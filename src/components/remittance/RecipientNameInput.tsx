@@ -2,12 +2,22 @@
 import { Input } from "@/components/ui/input"
 import { AlertCircle, User } from "lucide-react"
 
+/**
+ * Props for the RecipientNameInput component
+ */
 interface RecipientNameInputProps {
   recipientName: string
   setRecipientName: (name: string) => void
   error?: string
 }
 
+/**
+ * Input component for recipient name with validation and error display
+ * @param recipientName - Current recipient name value
+ * @param setRecipientName - Function to update recipient name
+ * @param error - Optional error message to display
+ * @returns JSX element containing the recipient name input field
+ */
 export function RecipientNameInput({
   recipientName,
   setRecipientName,

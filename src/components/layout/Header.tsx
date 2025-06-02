@@ -4,10 +4,17 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/hooks/useAuth"
 
+/**
+ * Header component displaying app branding, user information, and action buttons
+ * @returns JSX element containing the application header
+ */
 export function Header() {
   const { toast } = useToast()
   const { user, signOut } = useAuth()
 
+  /**
+   * Handles notification button click and shows toast message
+   */
   const handleNotificationClick = () => {
     toast({
       title: "Notifications",
@@ -15,6 +22,9 @@ export function Header() {
     })
   }
 
+  /**
+   * Handles user sign out and shows confirmation toast
+   */
   const handleSignOut = () => {
     signOut()
     toast({

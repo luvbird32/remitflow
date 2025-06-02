@@ -1,4 +1,7 @@
 
+/**
+ * Currency interface representing exchange rate information
+ */
 export interface Currency {
   code: string
   name: string
@@ -6,6 +9,9 @@ export interface Currency {
   rate: number
 }
 
+/**
+ * Country interface with delivery method support
+ */
 export interface Country {
   code: string
   name: string
@@ -14,6 +20,9 @@ export interface Country {
   deliveryMethods: string[]
 }
 
+/**
+ * Transfer form data interface containing all transfer information
+ */
 export interface TransferFormData {
   amount: string
   recipientName: string
@@ -33,6 +42,9 @@ export interface TransferFormData {
   mobileProvider: string
 }
 
+/**
+ * Form validation errors interface
+ */
 export interface FormErrors {
   [key: string]: string
 }

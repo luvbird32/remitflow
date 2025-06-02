@@ -1,14 +1,20 @@
 
-// This file now acts as a bridge to the backend API
-// All business logic has been moved to the backend
-
 import { ApiService } from '@/services/apiService'
 
-// These will be loaded from the backend
+/**
+ * Array of available currencies loaded from the backend
+ */
 export let currencies: any[] = []
+
+/**
+ * Array of available countries loaded from the backend
+ */
 export let countries: any[] = []
 
-// Load data from backend
+/**
+ * Loads currencies and countries data from the backend API
+ * Populates the module-level currencies and countries arrays
+ */
 export const loadCurrenciesAndCountries = async () => {
   try {
     const [currenciesData, countriesData] = await Promise.all([
@@ -27,19 +33,31 @@ export const loadCurrenciesAndCountries = async () => {
 // Initialize data on module load
 loadCurrenciesAndCountries()
 
+/**
+ * Human-readable labels for delivery methods
+ */
 export const deliveryMethodLabels = {
   bank: "Bank Transfer",
   card: "Debit Card",
   mobile: "Mobile Money"
 }
 
+/**
+ * Expected delivery timeframes for each delivery method
+ */
 export const deliveryTimeframes = {
   bank: "1-3 business days",
   card: "1-2 hours", 
   mobile: "Within minutes"
 }
 
-// Synchronous calculation functions using local data (for UI previews)
+/**
+ * Calculates converted amount using local exchange rates (for UI previews)
+ * @param amount - Amount to convert
+ * @param fromCurrency - Source currency code
+ * @param toCurrency - Target currency code
+ * @returns Converted amount as string with 2 decimal places
+ */
 export const calculateConvertedAmount = (amount: string, fromCurrency: string, toCurrency: string): string => {
   if (!amount) return "0"
   const fromRate = currencies.find(c => c.code === fromCurrency)?.rate || 1
@@ -47,6 +65,12 @@ export const calculateConvertedAmount = (amount: string, fromCurrency: string, t
   return (parseFloat(amount) / fromRate * toRate).toFixed(2)
 }
 
+/**
+ * Calculates transfer fee based on amount and delivery method
+ * @param amount - Transfer amount
+ * @param deliveryMethod - Selected delivery method
+ * @returns Transfer fee as number
+ */
 export const calculateFee = (amount: string, deliveryMethod: string): number => {
   if (!amount) return 0
   const transferAmount = parseFloat(amount)
@@ -64,7 +88,13 @@ export const calculateFee = (amount: string, deliveryMethod: string): number => 
   return baseFee + (deliveryFees[deliveryMethod as keyof typeof deliveryFees] || 0)
 }
 
-// Async functions for actual API calls
+/**
+ * Calculates converted amount using backend API for accurate rates
+ * @param amount - Amount to convert
+ * @param fromCurrency - Source currency code
+ * @param toCurrency - Target currency code
+ * @returns Promise resolving to converted amount as string
+ */
 export const calculateConvertedAmountAPI = async (amount: string, fromCurrency: string, toCurrency: string): Promise<string> => {
   if (!amount) return "0"
   try {
@@ -76,6 +106,12 @@ export const calculateConvertedAmountAPI = async (amount: string, fromCurrency: 
   }
 }
 
+/**
+ * Calculates transfer fee using backend API for accurate pricing
+ * @param amount - Transfer amount
+ * @param deliveryMethod - Selected delivery method
+ * @returns Promise resolving to transfer fee as number
+ */
 export const calculateFeeAPI = async (amount: string, deliveryMethod: string): Promise<number> => {
   if (!amount) return 0
   try {

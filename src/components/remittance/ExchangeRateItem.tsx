@@ -2,6 +2,9 @@
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, TrendingDown } from "lucide-react"
 
+/**
+ * Exchange rate data interface
+ */
 interface ExchangeRate {
   from: string
   to: string
@@ -10,11 +13,24 @@ interface ExchangeRate {
   lastUpdated: string
 }
 
+/**
+ * Props for the ExchangeRateItem component
+ */
 interface ExchangeRateItemProps {
   rate: ExchangeRate
 }
 
+/**
+ * Component displaying exchange rate information with trend indicators
+ * @param rate - Exchange rate data to display
+ * @returns JSX element showing exchange rate details
+ */
 export function ExchangeRateItem({ rate }: ExchangeRateItemProps) {
+  /**
+   * Formats the rate change with appropriate sign
+   * @param change - Rate change value
+   * @returns Formatted change string with sign
+   */
   const formatChange = (change: number) => {
     const sign = change >= 0 ? '+' : ''
     return `${sign}${change.toFixed(3)}`

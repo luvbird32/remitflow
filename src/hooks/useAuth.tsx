@@ -1,12 +1,18 @@
 
 import { useState, useEffect, createContext, useContext } from 'react';
 
+/**
+ * User interface representing authenticated user data
+ */
 interface User {
   id: string;
   name: string;
   email: string;
 }
 
+/**
+ * Authentication context type definition
+ */
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -16,9 +22,17 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+/**
+ * Authentication provider component that manages user authentication state
+ * @param children - React children components
+ * @returns JSX element providing authentication context
+ */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
+  /**
+   * Effect to check for stored user data on app initialization
+   */
   useEffect(() => {
     // Check for stored user on app load
     const storedUser = localStorage.getItem('user');
@@ -31,11 +45,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  /**
+   * Signs in a user and stores their data in localStorage
+   * @param user - User object containing authentication data
+   */
   const signIn = (user: User) => {
     setUser(user);
     localStorage.setItem('user', JSON.stringify(user));
   };
 
+  /**
+   * Signs out the current user and removes their data from localStorage
+   */
   const signOut = () => {
     setUser(null);
     localStorage.removeItem('user');
@@ -50,6 +71,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Custom hook to access authentication context
+ * @returns Authentication context with user data and auth methods
+ * @throws Error if used outside of AuthProvider
+ */
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {

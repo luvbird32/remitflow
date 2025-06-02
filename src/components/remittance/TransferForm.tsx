@@ -9,6 +9,10 @@ import { TransferSuccessDialog } from './TransferSuccessDialog'
 import { ApiService } from '@/services/apiService'
 import { TransferFormData, FormErrors } from './types'
 
+/**
+ * Main transfer form component that handles the multi-step money transfer process
+ * @returns JSX element containing the complete transfer form with steps
+ */
 export function TransferForm() {
   const [formData, setFormData] = useState<TransferFormData>({
     amount: "",
@@ -31,7 +35,9 @@ export function TransferForm() {
   const [countries, setCountries] = useState([])
   const [transferResult, setTransferResult] = useState<any>(null)
 
-  // Load countries and currencies from backend
+  /**
+   * Load countries and currencies from backend on component mount
+   */
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -44,7 +50,10 @@ export function TransferForm() {
     loadData()
   }, [])
 
-  // Auto-update currency when country changes
+  /**
+   * Handles country selection and auto-updates currency
+   * @param countryCode - Selected country code
+   */
   const handleCountryChange = (countryCode: string) => {
     const country = countries.find((c: any) => c.code === countryCode)
     setFormData(prev => ({
@@ -55,6 +64,10 @@ export function TransferForm() {
     }))
   }
 
+  /**
+   * Handles form submission and transfer creation
+   * @param e - Form submit event
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -83,6 +96,9 @@ export function TransferForm() {
     }
   }
 
+  /**
+   * Handles success dialog close and form reset
+   */
   const handleSuccessDialogClose = () => {
     setShowSuccessDialog(false)
     setTransferResult(null)

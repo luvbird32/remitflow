@@ -5,6 +5,9 @@ import { CheckCircle, ArrowRight, Copy, Clock, CreditCard } from "lucide-react"
 import { TransferFormData } from './types'
 import { currencies, countries, deliveryMethodLabels, deliveryTimeframes, calculateConvertedAmount, calculateFee } from './transferUtils'
 
+/**
+ * Props for the TransferSuccessDialog component
+ */
 interface TransferSuccessDialogProps {
   isOpen: boolean
   onClose: () => void
@@ -12,6 +15,14 @@ interface TransferSuccessDialogProps {
   transferResult?: any
 }
 
+/**
+ * Success dialog component displayed after successful transfer submission
+ * @param isOpen - Whether the dialog is open
+ * @param onClose - Callback function to close the dialog
+ * @param formData - Transfer form data
+ * @param transferResult - Result from the transfer API
+ * @returns JSX element containing the success dialog
+ */
 export function TransferSuccessDialog({ isOpen, onClose, formData, transferResult }: TransferSuccessDialogProps) {
   const fromCurrencyData = currencies.find(c => c.code === formData.fromCurrency)
   const toCurrencyData = currencies.find(c => c.code === formData.toCurrency)
@@ -23,6 +34,9 @@ export function TransferSuccessDialog({ isOpen, onClose, formData, transferResul
   // Use transfer reference from API result or generate a mock one
   const transferRef = transferResult?.id || `TXN${Date.now().toString().slice(-8)}`
 
+  /**
+   * Copies the transfer reference to clipboard
+   */
   const copyReference = () => {
     navigator.clipboard.writeText(transferRef)
   }
