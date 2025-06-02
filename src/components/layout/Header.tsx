@@ -24,24 +24,8 @@ export function Header() {
   }
 
   return (
-    <header className="glass backdrop-blur-xl shadow-xl shadow-slate-900/5 border-b border-slate-200/30 sticky top-0 z-50">
-      <div className="container mx-auto px-8 py-6 flex items-center justify-between">
-        <div className="flex items-center space-x-6">
-          <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-2xl shadow-teal-500/25 animate-pulse">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold gradient-text tracking-tight">
-                RemitFlow
-              </h1>
-              <p className="text-xs text-slate-500 font-medium">Global Money Transfer</p>
-            </div>
-          </div>
-        </div>
-
+    <header className="glass backdrop-blur-xl shadow-xl shadow-slate-900/5 border-b border-slate-200/30">
+      <div className="container mx-auto px-8 py-6 flex items-center justify-end">
         <div className="flex items-center space-x-4">
           <div className="hidden sm:flex items-center space-x-4 px-6 py-3 modern-card rounded-2xl">
             <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
