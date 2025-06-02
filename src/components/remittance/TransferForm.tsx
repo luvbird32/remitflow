@@ -4,23 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Calculator, AlertCircle } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowRight, Calculator } from 'lucide-react';
+import { TransferData } from '@/types/remittance';
 import { useToast } from '@/hooks/use-toast';
-import type { TransferData } from '@/types/remittance';
-
-const exchangeRates = {
-  'USD-EUR': 0.85,
-  'USD-GBP': 0.73,
-  'EUR-USD': 1.18,
-  'EUR-GBP': 0.86,
-  'GBP-USD': 1.37,
-  'GBP-EUR': 1.16,
-};
 
 export const TransferForm = () => {
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<TransferData>({
     amount: '',
     fromCurrency: 'USD',
@@ -29,184 +19,145 @@ export const TransferForm = () => {
     recipientEmail: ''
   });
 
-  const calculateConvertedAmount = () => {
-    if (!formData.amount) return 0;
-    const rate = exchangeRates[`${formData.fromCurrency}-${formData.toCurrency}` as keyof typeof exchangeRates] || 1;
-    return (parseFloat(formData.amount) * rate).toFixed(2);
-  };
+  const [exchangeRate] = useState(0.85); // Mock exchange rate
 
-  const getTransferFee = () => {
-    const amount = parseFloat(formData.amount) || 0;
-    return Math.max(2.99, amount * 0.01).toFixed(2);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Transfer data:', formData);
+    if (!formData.amount || !formData.recipientName || !formData.recipientEmail) {
       toast({
-        title: "Transfer Initiated Successfully!",
-        description: `${formData.amount} ${formData.fromCurrency} → ${calculateConvertedAmount()} ${formData.toCurrency} to ${formData.recipientName}`,
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
       });
-      setIsLoading(false);
-      
-      // Reset form
-      setFormData({
-        amount: '',
-        fromCurrency: 'USD',
-        toCurrency: 'EUR',
-        recipientName: '',
-        recipientEmail: ''
-      });
-    }, 2000);
+      return;
+    }
+
+    toast({
+      title: "Transfer Initiated",
+      description: `Transfer of ${formData.amount} ${formData.fromCurrency} to ${formData.recipientName} has been initiated.`,
+    });
+
+    // Reset form
+    setFormData({
+      amount: '',
+      fromCurrency: 'USD',
+      toCurrency: 'EUR',
+      recipientName: '',
+      recipientEmail: ''
+    });
   };
 
-  const isFormValid = formData.amount && formData.recipientName && formData.recipientEmail;
+  const convertedAmount = formData.amount ? (parseFloat(formData.amount) * exchangeRate).toFixed(2) : '0.00';
 
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Amount and Currency Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calculator className="h-5 w-5" />
-              Transfer Amount
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calculator className="h-5 w-5" />
+            Send Money
+          </CardTitle>
+          <CardDescription>
+            Send money to your loved ones worldwide with competitive exchange rates
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Amount and Currency Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
               <div className="space-y-2">
-                <Label htmlFor="amount">Send Amount</Label>
+                <Label htmlFor="amount">Amount</Label>
                 <Input
                   id="amount"
                   type="number"
-                  step="0.01"
                   placeholder="0.00"
                   value={formData.amount}
-                  onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
-                  className="text-lg font-semibold"
-                  required
+                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                  className="text-lg"
                 />
               </div>
               
               <div className="space-y-2">
                 <Label>From</Label>
-                <Select
-                  value={formData.fromCurrency}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, fromCurrency: value }))}
-                >
+                <Select value={formData.fromCurrency} onValueChange={(value) => setFormData({ ...formData, fromCurrency: value })}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="USD">🇺🇸 USD</SelectItem>
-                    <SelectItem value="EUR">🇪🇺 EUR</SelectItem>
-                    <SelectItem value="GBP">🇬🇧 GBP</SelectItem>
+                    <SelectItem value="USD">USD - US Dollar</SelectItem>
+                    <SelectItem value="EUR">EUR - Euro</SelectItem>
+                    <SelectItem value="GBP">GBP - British Pound</SelectItem>
+                    <SelectItem value="CAD">CAD - Canadian Dollar</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
                 <Label>To</Label>
-                <Select
-                  value={formData.toCurrency}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, toCurrency: value }))}
-                >
+                <Select value={formData.toCurrency} onValueChange={(value) => setFormData({ ...formData, toCurrency: value })}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="USD">🇺🇸 USD</SelectItem>
-                    <SelectItem value="EUR">🇪🇺 EUR</SelectItem>
-                    <SelectItem value="GBP">🇬🇧 GBP</SelectItem>
+                    <SelectItem value="EUR">EUR - Euro</SelectItem>
+                    <SelectItem value="USD">USD - US Dollar</SelectItem>
+                    <SelectItem value="GBP">GBP - British Pound</SelectItem>
+                    <SelectItem value="INR">INR - Indian Rupee</SelectItem>
+                    <SelectItem value="PHP">PHP - Philippine Peso</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
+            {/* Exchange Rate Display */}
             {formData.amount && (
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Recipient receives:</span>
-                  <span className="text-2xl font-bold text-blue-600">
-                    {calculateConvertedAmount()} {formData.toCurrency}
-                  </span>
+              <div className="bg-blue-50 p-4 rounded-lg flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-semibold">{formData.amount} {formData.fromCurrency}</span>
+                  <ArrowRight className="h-4 w-4 text-gray-500" />
+                  <span className="text-lg font-semibold text-blue-600">{convertedAmount} {formData.toCurrency}</span>
                 </div>
-                <div className="flex items-center justify-between mt-2 text-sm">
-                  <span className="text-gray-500">Transfer fee:</span>
-                  <span className="text-gray-700">${getTransferFee()}</span>
+                <div className="text-sm text-gray-600">
+                  Rate: 1 {formData.fromCurrency} = {exchangeRate} {formData.toCurrency}
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
 
-        {/* Recipient Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recipient Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="recipientName">Full Name</Label>
-                <Input
-                  id="recipientName"
-                  placeholder="John Doe"
-                  value={formData.recipientName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, recipientName: e.target.value }))}
-                  required
-                />
-              </div>
+            {/* Recipient Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Recipient Information</h3>
               
-              <div className="space-y-2">
-                <Label htmlFor="recipientEmail">Email Address</Label>
-                <Input
-                  id="recipientEmail"
-                  type="email"
-                  placeholder="john@example.com"
-                  value={formData.recipientEmail}
-                  onChange={(e) => setFormData(prev => ({ ...prev, recipientEmail: e.target.value }))}
-                  required
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="recipientName">Recipient Name *</Label>
+                  <Input
+                    id="recipientName"
+                    placeholder="Enter recipient's full name"
+                    value={formData.recipientName}
+                    onChange={(e) => setFormData({ ...formData, recipientName: e.target.value })}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="recipientEmail">Recipient Email *</Label>
+                  <Input
+                    id="recipientEmail"
+                    type="email"
+                    placeholder="Enter recipient's email"
+                    value={formData.recipientEmail}
+                    onChange={(e) => setFormData({ ...formData, recipientEmail: e.target.value })}
+                  />
+                </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Security Notice */}
-        <div className="flex items-start gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-          <div className="text-sm">
-            <p className="font-medium text-yellow-800">Security Notice</p>
-            <p className="text-yellow-700">
-              Your transfer will be processed securely. Please verify all recipient details before confirming.
-            </p>
-          </div>
-        </div>
-
-        <Button 
-          type="submit" 
-          className="w-full py-6 text-lg"
-          disabled={!isFormValid || isLoading}
-        >
-          {isLoading ? (
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              Processing Transfer...
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
+            <Button type="submit" className="w-full" size="lg">
               Send Money
-              <ArrowRight className="h-5 w-5" />
-            </div>
-          )}
-        </Button>
-      </form>
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };
