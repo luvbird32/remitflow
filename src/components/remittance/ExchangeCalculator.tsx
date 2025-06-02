@@ -1,55 +1,70 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowUpDown, Calculator } from "lucide-react"
-
-interface Currency {
-  code: string
-  name: string
-  symbol: string
-  rate: number
-}
-
-const currencies: Currency[] = [
-  { code: "USD", name: "US Dollar", symbol: "$", rate: 1 },
-  { code: "EUR", name: "Euro", symbol: "€", rate: 0.85 },
-  { code: "GBP", name: "British Pound", symbol: "£", rate: 0.73 },
-  { code: "JPY", name: "Japanese Yen", symbol: "¥", rate: 110.25 },
-  { code: "CAD", name: "Canadian Dollar", symbol: "C$", rate: 1.35 },
-  { code: "AUD", name: "Australian Dollar", symbol: "A$", rate: 1.52 },
-  { code: "CHF", name: "Swiss Franc", symbol: "CHF", rate: 0.92 },
-  { code: "CNY", name: "Chinese Yuan", symbol: "¥", rate: 7.24 }
-]
+import { ApiService } from '@/services/apiService'
 
 export function ExchangeCalculator() {
   const [amount, setAmount] = useState("")
   const [fromCurrency, setFromCurrency] = useState("USD")
   const [toCurrency, setToCurrency] = useState("EUR")
+  const [currencies, setCurrencies] = useState<any[]>([])
+  const [conversionResult, setConversionResult] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const calculateConversion = () => {
-    if (!amount || parseFloat(amount) <= 0) return "0.00"
+  // Load currencies from backend
+  useEffect(() => {
+    const loadCurrencies = async () => {
+      try {
+        const data = await ApiService.getCurrencies()
+        setCurrencies(data)
+      } catch (error) {
+        console.error('Failed to load currencies:', error)
+      }
+    }
+    loadCurrencies()
+  }, [])
+
+  // Calculate conversion when inputs change
+  useEffect(() => {
+    if (amount && parseFloat(amount) > 0) {
+      calculateConversion()
+    } else {
+      setConversionResult(null)
+    }
+  }, [amount, fromCurrency, toCurrency])
+
+  const calculateConversion = async () => {
+    if (!amount || parseFloat(amount) <= 0) {
+      setConversionResult(null)
+      return
+    }
     
-    const fromRate = currencies.find(c => c.code === fromCurrency)?.rate || 1
-    const toRate = currencies.find(c => c.code === toCurrency)?.rate || 1
-    const result = (parseFloat(amount) / fromRate * toRate)
-    
-    return result.toFixed(2)
+    setIsLoading(true)
+    try {
+      const result = await ApiService.convertCurrency({
+        amount,
+        from: fromCurrency,
+        to: toCurrency
+      })
+      setConversionResult(result)
+    } catch (error) {
+      console.error('Conversion error:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const swapCurrencies = () => {
-    const temp = fromCurrency
     setFromCurrency(toCurrency)
-    setToCurrency(temp)
+    setToCurrency(fromCurrency)
   }
 
   const fromCurrencyData = currencies.find(c => c.code === fromCurrency)
   const toCurrencyData = currencies.find(c => c.code === toCurrency)
-  const exchangeRate = fromCurrencyData && toCurrencyData 
-    ? (toCurrencyData.rate / fromCurrencyData.rate).toFixed(4)
-    : "0.0000"
 
   return (
     <Card>
@@ -134,32 +149,42 @@ export function ExchangeCalculator() {
         </div>
 
         {/* Results */}
-        {amount && (
+        {(conversionResult || isLoading) && (
           <div className="space-y-4">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <div className="text-center space-y-2">
-                <div className="text-sm text-gray-600">
-                  {fromCurrencyData?.symbol}{amount} {fromCurrency} =
-                </div>
-                <div className="text-2xl font-bold text-blue-600">
-                  {toCurrencyData?.symbol}{calculateConversion()} {toCurrency}
-                </div>
-                <div className="text-xs text-gray-500">
-                  1 {fromCurrency} = {exchangeRate} {toCurrency}
+            {isLoading ? (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div className="text-center">
+                  <div className="text-sm text-gray-600">Calculating...</div>
                 </div>
               </div>
-            </div>
+            ) : conversionResult && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="text-center space-y-2">
+                  <div className="text-sm text-gray-600">
+                    {fromCurrencyData?.symbol}{amount} {fromCurrency} =
+                  </div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {toCurrencyData?.symbol}{conversionResult.convertedAmount} {toCurrency}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    1 {fromCurrency} = {conversionResult.rate} {toCurrency}
+                  </div>
+                </div>
+              </div>
+            )}
 
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="bg-gray-50 p-3 rounded">
-                <div className="font-medium">You send</div>
-                <div className="text-blue-600">{fromCurrencyData?.symbol}{amount} {fromCurrency}</div>
+            {conversionResult && (
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="bg-gray-50 p-3 rounded">
+                  <div className="font-medium">You send</div>
+                  <div className="text-blue-600">{fromCurrencyData?.symbol}{amount} {fromCurrency}</div>
+                </div>
+                <div className="bg-gray-50 p-3 rounded">
+                  <div className="font-medium">They receive</div>
+                  <div className="text-green-600">{toCurrencyData?.symbol}{conversionResult.convertedAmount} {toCurrency}</div>
+                </div>
               </div>
-              <div className="bg-gray-50 p-3 rounded">
-                <div className="font-medium">They receive</div>
-                <div className="text-green-600">{toCurrencyData?.symbol}{calculateConversion()} {toCurrency}</div>
-              </div>
-            </div>
+            )}
           </div>
         )}
 
