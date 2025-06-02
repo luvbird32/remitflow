@@ -13,15 +13,15 @@ export function DeliveryMethodOption({ method, isSelected, onClick }: DeliveryMe
     <button
       type="button"
       onClick={onClick}
-      className={`p-4 border rounded-lg text-left transition-all hover:border-blue-300 ${
+      className={`p-4 border rounded-lg text-left transition-all hover:border-teal-300 ${
         isSelected 
-          ? 'border-blue-500 bg-blue-50' 
-          : 'border-gray-200'
+          ? 'border-teal-500 bg-gradient-to-r from-teal-50 to-cyan-50' 
+          : 'border-gray-200 hover:bg-teal-50'
       }`}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <CreditCard className="h-5 w-5 text-blue-600" />
+          <CreditCard className="h-5 w-5 text-teal-600" />
           <div>
             <div className="font-medium">
               {deliveryMethodLabels[method as keyof typeof deliveryMethodLabels]}
@@ -32,7 +32,7 @@ export function DeliveryMethodOption({ method, isSelected, onClick }: DeliveryMe
             </div>
           </div>
         </div>
-        <div className="text-sm font-medium">
+        <div className="text-sm font-medium text-teal-600">
           {method === 'bank' ? 'Free' : 
            method === 'card' ? '+$1.99' : '+$0.99'}
         </div>

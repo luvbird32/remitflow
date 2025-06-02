@@ -32,8 +32,8 @@ export function ReviewCompleteStep({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
-        <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">3</div>
+      <div className="flex items-center gap-2 text-sm font-medium text-teal-600">
+        <div className="w-6 h-6 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-full flex items-center justify-center text-xs">3</div>
         Review & Complete Transfer
       </div>
 
@@ -44,7 +44,7 @@ export function ReviewCompleteStep({
         <Button 
           type="button" 
           onClick={() => setShowPaymentFields(true)}
-          className="w-full"
+          className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600"
         >
           Continue to Payment Details
           <ArrowRight className="ml-2 h-4 w-4" />
@@ -60,7 +60,7 @@ export function ReviewCompleteStep({
           
           <Button 
             type="submit" 
-            className="w-full bg-green-600 hover:bg-green-700"
+            className="w-full bg-gradient-to-r from-coral-500 to-orange-400 hover:from-coral-600 hover:to-orange-500"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Processing Transfer..." : `Send ${fromCurrencyData?.symbol}${totalAmount}`}
