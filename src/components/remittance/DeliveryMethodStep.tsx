@@ -1,7 +1,8 @@
 
-import { AlertCircle, CreditCard, Clock } from "lucide-react"
-import { deliveryMethodLabels, deliveryTimeframes, countries } from './transferUtils'
+import { AlertCircle } from "lucide-react"
+import { countries } from './transferUtils'
 import { FormErrors } from './types'
+import { DeliveryMethodOption } from './DeliveryMethodOption'
 
 interface DeliveryMethodStepProps {
   recipientCountry: string
@@ -27,35 +28,12 @@ export function DeliveryMethodStep({
       
       <div className="grid gap-3">
         {selectedCountry?.deliveryMethods.map((method) => (
-          <button
+          <DeliveryMethodOption
             key={method}
-            type="button"
+            method={method}
+            isSelected={deliveryMethod === method}
             onClick={() => setDeliveryMethod(method)}
-            className={`p-4 border rounded-lg text-left transition-all hover:border-blue-300 ${
-              deliveryMethod === method 
-                ? 'border-blue-500 bg-blue-50' 
-                : 'border-gray-200'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <CreditCard className="h-5 w-5 text-blue-600" />
-                <div>
-                  <div className="font-medium">
-                    {deliveryMethodLabels[method as keyof typeof deliveryMethodLabels]}
-                  </div>
-                  <div className="text-sm text-gray-500 flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    {deliveryTimeframes[method as keyof typeof deliveryTimeframes]}
-                  </div>
-                </div>
-              </div>
-              <div className="text-sm font-medium">
-                {method === 'bank' ? 'Free' : 
-                 method === 'card' ? '+$1.99' : '+$0.99'}
-              </div>
-            </div>
-          </button>
+          />
         ))}
       </div>
       
