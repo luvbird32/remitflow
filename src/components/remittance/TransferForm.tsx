@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowDown, DollarSign } from "lucide-react"
@@ -11,6 +12,7 @@ import { TransferFormData, FormErrors } from './types'
 export function TransferForm() {
   const [formData, setFormData] = useState<TransferFormData>({
     amount: "",
+    recipientName: "",
     recipientEmail: "",
     recipientCountry: "",
     deliveryMethod: "",
@@ -47,6 +49,10 @@ export function TransferForm() {
       newErrors.amount = "Minimum transfer amount is $1"
     } else if (parseFloat(formData.amount) > 10000) {
       newErrors.amount = "Maximum transfer amount is $10,000"
+    }
+
+    if (!formData.recipientName.trim()) {
+      newErrors.recipientName = "Recipient name is required"
     }
 
     if (!formData.recipientCountry) {
@@ -112,6 +118,7 @@ export function TransferForm() {
     // Reset form on success
     setFormData({
       amount: "",
+      recipientName: "",
       recipientEmail: "",
       recipientCountry: "",
       deliveryMethod: "",
@@ -127,7 +134,7 @@ export function TransferForm() {
     setErrors({})
   }
 
-  const showStep2 = formData.amount && formData.recipientCountry
+  const showStep2 = formData.amount && formData.recipientName && formData.recipientCountry
   const showStep3 = showStep2 && formData.deliveryMethod
 
   return (
@@ -149,6 +156,8 @@ export function TransferForm() {
             <AmountDestinationStep
               amount={formData.amount}
               setAmount={(amount) => setFormData(prev => ({ ...prev, amount }))}
+              recipientName={formData.recipientName}
+              setRecipientName={(name) => setFormData(prev => ({ ...prev, recipientName: name }))}
               recipientCountry={formData.recipientCountry}
               onCountryChange={handleCountryChange}
               fromCurrency={formData.fromCurrency}

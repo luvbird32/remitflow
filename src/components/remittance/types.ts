@@ -16,6 +16,7 @@ export interface Country {
 
 export interface TransferFormData {
   amount: string
+  recipientName: string
   recipientEmail: string
   recipientCountry: string
   deliveryMethod: string

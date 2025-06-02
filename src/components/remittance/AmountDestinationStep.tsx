@@ -1,13 +1,15 @@
 
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { AlertCircle, MapPin } from "lucide-react"
+import { AlertCircle, MapPin, User } from "lucide-react"
 import { currencies, countries } from './transferUtils'
 import { FormErrors } from './types'
 
 interface AmountDestinationStepProps {
   amount: string
   setAmount: (amount: string) => void
+  recipientName: string
+  setRecipientName: (name: string) => void
   recipientCountry: string
   onCountryChange: (countryCode: string) => void
   fromCurrency: string
@@ -18,6 +20,8 @@ interface AmountDestinationStepProps {
 export function AmountDestinationStep({
   amount,
   setAmount,
+  recipientName,
+  setRecipientName,
   recipientCountry,
   onCountryChange,
   fromCurrency,
@@ -28,7 +32,7 @@ export function AmountDestinationStep({
     <div className="space-y-6">
       <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
         <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">1</div>
-        Amount & Destination
+        Amount & Recipient
       </div>
       
       <div className="grid md:grid-cols-2 gap-4">
@@ -100,6 +104,28 @@ export function AmountDestinationStep({
             </p>
           )}
         </div>
+      </div>
+
+      {/* Recipient Name */}
+      <div>
+        <label htmlFor="recipientName" className="block text-sm font-medium mb-2">
+          <User className="h-4 w-4 inline mr-1" />
+          Recipient Name
+        </label>
+        <Input
+          id="recipientName"
+          type="text"
+          placeholder="Enter recipient's full name"
+          value={recipientName}
+          onChange={(e) => setRecipientName(e.target.value)}
+          className={errors.recipientName ? "border-red-500" : ""}
+        />
+        {errors.recipientName && (
+          <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+            <AlertCircle className="h-3 w-3" />
+            {errors.recipientName}
+          </p>
+        )}
       </div>
     </div>
   )
