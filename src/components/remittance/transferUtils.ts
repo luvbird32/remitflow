@@ -39,8 +39,33 @@ export const deliveryTimeframes = {
   mobile: "Within minutes"
 }
 
-// These functions now call the backend API
-export const calculateConvertedAmount = async (amount: string, fromCurrency: string, toCurrency: string): Promise<string> => {
+// Synchronous calculation functions using local data (for UI previews)
+export const calculateConvertedAmount = (amount: string, fromCurrency: string, toCurrency: string): string => {
+  if (!amount) return "0"
+  const fromRate = currencies.find(c => c.code === fromCurrency)?.rate || 1
+  const toRate = currencies.find(c => c.code === toCurrency)?.rate || 1
+  return (parseFloat(amount) / fromRate * toRate).toFixed(2)
+}
+
+export const calculateFee = (amount: string, deliveryMethod: string): number => {
+  if (!amount) return 0
+  const transferAmount = parseFloat(amount)
+  let baseFee = 0
+  if (transferAmount <= 100) baseFee = 2.99
+  else if (transferAmount <= 500) baseFee = 4.99
+  else baseFee = 7.99
+
+  const deliveryFees = {
+    bank: 0,
+    card: 1.99,
+    mobile: 0.99
+  }
+  
+  return baseFee + (deliveryFees[deliveryMethod as keyof typeof deliveryFees] || 0)
+}
+
+// Async functions for actual API calls
+export const calculateConvertedAmountAPI = async (amount: string, fromCurrency: string, toCurrency: string): Promise<string> => {
   if (!amount) return "0"
   try {
     const result = await ApiService.convertCurrency({ amount, from: fromCurrency, to: toCurrency })
@@ -51,7 +76,7 @@ export const calculateConvertedAmount = async (amount: string, fromCurrency: str
   }
 }
 
-export const calculateFee = async (amount: string, deliveryMethod: string): Promise<number> => {
+export const calculateFeeAPI = async (amount: string, deliveryMethod: string): Promise<number> => {
   if (!amount) return 0
   try {
     const result = await ApiService.getTransferPreview({ amount, deliveryMethod, fromCurrency: 'USD', toCurrency: 'USD' })

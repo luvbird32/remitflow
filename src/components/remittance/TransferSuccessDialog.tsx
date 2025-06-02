@@ -9,9 +9,10 @@ interface TransferSuccessDialogProps {
   isOpen: boolean
   onClose: () => void
   formData: TransferFormData
+  transferResult?: any
 }
 
-export function TransferSuccessDialog({ isOpen, onClose, formData }: TransferSuccessDialogProps) {
+export function TransferSuccessDialog({ isOpen, onClose, formData, transferResult }: TransferSuccessDialogProps) {
   const fromCurrencyData = currencies.find(c => c.code === formData.fromCurrency)
   const toCurrencyData = currencies.find(c => c.code === formData.toCurrency)
   const selectedCountry = countries.find(c => c.code === formData.recipientCountry)
@@ -19,8 +20,8 @@ export function TransferSuccessDialog({ isOpen, onClose, formData }: TransferSuc
   const fee = calculateFee(formData.amount, formData.deliveryMethod)
   const totalAmount = (parseFloat(formData.amount) + fee).toFixed(2)
   
-  // Generate a mock transfer reference
-  const transferRef = `TXN${Date.now().toString().slice(-8)}`
+  // Use transfer reference from API result or generate a mock one
+  const transferRef = transferResult?.id || `TXN${Date.now().toString().slice(-8)}`
 
   const copyReference = () => {
     navigator.clipboard.writeText(transferRef)
