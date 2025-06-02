@@ -14,7 +14,7 @@ export interface TransferHistory {
   toCurrency: string;
   convertedAmount: string;
   recipient: string;
-  status: 'pending' | 'completed' | 'failed';
+  status: 'completed' | 'pending' | 'failed';
   date: string;
   fee: string;
 }
