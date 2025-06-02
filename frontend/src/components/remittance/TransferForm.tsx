@@ -153,7 +153,7 @@ export const TransferForm = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="recipientName">Full Name</Label>
+                <Label htmlFor="recipientName">Full Name <span className="text-red-500">*</span></Label>
                 <Input
                   id="recipientName"
                   placeholder="John Doe"
@@ -162,9 +162,8 @@ export const TransferForm = () => {
                   required
                 />
               </div>
-              
               <div className="space-y-2">
-                <Label htmlFor="recipientEmail">Email Address</Label>
+                <Label htmlFor="recipientEmail">Email Address <span className="text-red-500">*</span></Label>
                 <Input
                   id="recipientEmail"
                   type="email"
@@ -179,31 +178,35 @@ export const TransferForm = () => {
         </Card>
 
         {/* Security Notice */}
-        <div className="flex items-start gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-          <div className="text-sm">
-            <p className="font-medium text-yellow-800">Security Notice</p>
-            <p className="text-yellow-700">
-              Your transfer will be processed securely. Please verify all recipient details before confirming.
-            </p>
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
+            <div>
+              <h4 className="font-medium text-amber-800">Security Notice</h4>
+              <p className="text-sm text-amber-700 mt-1">
+                Your transfer will be processed securely. You'll receive a confirmation email once completed.
+              </p>
+            </div>
           </div>
         </div>
 
+        {/* Submit Button */}
         <Button 
           type="submit" 
-          className="w-full py-6 text-lg"
+          size="lg" 
+          className="w-full"
           disabled={!isFormValid || isLoading}
         >
           {isLoading ? (
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
               Processing Transfer...
-            </div>
+            </>
           ) : (
-            <div className="flex items-center gap-2">
-              Send Money
-              <ArrowRight className="h-5 w-5" />
-            </div>
+            <>
+              Send {formData.amount ? `${formData.amount} ${formData.fromCurrency}` : 'Money'}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </>
           )}
         </Button>
       </form>
