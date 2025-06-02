@@ -1,88 +1,82 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TransferHistory as TransferHistoryType } from '@/types/remittance';
+import { Transfer } from '@/types/remittance';
 
-const mockTransfers: TransferHistoryType[] = [
+const mockTransfers: Transfer[] = [
   {
     id: '1',
-    amount: '1000',
-    fromCurrency: 'USD',
-    toCurrency: 'EUR',
-    convertedAmount: '850',
-    recipient: 'John Doe',
+    recipientName: 'John Doe',
+    amount: 500,
+    currency: 'USD',
     status: 'completed',
     date: '2024-01-15',
-    fee: '5.00'
+    country: 'Philippines'
   },
   {
     id: '2',
-    amount: '500',
-    fromCurrency: 'EUR',
-    toCurrency: 'GBP',
-    convertedAmount: '430',
-    recipient: 'Jane Smith',
+    recipientName: 'Jane Smith',
+    amount: 300,
+    currency: 'USD',
     status: 'pending',
     date: '2024-01-14',
-    fee: '3.50'
+    country: 'India'
+  },
+  {
+    id: '3',
+    recipientName: 'Bob Johnson',
+    amount: 750,
+    currency: 'USD',
+    status: 'failed',
+    date: '2024-01-13',
+    country: 'Mexico'
   }
 ];
 
 export const TransferHistory = () => {
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: Transfer['status']) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'default';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'secondary';
       case 'failed':
-        return 'bg-red-100 text-red-800';
+        return 'destructive';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'default';
     }
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Transfer History</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold">Transfer History</h2>
+      
+      {mockTransfers.length === 0 ? (
+        <p className="text-gray-500">No transfers found</p>
+      ) : (
+        <div className="space-y-3">
           {mockTransfers.map((transfer) => (
-            <div key={transfer.id} className="border rounded-lg p-4">
-              <div className="flex justify-between items-start mb-2">
+            <div
+              key={transfer.id}
+              className="border rounded-lg p-4 bg-white shadow-sm"
+            >
+              <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">{transfer.recipient}</h3>
-                  <p className="text-sm text-gray-600">{transfer.date}</p>
+                  <h3 className="font-medium">{transfer.recipientName}</h3>
+                  <p className="text-sm text-gray-600">{transfer.country}</p>
+                  <p className="text-sm text-gray-500">{transfer.date}</p>
                 </div>
-                <Badge className={getStatusColor(transfer.status)}>
-                  {transfer.status}
-                </Badge>
-              </div>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-gray-600">Amount:</span>
-                  <span className="ml-2 font-medium">
-                    {transfer.amount} {transfer.fromCurrency}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-600">Converted:</span>
-                  <span className="ml-2 font-medium">
-                    {transfer.convertedAmount} {transfer.toCurrency}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-600">Fee:</span>
-                  <span className="ml-2 font-medium">{transfer.fee} {transfer.fromCurrency}</span>
+                <div className="text-right">
+                  <p className="font-semibold">${transfer.amount}</p>
+                  <Badge variant={getStatusColor(transfer.status)}>
+                    {transfer.status}
+                  </Badge>
                 </div>
               </div>
             </div>
           ))}
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 };

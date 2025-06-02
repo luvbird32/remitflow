@@ -1,28 +1,24 @@
 
-export interface TransferData {
-  amount: string;
-  fromCurrency: string;
-  toCurrency: string;
-  recipientName: string;
-  recipientEmail: string;
-}
-
-export interface TransferHistory {
+export interface Transfer {
   id: string;
-  amount: string;
-  fromCurrency: string;
-  toCurrency: string;
-  convertedAmount: string;
-  recipient: string;
-  status: 'completed' | 'pending' | 'failed';
+  recipientName: string;
+  amount: number;
+  currency: string;
+  status: 'pending' | 'completed' | 'failed';
   date: string;
-  fee: string;
+  country: string;
 }
 
 export interface ExchangeRate {
   from: string;
   to: string;
   rate: number;
-  change: number;
-  trend: 'up' | 'down';
+  lastUpdated: string;
+}
+
+export interface Country {
+  code: string;
+  name: string;
+  currency: string;
+  flag: string;
 }
