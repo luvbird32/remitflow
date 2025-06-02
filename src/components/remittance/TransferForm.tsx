@@ -3,16 +3,97 @@ import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, DollarSign } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Badge } from "@/components/ui/badge"
+import { ArrowRight, DollarSign, AlertCircle, CheckCircle } from "lucide-react"
+
+interface Currency {
+  code: string
+  name: string
+  symbol: string
+  rate: number
+}
+
+const currencies: Currency[] = [
+  { code: "USD", name: "US Dollar", symbol: "$", rate: 1 },
+  { code: "EUR", name: "Euro", symbol: "€", rate: 0.85 },
+  { code: "GBP", name: "British Pound", symbol: "£", rate: 0.73 },
+  { code: "JPY", name: "Japanese Yen", symbol: "¥", rate: 110.25 },
+  { code: "CAD", name: "Canadian Dollar", symbol: "C$", rate: 1.35 }
+]
 
 export function TransferForm() {
   const [amount, setAmount] = useState("")
   const [recipientEmail, setRecipientEmail] = useState("")
+  const [fromCurrency, setFromCurrency] = useState("USD")
+  const [toCurrency, setToCurrency] = useState("EUR")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Transfer submitted:", { amount, recipientEmail })
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {}
+    
+    if (!amount || parseFloat(amount) <= 0) {
+      newErrors.amount = "Please enter a valid amount"
+    } else if (parseFloat(amount) < 1) {
+      newErrors.amount = "Minimum transfer amount is $1"
+    } else if (parseFloat(amount) > 10000) {
+      newErrors.amount = "Maximum transfer amount is $10,000"
+    }
+    
+    if (!recipientEmail) {
+      newErrors.recipientEmail = "Recipient email is required"
+    } else if (!/\S+@\S+\.\S+/.test(recipientEmail)) {
+      newErrors.recipientEmail = "Please enter a valid email address"
+    }
+    
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
   }
+
+  const calculateConvertedAmount = () => {
+    if (!amount) return 0
+    const fromRate = currencies.find(c => c.code === fromCurrency)?.rate || 1
+    const toRate = currencies.find(c => c.code === toCurrency)?.rate || 1
+    return (parseFloat(amount) / fromRate * toRate).toFixed(2)
+  }
+
+  const calculateFee = () => {
+    if (!amount) return 0
+    const transferAmount = parseFloat(amount)
+    if (transferAmount <= 100) return 2.99
+    if (transferAmount <= 500) return 4.99
+    return 7.99
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!validateForm()) return
+    
+    setIsSubmitting(true)
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    console.log("Transfer submitted:", { 
+      amount, 
+      recipientEmail, 
+      fromCurrency, 
+      toCurrency,
+      convertedAmount: calculateConvertedAmount(),
+      fee: calculateFee()
+    })
+    
+    setIsSubmitting(false)
+    // Reset form on success
+    setAmount("")
+    setRecipientEmail("")
+    setErrors({})
+  }
+
+  const fromCurrencyData = currencies.find(c => c.code === fromCurrency)
+  const toCurrencyData = currencies.find(c => c.code === toCurrency)
 
   return (
     <Card>
@@ -26,21 +107,96 @@ export function TransferForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="amount" className="block text-sm font-medium mb-2">
-              Amount
-            </label>
-            <Input
-              id="amount"
-              type="number"
-              placeholder="0.00"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              required
-            />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Amount and Currency Selection */}
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="amount" className="block text-sm font-medium mb-2">
+                You Send
+              </label>
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <Input
+                    id="amount"
+                    type="number"
+                    placeholder="0.00"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className={errors.amount ? "border-red-500" : ""}
+                    step="0.01"
+                    min="0"
+                  />
+                  {errors.amount && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.amount}
+                    </p>
+                  )}
+                </div>
+                <Select value={fromCurrency} onValueChange={setFromCurrency}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {currencies.map((currency) => (
+                      <SelectItem key={currency.code} value={currency.code}>
+                        {currency.code}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Exchange Rate Display */}
+            {amount && (
+              <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Exchange rate</span>
+                  <span className="font-medium">
+                    1 {fromCurrency} = {toCurrencyData?.rate} {toCurrency}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Transfer fee</span>
+                  <span className="font-medium">${calculateFee()}</span>
+                </div>
+                <div className="border-t pt-2 flex justify-between font-semibold">
+                  <span>Recipient gets</span>
+                  <span className="text-green-600">
+                    {toCurrencyData?.symbol}{calculateConvertedAmount()} {toCurrency}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Recipient Gets
+              </label>
+              <div className="flex gap-2">
+                <Input
+                  value={calculateConvertedAmount()}
+                  readOnly
+                  className="flex-1 bg-gray-50"
+                />
+                <Select value={toCurrency} onValueChange={setToCurrency}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {currencies.map((currency) => (
+                      <SelectItem key={currency.code} value={currency.code}>
+                        {currency.code}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
           
+          {/* Recipient Email */}
           <div>
             <label htmlFor="recipient" className="block text-sm font-medium mb-2">
               Recipient Email
@@ -51,13 +207,41 @@ export function TransferForm() {
               placeholder="recipient@example.com"
               value={recipientEmail}
               onChange={(e) => setRecipientEmail(e.target.value)}
-              required
+              className={errors.recipientEmail ? "border-red-500" : ""}
             />
+            {errors.recipientEmail && (
+              <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                <AlertCircle className="h-3 w-3" />
+                {errors.recipientEmail}
+              </p>
+            )}
           </div>
 
-          <Button type="submit" className="w-full">
-            Send Money
-            <ArrowRight className="ml-2 h-4 w-4" />
+          {/* Delivery Info */}
+          <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-blue-600" />
+              <span className="text-sm font-medium">Delivery time</span>
+            </div>
+            <Badge variant="secondary">Within minutes</Badge>
+          </div>
+
+          <Button 
+            type="submit" 
+            className="w-full" 
+            disabled={isSubmitting || !amount || !recipientEmail}
+          >
+            {isSubmitting ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Processing...
+              </>
+            ) : (
+              <>
+                Send Money
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
           </Button>
         </form>
       </CardContent>
