@@ -1,6 +1,7 @@
 
 import { TransferFormData } from './types'
 import { currencies, countries, deliveryMethodLabels, deliveryTimeframes, calculateConvertedAmount, calculateFee } from './transferUtils'
+import { ArrowRight, Clock, CreditCard, Globe, DollarSign } from 'lucide-react'
 
 interface TransferSummaryProps {
   formData: TransferFormData
@@ -17,51 +18,77 @@ export function TransferSummary({ formData }: TransferSummaryProps) {
   return (
     <div className="space-y-6">
       {/* Transfer Summary */}
-      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-        <h4 className="font-medium text-blue-900 mb-3">Transfer Summary</h4>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-blue-700">You send:</span>
-            <span className="font-medium">{fromCurrencyData?.symbol}{formData.amount} {formData.fromCurrency}</span>
+      <div className="modern-card p-6 bg-gradient-to-r from-teal-50 to-cyan-50 border-teal-200">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+            <DollarSign className="h-4 w-4 text-white" />
           </div>
-          <div className="flex justify-between">
-            <span className="text-blue-700">Transfer fee:</span>
-            <span className="font-medium">${fee.toFixed(2)}</span>
+          <h4 className="text-xl font-bold text-slate-800">Transfer Summary</h4>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-white/80 rounded-xl border border-teal-100">
+            <span className="text-slate-600 font-medium">You send:</span>
+            <span className="text-xl font-bold text-slate-800">{fromCurrencyData?.symbol}{formData.amount} {formData.fromCurrency}</span>
           </div>
-          <div className="flex justify-between border-t pt-2">
-            <span className="text-blue-700">Total amount:</span>
-            <span className="font-medium">{fromCurrencyData?.symbol}{totalAmount}</span>
+          <div className="flex items-center justify-between p-4 bg-white/80 rounded-xl border border-teal-100">
+            <span className="text-slate-600 font-medium">Transfer fee:</span>
+            <span className="text-lg font-semibold text-amber-600">${fee.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-blue-700">Exchange rate:</span>
-            <span className="font-medium">1 {formData.fromCurrency} = {toCurrencyData?.rate} {formData.toCurrency}</span>
+          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-100 to-slate-50 rounded-xl border border-slate-200 shadow-sm">
+            <span className="text-slate-700 font-semibold">Total amount:</span>
+            <span className="text-xl font-bold text-slate-800">{fromCurrencyData?.symbol}{totalAmount}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-blue-700">{formData.recipientName} receives:</span>
-            <span className="font-medium text-green-600">{toCurrencyData?.symbol}{convertedAmount} {formData.toCurrency}</span>
+          <div className="flex items-center justify-between p-4 bg-white/80 rounded-xl border border-teal-100">
+            <span className="text-slate-600 font-medium">Exchange rate:</span>
+            <span className="font-semibold text-slate-800">1 {formData.fromCurrency} = {toCurrencyData?.rate} {formData.toCurrency}</span>
+          </div>
+          <div className="flex items-center justify-center p-6 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-200">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <span className="text-lg font-semibold text-emerald-700">{formData.recipientName} receives:</span>
+                <ArrowRight className="h-5 w-5 text-emerald-600" />
+              </div>
+              <span className="text-2xl font-bold text-emerald-600">{toCurrencyData?.symbol}{convertedAmount} {formData.toCurrency}</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Recipient Details */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h4 className="font-medium text-gray-900 mb-3">Recipient Details</h4>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-gray-600">Name:</span>
-            <span className="font-medium">{formData.recipientName}</span>
+      <div className="modern-card p-6 bg-gradient-to-r from-slate-50 to-slate-100/50 border-slate-200">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-8 h-8 bg-gradient-to-r from-slate-600 to-slate-700 rounded-xl flex items-center justify-center shadow-lg">
+            <Globe className="h-4 w-4 text-white" />
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">Country:</span>
-            <span className="font-medium">{selectedCountry?.flag} {selectedCountry?.name}</span>
+          <h4 className="text-xl font-bold text-slate-800">Recipient Details</h4>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-white/80 rounded-xl border border-slate-200">
+            <span className="text-slate-600 font-medium">Name:</span>
+            <span className="font-semibold text-slate-800">{formData.recipientName}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">Delivery method:</span>
-            <span className="font-medium">{deliveryMethodLabels[formData.deliveryMethod as keyof typeof deliveryMethodLabels]}</span>
+          <div className="flex items-center justify-between p-4 bg-white/80 rounded-xl border border-slate-200">
+            <span className="text-slate-600 font-medium">Country:</span>
+            <span className="font-semibold text-slate-800 flex items-center gap-2">
+              <span className="text-lg">{selectedCountry?.flag}</span>
+              {selectedCountry?.name}
+            </span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">Estimated delivery:</span>
-            <span className="font-medium">{deliveryTimeframes[formData.deliveryMethod as keyof typeof deliveryTimeframes]}</span>
+          <div className="flex items-center justify-between p-4 bg-white/80 rounded-xl border border-slate-200">
+            <span className="text-slate-600 font-medium">Delivery method:</span>
+            <span className="font-semibold text-slate-800 flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              {deliveryMethodLabels[formData.deliveryMethod as keyof typeof deliveryMethodLabels]}
+            </span>
+          </div>
+          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-coral-50 to-orange-50 rounded-xl border border-coral-200">
+            <span className="text-coral-700 font-medium flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Estimated delivery:
+            </span>
+            <span className="font-bold text-coral-600">{deliveryTimeframes[formData.deliveryMethod as keyof typeof deliveryTimeframes]}</span>
           </div>
         </div>
       </div>
