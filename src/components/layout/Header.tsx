@@ -1,3 +1,4 @@
+
 import { Bell, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -8,13 +9,6 @@ export function Header() {
         <div className="flex items-center space-x-4">
           <h1 className="text-2xl font-bold text-blue-600">RemitFlow</h1>
         </div>
-        
-        <nav className="hidden md:flex items-center space-x-6">
-          <a href="#" className="text-blue-600 hover:text-yellow-500 transition-colors">Send Money</a>
-          <a href="#" className="text-blue-600 hover:text-yellow-500 transition-colors">Track Transfer</a>
-          <a href="#" className="text-blue-600 hover:text-yellow-500 transition-colors">Exchange Rates</a>
-          <a href="#" className="text-blue-600 hover:text-yellow-500 transition-colors">Help</a>
-        </nav>
 
         <div className="flex items-center space-x-4">
           <Button variant="ghost" size="icon" className="text-blue-600 hover:text-yellow-500 hover:bg-yellow-50">
