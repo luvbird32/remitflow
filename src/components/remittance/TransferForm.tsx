@@ -1,10 +1,11 @@
+
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, DollarSign, AlertCircle, CheckCircle, MapPin, CreditCard } from "lucide-react"
+import { ArrowRight, DollarSign, AlertCircle, CheckCircle, MapPin, CreditCard, ArrowDown, Clock } from "lucide-react"
 
 interface Currency {
   code: string
@@ -48,6 +49,12 @@ const deliveryMethodLabels = {
   bank: "Bank Transfer",
   card: "Debit Card",
   mobile: "Mobile Money"
+}
+
+const deliveryTimeframes = {
+  bank: "1-3 business days",
+  card: "1-2 hours", 
+  mobile: "Within minutes"
 }
 
 export function TransferForm() {
@@ -158,9 +165,11 @@ export function TransferForm() {
 
   const fromCurrencyData = currencies.find(c => c.code === fromCurrency)
   const toCurrencyData = currencies.find(c => c.code === toCurrency)
+  const showStep2 = amount && recipientCountry
+  const showStep3 = showStep2 && deliveryMethod
 
   return (
-    <Card>
+    <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <DollarSign className="h-5 w-5" />
@@ -171,213 +180,252 @@ export function TransferForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Amount and Currency Selection */}
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="amount" className="block text-sm font-medium mb-2">
-                You Send
-              </label>
-              <div className="flex gap-2">
-                <div className="flex-1">
-                  <Input
-                    id="amount"
-                    type="number"
-                    placeholder="0.00"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    className={errors.amount ? "border-red-500" : ""}
-                    step="0.01"
-                    min="0"
-                  />
-                  {errors.amount && (
-                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                      <AlertCircle className="h-3 w-3" />
-                      {errors.amount}
-                    </p>
-                  )}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          
+          {/* Step 1: Amount and Destination */}
+          <div className="space-y-6">
+            <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
+              <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">1</div>
+              Amount & Destination
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Amount */}
+              <div>
+                <label htmlFor="amount" className="block text-sm font-medium mb-2">
+                  You Send
+                </label>
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <Input
+                      id="amount"
+                      type="number"
+                      placeholder="0.00"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      className={errors.amount ? "border-red-500" : ""}
+                      step="0.01"
+                      min="0"
+                    />
+                    {errors.amount && (
+                      <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {errors.amount}
+                      </p>
+                    )}
+                  </div>
+                  <Select value={fromCurrency} onValueChange={setFromCurrency}>
+                    <SelectTrigger className="w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {currencies.map((currency) => (
+                        <SelectItem key={currency.code} value={currency.code}>
+                          {currency.code}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <Select value={fromCurrency} onValueChange={setFromCurrency}>
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {currencies.map((currency) => (
-                      <SelectItem key={currency.code} value={currency.code}>
-                        {currency.code}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
-            </div>
 
-            {/* Recipient Country Selection */}
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                <MapPin className="h-4 w-4 inline mr-1" />
-                Recipient Country
-              </label>
-              <Select value={recipientCountry} onValueChange={handleCountryChange}>
-                <SelectTrigger className={errors.recipientCountry ? "border-red-500" : ""}>
-                  <SelectValue placeholder="Select country" />
-                </SelectTrigger>
-                <SelectContent>
-                  {countries.map((country) => (
-                    <SelectItem key={country.code} value={country.code}>
-                      <span className="flex items-center gap-2">
-                        <span>{country.flag}</span>
-                        <span>{country.name}</span>
-                        <span className="text-gray-500">({country.currency})</span>
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.recipientCountry && (
-                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.recipientCountry}
-                </p>
-              )}
-            </div>
-
-            {/* Delivery Method Selection */}
-            {selectedCountry && (
+              {/* Recipient Country */}
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  <CreditCard className="h-4 w-4 inline mr-1" />
-                  Delivery Method
+                  <MapPin className="h-4 w-4 inline mr-1" />
+                  Recipient Country
                 </label>
-                <Select value={deliveryMethod} onValueChange={setDeliveryMethod}>
-                  <SelectTrigger className={errors.deliveryMethod ? "border-red-500" : ""}>
-                    <SelectValue placeholder="Select delivery method" />
+                <Select value={recipientCountry} onValueChange={handleCountryChange}>
+                  <SelectTrigger className={errors.recipientCountry ? "border-red-500" : ""}>
+                    <SelectValue placeholder="Select country" />
                   </SelectTrigger>
                   <SelectContent>
-                    {selectedCountry.deliveryMethods.map((method) => (
-                      <SelectItem key={method} value={method}>
-                        {deliveryMethodLabels[method as keyof typeof deliveryMethodLabels]}
+                    {countries.map((country) => (
+                      <SelectItem key={country.code} value={country.code}>
+                        <span className="flex items-center gap-2">
+                          <span>{country.flag}</span>
+                          <span>{country.name}</span>
+                          <span className="text-gray-500">({country.currency})</span>
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.deliveryMethod && (
+                {errors.recipientCountry && (
                   <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.recipientCountry}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Step 2: Delivery Method */}
+          {showStep2 && (
+            <>
+              <div className="flex items-center justify-center">
+                <ArrowDown className="h-5 w-5 text-gray-400" />
+              </div>
+              
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
+                  <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">2</div>
+                  Choose Delivery Method
+                </div>
+                
+                <div className="grid gap-3">
+                  {selectedCountry?.deliveryMethods.map((method) => (
+                    <button
+                      key={method}
+                      type="button"
+                      onClick={() => setDeliveryMethod(method)}
+                      className={`p-4 border rounded-lg text-left transition-all hover:border-blue-300 ${
+                        deliveryMethod === method 
+                          ? 'border-blue-500 bg-blue-50' 
+                          : 'border-gray-200'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <CreditCard className="h-5 w-5 text-blue-600" />
+                          <div>
+                            <div className="font-medium">
+                              {deliveryMethodLabels[method as keyof typeof deliveryMethodLabels]}
+                            </div>
+                            <div className="text-sm text-gray-500 flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {deliveryTimeframes[method as keyof typeof deliveryTimeframes]}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-sm font-medium">
+                          {method === 'bank' ? 'Free' : 
+                           method === 'card' ? '+$1.99' : '+$0.99'}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                
+                {errors.deliveryMethod && (
+                  <p className="text-red-500 text-xs flex items-center gap-1">
                     <AlertCircle className="h-3 w-3" />
                     {errors.deliveryMethod}
                   </p>
                 )}
               </div>
-            )}
-
-            {/* Exchange Rate Display */}
-            {amount && selectedCountry && (
-              <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Exchange rate</span>
-                  <span className="font-medium">
-                    1 {fromCurrency} = {toCurrencyData?.rate} {toCurrency}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Transfer fee</span>
-                  <span className="font-medium">${calculateFee().toFixed(2)}</span>
-                </div>
-                {deliveryMethod && deliveryMethod !== 'bank' && (
-                  <div className="flex justify-between text-sm text-gray-600">
-                    <span>{deliveryMethodLabels[deliveryMethod as keyof typeof deliveryMethodLabels]} fee</span>
-                    <span>+$1.99</span>
-                  </div>
-                )}
-                <div className="border-t pt-2 flex justify-between font-semibold">
-                  <span>Recipient gets</span>
-                  <span className="text-green-600">
-                    {toCurrencyData?.symbol}{calculateConvertedAmount()} {toCurrency}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Recipient Gets
-              </label>
-              <div className="flex gap-2">
-                <Input
-                  value={calculateConvertedAmount()}
-                  readOnly
-                  className="flex-1 bg-gray-50"
-                />
-                <Select value={toCurrency} onValueChange={setToCurrency}>
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {currencies.map((currency) => (
-                      <SelectItem key={currency.code} value={currency.code}>
-                        {currency.code}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-          
-          {/* Recipient Email */}
-          <div>
-            <label htmlFor="recipient" className="block text-sm font-medium mb-2">
-              Recipient Email
-            </label>
-            <Input
-              id="recipient"
-              type="email"
-              placeholder="recipient@example.com"
-              value={recipientEmail}
-              onChange={(e) => setRecipientEmail(e.target.value)}
-              className={errors.recipientEmail ? "border-red-500" : ""}
-            />
-            {errors.recipientEmail && (
-              <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                <AlertCircle className="h-3 w-3" />
-                {errors.recipientEmail}
-              </p>
-            )}
-          </div>
-
-          {/* Delivery Info */}
-          {deliveryMethod && (
-            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-blue-600" />
-                <span className="text-sm font-medium">
-                  Delivery via {deliveryMethodLabels[deliveryMethod as keyof typeof deliveryMethodLabels]}
-                </span>
-              </div>
-              <Badge variant="secondary">
-                {deliveryMethod === 'mobile' ? 'Within minutes' : 
-                 deliveryMethod === 'card' ? '1-2 hours' : '1-3 business days'}
-              </Badge>
-            </div>
+            </>
           )}
 
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={isSubmitting || !amount || !recipientEmail || !recipientCountry || !deliveryMethod}
-          >
-            {isSubmitting ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Processing...
-              </>
-            ) : (
-              <>
-                Send Money
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </>
-            )}
-          </Button>
+          {/* Step 3: Review & Recipient */}
+          {showStep3 && (
+            <>
+              <div className="flex items-center justify-center">
+                <ArrowDown className="h-5 w-5 text-gray-400" />
+              </div>
+              
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
+                  <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">3</div>
+                  Review & Complete
+                </div>
+
+                {/* Exchange Rate Summary */}
+                <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg border border-blue-200">
+                  <div className="text-center space-y-4">
+                    <div className="flex items-center justify-center gap-4">
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-blue-700">
+                          {fromCurrencyData?.symbol}{amount}
+                        </div>
+                        <div className="text-sm text-blue-600">{fromCurrency}</div>
+                      </div>
+                      <ArrowRight className="h-6 w-6 text-blue-500" />
+                      <div className="text-left">
+                        <div className="text-2xl font-bold text-green-700">
+                          {toCurrencyData?.symbol}{calculateConvertedAmount()}
+                        </div>
+                        <div className="text-sm text-green-600">{toCurrency}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-4 pt-4 border-t border-blue-200">
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500">Exchange Rate</div>
+                        <div className="font-medium">1 {fromCurrency} = {toCurrencyData?.rate} {toCurrency}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500">Transfer Fee</div>
+                        <div className="font-medium">${calculateFee().toFixed(2)}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500">Delivery Time</div>
+                        <div className="font-medium">{deliveryTimeframes[deliveryMethod as keyof typeof deliveryTimeframes]}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Delivery Method Confirmation */}
+                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <div className="font-medium text-blue-900">
+                        {deliveryMethodLabels[deliveryMethod as keyof typeof deliveryMethodLabels]}
+                      </div>
+                      <div className="text-sm text-blue-600">
+                        to {selectedCountry?.flag} {selectedCountry?.name}
+                      </div>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                    {deliveryTimeframes[deliveryMethod as keyof typeof deliveryTimeframes]}
+                  </Badge>
+                </div>
+
+                {/* Recipient Email */}
+                <div>
+                  <label htmlFor="recipient" className="block text-sm font-medium mb-2">
+                    Recipient Email
+                  </label>
+                  <Input
+                    id="recipient"
+                    type="email"
+                    placeholder="recipient@example.com"
+                    value={recipientEmail}
+                    onChange={(e) => setRecipientEmail(e.target.value)}
+                    className={errors.recipientEmail ? "border-red-500" : ""}
+                  />
+                  {errors.recipientEmail && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.recipientEmail}
+                    </p>
+                  )}
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 text-base" 
+                  disabled={isSubmitting || !amount || !recipientEmail || !recipientCountry || !deliveryMethod}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Processing Transfer...
+                    </>
+                  ) : (
+                    <>
+                      Send {fromCurrencyData?.symbol}{amount} • {toCurrencyData?.symbol}{calculateConvertedAmount()} arrives
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            </>
+          )}
         </form>
       </CardContent>
     </Card>
