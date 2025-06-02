@@ -14,11 +14,20 @@ export interface ExchangeRate {
   rate: number;
 }
 
-export interface TransferFormData {
-  recipientName: string;
-  recipientEmail: string;
-  amount: number;
+export interface TransferData {
+  amount: string;
   fromCurrency: string;
   toCurrency: string;
-  purpose: string;
+  recipientName: string;
+  recipientEmail: string;
+}
+
+export interface TransferFormData {
+  fromCurrency: string;
+  toCurrency: string;
+  amount: number;
+  recipientName: string;
+  recipientEmail: string;
+  recipientPhone: string;
+  recipientCountry: string;
 }
