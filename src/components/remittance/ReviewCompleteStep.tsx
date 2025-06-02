@@ -1,9 +1,10 @@
-
+import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowRight, AlertCircle, CheckCircle, CreditCard, Banknote, Phone } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { currencies, countries, deliveryMethodLabels, deliveryTimeframes, calculateConvertedAmount, calculateFee } from './transferUtils'
 import { TransferFormData, FormErrors } from './types'
 
@@ -20,11 +21,14 @@ export function ReviewCompleteStep({
   isSubmitting,
   errors
 }: ReviewCompleteStepProps) {
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  
   const fromCurrencyData = currencies.find(c => c.code === formData.fromCurrency)
   const toCurrencyData = currencies.find(c => c.code === formData.toCurrency)
   const selectedCountry = countries.find(c => c.code === formData.recipientCountry)
   const convertedAmount = calculateConvertedAmount(formData.amount, formData.fromCurrency, formData.toCurrency)
   const fee = calculateFee(formData.amount, formData.deliveryMethod)
+  const totalAmount = (parseFloat(formData.amount) + fee).toFixed(2)
 
   const renderRecipientFields = () => {
     switch (formData.deliveryMethod) {
@@ -209,87 +213,169 @@ export function ReviewCompleteStep({
     }
   }
 
+  const handleReviewClick = () => {
+    setShowConfirmDialog(true)
+  }
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
-        <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">3</div>
-        Review & Complete
-      </div>
+    <>
+      <div className="space-y-6">
+        <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
+          <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">3</div>
+          Review & Complete
+        </div>
 
-      {/* Exchange Rate Summary */}
-      <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg border border-blue-200">
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center gap-4">
-            <div className="text-right">
-              <div className="text-2xl font-bold text-blue-700">
-                {fromCurrencyData?.symbol}{formData.amount}
+        {/* Exchange Rate Summary */}
+        <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg border border-blue-200">
+          <div className="text-center space-y-4">
+            <div className="flex items-center justify-center gap-4">
+              <div className="text-right">
+                <div className="text-2xl font-bold text-blue-700">
+                  {fromCurrencyData?.symbol}{formData.amount}
+                </div>
+                <div className="text-sm text-blue-600">{formData.fromCurrency}</div>
               </div>
-              <div className="text-sm text-blue-600">{formData.fromCurrency}</div>
-            </div>
-            <ArrowRight className="h-6 w-6 text-blue-500" />
-            <div className="text-left">
-              <div className="text-2xl font-bold text-green-700">
-                {toCurrencyData?.symbol}{convertedAmount}
+              <ArrowRight className="h-6 w-6 text-blue-500" />
+              <div className="text-left">
+                <div className="text-2xl font-bold text-green-700">
+                  {toCurrencyData?.symbol}{convertedAmount}
+                </div>
+                <div className="text-sm text-green-600">{formData.toCurrency}</div>
               </div>
-              <div className="text-sm text-green-600">{formData.toCurrency}</div>
             </div>
-          </div>
-          
-          <div className="grid grid-cols-3 gap-4 pt-4 border-t border-blue-200">
-            <div className="text-center">
-              <div className="text-xs text-gray-500">Exchange Rate</div>
-              <div className="font-medium">1 {formData.fromCurrency} = {toCurrencyData?.rate} {formData.toCurrency}</div>
-            </div>
-            <div className="text-center">
-              <div className="text-xs text-gray-500">Transfer Fee</div>
-              <div className="font-medium">${fee.toFixed(2)}</div>
-            </div>
-            <div className="text-center">
-              <div className="text-xs text-gray-500">Delivery Time</div>
-              <div className="font-medium">{deliveryTimeframes[formData.deliveryMethod as keyof typeof deliveryTimeframes]}</div>
+            
+            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-blue-200">
+              <div className="text-center">
+                <div className="text-xs text-gray-500">Exchange Rate</div>
+                <div className="font-medium">1 {formData.fromCurrency} = {toCurrencyData?.rate} {formData.toCurrency}</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xs text-gray-500">Transfer Fee</div>
+                <div className="font-medium">${fee.toFixed(2)}</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xs text-gray-500">Delivery Time</div>
+                <div className="font-medium">{deliveryTimeframes[formData.deliveryMethod as keyof typeof deliveryTimeframes]}</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Delivery Method Confirmation */}
-      <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <div className="flex items-center gap-3">
-          <CheckCircle className="h-5 w-5 text-blue-600" />
-          <div>
-            <div className="font-medium text-blue-900">
-              {deliveryMethodLabels[formData.deliveryMethod as keyof typeof deliveryMethodLabels]}
-            </div>
-            <div className="text-sm text-blue-600">
-              to {selectedCountry?.flag} {selectedCountry?.name}
+        {/* Delivery Method Confirmation */}
+        <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="h-5 w-5 text-blue-600" />
+            <div>
+              <div className="font-medium text-blue-900">
+                {deliveryMethodLabels[formData.deliveryMethod as keyof typeof deliveryMethodLabels]}
+              </div>
+              <div className="text-sm text-blue-600">
+                to {formData.recipientName} in {selectedCountry?.flag} {selectedCountry?.name}
+              </div>
             </div>
           </div>
+          <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+            {deliveryTimeframes[formData.deliveryMethod as keyof typeof deliveryTimeframes]}
+          </Badge>
         </div>
-        <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-          {deliveryTimeframes[formData.deliveryMethod as keyof typeof deliveryTimeframes]}
-        </Badge>
+
+        {/* Recipient Details */}
+        {renderRecipientFields()}
+
+        <Button 
+          type="button" 
+          onClick={handleReviewClick}
+          className="w-full h-12 text-base" 
+          disabled={!isFormComplete()}
+        >
+          Review Transfer Details
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
       </div>
 
-      {/* Recipient Details */}
-      {renderRecipientFields()}
+      {/* Confirmation Dialog */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-blue-700">
+              Confirm Your Transfer
+            </DialogTitle>
+            <DialogDescription className="text-gray-600">
+              Please review the details below and confirm to send your transfer.
+            </DialogDescription>
+          </DialogHeader>
 
-      <Button 
-        type="submit" 
-        className="w-full h-12 text-base" 
-        disabled={isSubmitting || !isFormComplete()}
-      >
-        {isSubmitting ? (
-          <>
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-            Processing Transfer...
-          </>
-        ) : (
-          <>
-            Send {fromCurrencyData?.symbol}{formData.amount} • {toCurrencyData?.symbol}{convertedAmount} arrives
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </>
-        )}
-      </Button>
-    </div>
+          <div className="space-y-4 mt-4">
+            {/* Transfer Summary */}
+            <div className="bg-blue-50 p-4 rounded-lg space-y-3">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">You send:</span>
+                <span className="font-medium">{fromCurrencyData?.symbol}{formData.amount}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Transfer fee:</span>
+                <span className="font-medium">${fee.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between border-t pt-2">
+                <span className="text-sm font-medium">Total amount:</span>
+                <span className="font-bold">{fromCurrencyData?.symbol}{totalAmount}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Recipient gets:</span>
+                <span className="font-bold text-green-700">{toCurrencyData?.symbol}{convertedAmount}</span>
+              </div>
+            </div>
+
+            {/* Recipient Info */}
+            <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Recipient:</span>
+                <span className="font-medium">{formData.recipientName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Country:</span>
+                <span className="font-medium">{selectedCountry?.flag} {selectedCountry?.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Delivery method:</span>
+                <span className="font-medium">{deliveryMethodLabels[formData.deliveryMethod as keyof typeof deliveryMethodLabels]}</span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-4">
+              <Button variant="outline" className="flex-1" onClick={() => setShowConfirmDialog(false)}>
+                Review Details
+              </Button>
+              <Button 
+                type="submit" 
+                className="flex-1" 
+                disabled={isSubmitting}
+                onClick={() => {
+                  setShowConfirmDialog(false)
+                  // This will trigger the form submission in the parent component
+                  const form = document.querySelector('form') as HTMLFormElement
+                  if (form) {
+                    form.requestSubmit()
+                  }
+                }}
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    Confirm & Send
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
