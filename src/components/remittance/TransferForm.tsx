@@ -1,10 +1,10 @@
-
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowDown, DollarSign } from "lucide-react"
 import { AmountDestinationStep } from './AmountDestinationStep'
 import { DeliveryMethodStep } from './DeliveryMethodStep'
 import { ReviewCompleteStep } from './ReviewCompleteStep'
+import { TransferSuccessDialog } from './TransferSuccessDialog'
 import { countries, calculateConvertedAmount, calculateFee } from './transferUtils'
 import { TransferFormData, FormErrors } from './types'
 
@@ -24,6 +24,7 @@ export function TransferForm() {
     mobileProvider: ""
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
 
   // Auto-update currency when country changes
@@ -103,6 +104,11 @@ export function TransferForm() {
     })
     
     setIsSubmitting(false)
+    setShowSuccessDialog(true)
+  }
+
+  const handleSuccessDialogClose = () => {
+    setShowSuccessDialog(false)
     // Reset form on success
     setFormData({
       amount: "",
@@ -125,63 +131,72 @@ export function TransferForm() {
   const showStep3 = showStep2 && formData.deliveryMethod
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <DollarSign className="h-5 w-5" />
-          Send Money
-        </CardTitle>
-        <CardDescription>
-          Send money quickly and securely to anyone, anywhere
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-8">
-          
-          {/* Step 1: Amount and Destination */}
-          <AmountDestinationStep
-            amount={formData.amount}
-            setAmount={(amount) => setFormData(prev => ({ ...prev, amount }))}
-            recipientCountry={formData.recipientCountry}
-            onCountryChange={handleCountryChange}
-            fromCurrency={formData.fromCurrency}
-            setFromCurrency={(currency) => setFormData(prev => ({ ...prev, fromCurrency: currency }))}
-            errors={errors}
-          />
+    <>
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <DollarSign className="h-5 w-5" />
+            Send Money
+          </CardTitle>
+          <CardDescription>
+            Send money quickly and securely to anyone, anywhere
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            
+            {/* Step 1: Amount and Destination */}
+            <AmountDestinationStep
+              amount={formData.amount}
+              setAmount={(amount) => setFormData(prev => ({ ...prev, amount }))}
+              recipientCountry={formData.recipientCountry}
+              onCountryChange={handleCountryChange}
+              fromCurrency={formData.fromCurrency}
+              setFromCurrency={(currency) => setFormData(prev => ({ ...prev, fromCurrency: currency }))}
+              errors={errors}
+            />
 
-          {/* Step 2: Delivery Method */}
-          {showStep2 && (
-            <>
-              <div className="flex items-center justify-center">
-                <ArrowDown className="h-5 w-5 text-gray-400" />
-              </div>
-              
-              <DeliveryMethodStep
-                recipientCountry={formData.recipientCountry}
-                deliveryMethod={formData.deliveryMethod}
-                setDeliveryMethod={(method) => setFormData(prev => ({ ...prev, deliveryMethod: method }))}
-                errors={errors}
-              />
-            </>
-          )}
+            {/* Step 2: Delivery Method */}
+            {showStep2 && (
+              <>
+                <div className="flex items-center justify-center">
+                  <ArrowDown className="h-5 w-5 text-gray-400" />
+                </div>
+                
+                <DeliveryMethodStep
+                  recipientCountry={formData.recipientCountry}
+                  deliveryMethod={formData.deliveryMethod}
+                  setDeliveryMethod={(method) => setFormData(prev => ({ ...prev, deliveryMethod: method }))}
+                  errors={errors}
+                />
+              </>
+            )}
 
-          {/* Step 3: Review & Complete */}
-          {showStep3 && (
-            <>
-              <div className="flex items-center justify-center">
-                <ArrowDown className="h-5 w-5 text-gray-400" />
-              </div>
-              
-              <ReviewCompleteStep
-                formData={formData}
-                setFormData={setFormData}
-                isSubmitting={isSubmitting}
-                errors={errors}
-              />
-            </>
-          )}
-        </form>
-      </CardContent>
-    </Card>
+            {/* Step 3: Review & Complete */}
+            {showStep3 && (
+              <>
+                <div className="flex items-center justify-center">
+                  <ArrowDown className="h-5 w-5 text-gray-400" />
+                </div>
+                
+                <ReviewCompleteStep
+                  formData={formData}
+                  setFormData={setFormData}
+                  isSubmitting={isSubmitting}
+                  errors={errors}
+                />
+              </>
+            )}
+          </form>
+        </CardContent>
+      </Card>
+
+      {/* Success Dialog */}
+      <TransferSuccessDialog
+        isOpen={showSuccessDialog}
+        onClose={handleSuccessDialogClose}
+        formData={formData}
+      />
+    </>
   )
 }
