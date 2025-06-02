@@ -3,8 +3,9 @@ import { Header } from '@/components/layout/Header';
 import { TransferForm } from '@/components/remittance/TransferForm';
 import { TransferHistory } from '@/components/remittance/TransferHistory';
 import { ExchangeRates } from '@/components/remittance/ExchangeRates';
+import { ExchangeCalculator } from '@/components/remittance/ExchangeCalculator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Send, History, TrendingUp } from 'lucide-react';
+import { Send, History, TrendingUp, Calculator } from 'lucide-react';
 
 const Index = () => {
   return (
@@ -22,10 +23,14 @@ const Index = () => {
         </div>
 
         <Tabs defaultValue="send" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-white border border-blue-200">
+          <TabsList className="grid w-full grid-cols-4 bg-white border border-blue-200">
             <TabsTrigger value="send" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
               <Send className="h-4 w-4" />
               Send Money
+            </TabsTrigger>
+            <TabsTrigger value="calculator" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
+              <Calculator className="h-4 w-4" />
+              Calculator
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
               <History className="h-4 w-4" />
@@ -39,6 +44,10 @@ const Index = () => {
 
           <TabsContent value="send">
             <TransferForm />
+          </TabsContent>
+
+          <TabsContent value="calculator">
+            <ExchangeCalculator />
           </TabsContent>
 
           <TabsContent value="history">
