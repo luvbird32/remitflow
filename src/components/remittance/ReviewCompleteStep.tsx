@@ -2,38 +2,212 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, AlertCircle, CheckCircle } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ArrowRight, AlertCircle, CheckCircle, CreditCard, Banknote, Phone } from "lucide-react"
 import { currencies, countries, deliveryMethodLabels, deliveryTimeframes, calculateConvertedAmount, calculateFee } from './transferUtils'
-import { FormErrors } from './types'
+import { TransferFormData, FormErrors } from './types'
 
 interface ReviewCompleteStepProps {
-  amount: string
-  recipientEmail: string
-  setRecipientEmail: (email: string) => void
-  recipientCountry: string
-  deliveryMethod: string
-  fromCurrency: string
-  toCurrency: string
+  formData: TransferFormData
+  setFormData: (data: TransferFormData | ((prev: TransferFormData) => TransferFormData)) => void
   isSubmitting: boolean
   errors: FormErrors
 }
 
 export function ReviewCompleteStep({
-  amount,
-  recipientEmail,
-  setRecipientEmail,
-  recipientCountry,
-  deliveryMethod,
-  fromCurrency,
-  toCurrency,
+  formData,
+  setFormData,
   isSubmitting,
   errors
 }: ReviewCompleteStepProps) {
-  const fromCurrencyData = currencies.find(c => c.code === fromCurrency)
-  const toCurrencyData = currencies.find(c => c.code === toCurrency)
-  const selectedCountry = countries.find(c => c.code === recipientCountry)
-  const convertedAmount = calculateConvertedAmount(amount, fromCurrency, toCurrency)
-  const fee = calculateFee(amount, deliveryMethod)
+  const fromCurrencyData = currencies.find(c => c.code === formData.fromCurrency)
+  const toCurrencyData = currencies.find(c => c.code === formData.toCurrency)
+  const selectedCountry = countries.find(c => c.code === formData.recipientCountry)
+  const convertedAmount = calculateConvertedAmount(formData.amount, formData.fromCurrency, formData.toCurrency)
+  const fee = calculateFee(formData.amount, formData.deliveryMethod)
+
+  const renderRecipientFields = () => {
+    switch (formData.deliveryMethod) {
+      case 'bank':
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-sm font-medium text-blue-600 mb-4">
+              <Banknote className="h-4 w-4" />
+              Bank Account Details
+            </div>
+            <div>
+              <label htmlFor="bankName" className="block text-sm font-medium mb-2">
+                Bank Name
+              </label>
+              <Input
+                id="bankName"
+                type="text"
+                placeholder="Enter bank name"
+                value={formData.bankName}
+                onChange={(e) => setFormData(prev => ({ ...prev, bankName: e.target.value }))}
+                className={errors.bankName ? "border-red-500" : ""}
+              />
+              {errors.bankName && (
+                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.bankName}
+                </p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="accountNumber" className="block text-sm font-medium mb-2">
+                Account Number
+              </label>
+              <Input
+                id="accountNumber"
+                type="text"
+                placeholder="Enter account number"
+                value={formData.accountNumber}
+                onChange={(e) => setFormData(prev => ({ ...prev, accountNumber: e.target.value }))}
+                className={errors.accountNumber ? "border-red-500" : ""}
+              />
+              {errors.accountNumber && (
+                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.accountNumber}
+                </p>
+              )}
+            </div>
+          </div>
+        )
+      
+      case 'card':
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-sm font-medium text-blue-600 mb-4">
+              <CreditCard className="h-4 w-4" />
+              Debit Card Details
+            </div>
+            <div>
+              <label htmlFor="cardIssuer" className="block text-sm font-medium mb-2">
+                Card Issuer
+              </label>
+              <Select 
+                value={formData.cardIssuer} 
+                onValueChange={(value) => setFormData(prev => ({ ...prev, cardIssuer: value }))}
+              >
+                <SelectTrigger className={errors.cardIssuer ? "border-red-500" : ""}>
+                  <SelectValue placeholder="Select card issuer" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="visa">Visa</SelectItem>
+                  <SelectItem value="mastercard">Mastercard</SelectItem>
+                  <SelectItem value="amex">American Express</SelectItem>
+                  <SelectItem value="discover">Discover</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.cardIssuer && (
+                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.cardIssuer}
+                </p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="cardNumber" className="block text-sm font-medium mb-2">
+                Card Number
+              </label>
+              <Input
+                id="cardNumber"
+                type="text"
+                placeholder="1234 5678 9012 3456"
+                value={formData.cardNumber}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 ')
+                  setFormData(prev => ({ ...prev, cardNumber: value }))
+                }}
+                className={errors.cardNumber ? "border-red-500" : ""}
+                maxLength={19}
+              />
+              {errors.cardNumber && (
+                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.cardNumber}
+                </p>
+              )}
+            </div>
+          </div>
+        )
+      
+      case 'mobile':
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-sm font-medium text-blue-600 mb-4">
+              <Phone className="h-4 w-4" />
+              Mobile Money Details
+            </div>
+            <div>
+              <label htmlFor="mobileProvider" className="block text-sm font-medium mb-2">
+                Mobile Provider
+              </label>
+              <Select 
+                value={formData.mobileProvider} 
+                onValueChange={(value) => setFormData(prev => ({ ...prev, mobileProvider: value }))}
+              >
+                <SelectTrigger className={errors.mobileProvider ? "border-red-500" : ""}>
+                  <SelectValue placeholder="Select mobile provider" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="mpesa">M-Pesa</SelectItem>
+                  <SelectItem value="mtn">MTN Money</SelectItem>
+                  <SelectItem value="airtel">Airtel Money</SelectItem>
+                  <SelectItem value="tigo">Tigo Pesa</SelectItem>
+                  <SelectItem value="vodacom">Vodacom M-Pesa</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.mobileProvider && (
+                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.mobileProvider}
+                </p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="mobileNumber" className="block text-sm font-medium mb-2">
+                Mobile Number
+              </label>
+              <Input
+                id="mobileNumber"
+                type="tel"
+                placeholder="+1234567890"
+                value={formData.mobileNumber}
+                onChange={(e) => setFormData(prev => ({ ...prev, mobileNumber: e.target.value }))}
+                className={errors.mobileNumber ? "border-red-500" : ""}
+              />
+              {errors.mobileNumber && (
+                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.mobileNumber}
+                </p>
+              )}
+            </div>
+          </div>
+        )
+      
+      default:
+        return null
+    }
+  }
+
+  const isFormComplete = () => {
+    if (!formData.amount || !formData.recipientCountry || !formData.deliveryMethod) return false
+    
+    switch (formData.deliveryMethod) {
+      case 'bank':
+        return formData.bankName && formData.accountNumber
+      case 'card':
+        return formData.cardIssuer && formData.cardNumber
+      case 'mobile':
+        return formData.mobileProvider && formData.mobileNumber
+      default:
+        return false
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -48,23 +222,23 @@ export function ReviewCompleteStep({
           <div className="flex items-center justify-center gap-4">
             <div className="text-right">
               <div className="text-2xl font-bold text-blue-700">
-                {fromCurrencyData?.symbol}{amount}
+                {fromCurrencyData?.symbol}{formData.amount}
               </div>
-              <div className="text-sm text-blue-600">{fromCurrency}</div>
+              <div className="text-sm text-blue-600">{formData.fromCurrency}</div>
             </div>
             <ArrowRight className="h-6 w-6 text-blue-500" />
             <div className="text-left">
               <div className="text-2xl font-bold text-green-700">
                 {toCurrencyData?.symbol}{convertedAmount}
               </div>
-              <div className="text-sm text-green-600">{toCurrency}</div>
+              <div className="text-sm text-green-600">{formData.toCurrency}</div>
             </div>
           </div>
           
           <div className="grid grid-cols-3 gap-4 pt-4 border-t border-blue-200">
             <div className="text-center">
               <div className="text-xs text-gray-500">Exchange Rate</div>
-              <div className="font-medium">1 {fromCurrency} = {toCurrencyData?.rate} {toCurrency}</div>
+              <div className="font-medium">1 {formData.fromCurrency} = {toCurrencyData?.rate} {formData.toCurrency}</div>
             </div>
             <div className="text-center">
               <div className="text-xs text-gray-500">Transfer Fee</div>
@@ -72,7 +246,7 @@ export function ReviewCompleteStep({
             </div>
             <div className="text-center">
               <div className="text-xs text-gray-500">Delivery Time</div>
-              <div className="font-medium">{deliveryTimeframes[deliveryMethod as keyof typeof deliveryTimeframes]}</div>
+              <div className="font-medium">{deliveryTimeframes[formData.deliveryMethod as keyof typeof deliveryTimeframes]}</div>
             </div>
           </div>
         </div>
@@ -84,7 +258,7 @@ export function ReviewCompleteStep({
           <CheckCircle className="h-5 w-5 text-blue-600" />
           <div>
             <div className="font-medium text-blue-900">
-              {deliveryMethodLabels[deliveryMethod as keyof typeof deliveryMethodLabels]}
+              {deliveryMethodLabels[formData.deliveryMethod as keyof typeof deliveryMethodLabels]}
             </div>
             <div className="text-sm text-blue-600">
               to {selectedCountry?.flag} {selectedCountry?.name}
@@ -92,35 +266,17 @@ export function ReviewCompleteStep({
           </div>
         </div>
         <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-          {deliveryTimeframes[deliveryMethod as keyof typeof deliveryTimeframes]}
+          {deliveryTimeframes[formData.deliveryMethod as keyof typeof deliveryTimeframes]}
         </Badge>
       </div>
 
-      {/* Recipient Email */}
-      <div>
-        <label htmlFor="recipient" className="block text-sm font-medium mb-2">
-          Recipient Email
-        </label>
-        <Input
-          id="recipient"
-          type="email"
-          placeholder="recipient@example.com"
-          value={recipientEmail}
-          onChange={(e) => setRecipientEmail(e.target.value)}
-          className={errors.recipientEmail ? "border-red-500" : ""}
-        />
-        {errors.recipientEmail && (
-          <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-            <AlertCircle className="h-3 w-3" />
-            {errors.recipientEmail}
-          </p>
-        )}
-      </div>
+      {/* Recipient Details */}
+      {renderRecipientFields()}
 
       <Button 
         type="submit" 
         className="w-full h-12 text-base" 
-        disabled={isSubmitting || !amount || !recipientEmail || !recipientCountry || !deliveryMethod}
+        disabled={isSubmitting || !isFormComplete()}
       >
         {isSubmitting ? (
           <>
@@ -129,7 +285,7 @@ export function ReviewCompleteStep({
           </>
         ) : (
           <>
-            Send {fromCurrencyData?.symbol}{amount} • {toCurrencyData?.symbol}{convertedAmount} arrives
+            Send {fromCurrencyData?.symbol}{formData.amount} • {toCurrencyData?.symbol}{convertedAmount} arrives
             <ArrowRight className="ml-2 h-4 w-4" />
           </>
         )}

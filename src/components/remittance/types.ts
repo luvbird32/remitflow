@@ -21,6 +21,15 @@ export interface TransferFormData {
   deliveryMethod: string
   fromCurrency: string
   toCurrency: string
+  // Bank transfer fields
+  accountNumber: string
+  bankName: string
+  // Debit card fields
+  cardNumber: string
+  cardIssuer: string
+  // Mobile money fields
+  mobileNumber: string
+  mobileProvider: string
 }
 
 export interface FormErrors {

@@ -15,7 +15,13 @@ export function TransferForm() {
     recipientCountry: "",
     deliveryMethod: "",
     fromCurrency: "USD",
-    toCurrency: "EUR"
+    toCurrency: "EUR",
+    accountNumber: "",
+    bankName: "",
+    cardNumber: "",
+    cardIssuer: "",
+    mobileNumber: "",
+    mobileProvider: ""
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
@@ -41,12 +47,6 @@ export function TransferForm() {
     } else if (parseFloat(formData.amount) > 10000) {
       newErrors.amount = "Maximum transfer amount is $10,000"
     }
-    
-    if (!formData.recipientEmail) {
-      newErrors.recipientEmail = "Recipient email is required"
-    } else if (!/\S+@\S+\.\S+/.test(formData.recipientEmail)) {
-      newErrors.recipientEmail = "Please enter a valid email address"
-    }
 
     if (!formData.recipientCountry) {
       newErrors.recipientCountry = "Please select recipient country"
@@ -54,6 +54,32 @@ export function TransferForm() {
 
     if (!formData.deliveryMethod) {
       newErrors.deliveryMethod = "Please select delivery method"
+    }
+
+    // Validate based on delivery method
+    if (formData.deliveryMethod === 'bank') {
+      if (!formData.accountNumber) {
+        newErrors.accountNumber = "Account number is required"
+      }
+      if (!formData.bankName) {
+        newErrors.bankName = "Bank name is required"
+      }
+    } else if (formData.deliveryMethod === 'card') {
+      if (!formData.cardNumber) {
+        newErrors.cardNumber = "Card number is required"
+      } else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, ''))) {
+        newErrors.cardNumber = "Please enter a valid 16-digit card number"
+      }
+      if (!formData.cardIssuer) {
+        newErrors.cardIssuer = "Card issuer is required"
+      }
+    } else if (formData.deliveryMethod === 'mobile') {
+      if (!formData.mobileNumber) {
+        newErrors.mobileNumber = "Mobile number is required"
+      }
+      if (!formData.mobileProvider) {
+        newErrors.mobileProvider = "Mobile provider is required"
+      }
     }
     
     setErrors(newErrors)
@@ -84,7 +110,13 @@ export function TransferForm() {
       recipientCountry: "",
       deliveryMethod: "",
       fromCurrency: "USD",
-      toCurrency: "EUR"
+      toCurrency: "EUR",
+      accountNumber: "",
+      bankName: "",
+      cardNumber: "",
+      cardIssuer: "",
+      mobileNumber: "",
+      mobileProvider: ""
     })
     setErrors({})
   }
@@ -141,13 +173,8 @@ export function TransferForm() {
               </div>
               
               <ReviewCompleteStep
-                amount={formData.amount}
-                recipientEmail={formData.recipientEmail}
-                setRecipientEmail={(email) => setFormData(prev => ({ ...prev, recipientEmail: email }))}
-                recipientCountry={formData.recipientCountry}
-                deliveryMethod={formData.deliveryMethod}
-                fromCurrency={formData.fromCurrency}
-                toCurrency={formData.toCurrency}
+                formData={formData}
+                setFormData={setFormData}
                 isSubmitting={isSubmitting}
                 errors={errors}
               />
