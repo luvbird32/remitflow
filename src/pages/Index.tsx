@@ -3,7 +3,6 @@ import { Header } from '@/components/layout/Header';
 import { TransferForm } from '@/components/remittance/TransferForm';
 import { TransferHistory } from '@/components/remittance/TransferHistory';
 import { ExchangeRates } from '@/components/remittance/ExchangeRates';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Send, History, TrendingUp } from 'lucide-react';
 
@@ -39,49 +38,7 @@ const Index = () => {
           </TabsList>
 
           <TabsContent value="send">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <TransferForm />
-              </div>
-              
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Why Choose RemitFlow?</CardTitle>
-                    <CardDescription>
-                      Join millions of satisfied customers
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                        <div>
-                          <h4 className="font-semibold">Fast Transfers</h4>
-                          <p className="text-sm text-gray-600">Money delivered in minutes, not days</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                        <div>
-                          <h4 className="font-semibold">Low Fees</h4>
-                          <p className="text-sm text-gray-600">Transparent pricing with no hidden costs</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
-                        <div>
-                          <h4 className="font-semibold">Secure & Licensed</h4>
-                          <p className="text-sm text-gray-600">Bank-level security and regulatory compliance</p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
+            <TransferForm />
           </TabsContent>
 
           <TabsContent value="history">
