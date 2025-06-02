@@ -1,12 +1,4 @@
 
-export interface TransferData {
-  amount: string;
-  fromCurrency: string;
-  toCurrency: string;
-  recipientName: string;
-  recipientEmail: string;
-}
-
 export interface Transfer {
   id: string;
   amount: string;
@@ -20,4 +12,13 @@ export interface ExchangeRate {
   from: string;
   to: string;
   rate: number;
+}
+
+export interface TransferFormData {
+  recipientName: string;
+  recipientEmail: string;
+  amount: number;
+  fromCurrency: string;
+  toCurrency: string;
+  purpose: string;
 }
