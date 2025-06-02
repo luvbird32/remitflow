@@ -1,8 +1,8 @@
 
-import { useState, useEffect, createContext, useContext } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 /**
- * User interface representing authenticated user data
+ * User interface for authentication
  */
 interface User {
   id: string;
@@ -11,7 +11,7 @@ interface User {
 }
 
 /**
- * Authentication context type definition
+ * Authentication context interface
  */
 interface AuthContextType {
   user: User | null;
@@ -20,52 +20,55 @@ interface AuthContextType {
   signOut: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+/**
+ * Authentication context with default values
+ */
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  isAuthenticated: false,
+  signIn: () => {},
+  signOut: () => {},
+});
+
+/**
+ * Props interface for AuthProvider component
+ */
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
 /**
  * Authentication provider component that manages user authentication state
- * @param children - React children components
+ * @param children - Child components to wrap with authentication context
  * @returns JSX element providing authentication context
  */
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
 
   /**
-   * Effect to check for stored user data on app initialization
+   * Signs in a user and updates the authentication state
+   * @param userData - User data to sign in
    */
-  useEffect(() => {
-    // Check for stored user on app load
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        localStorage.removeItem('user');
-      }
-    }
-  }, []);
-
-  /**
-   * Signs in a user and stores their data in localStorage
-   * @param user - User object containing authentication data
-   */
-  const signIn = (user: User) => {
-    setUser(user);
-    localStorage.setItem('user', JSON.stringify(user));
+  const signIn = (userData: User) => {
+    setUser(userData);
   };
 
   /**
-   * Signs out the current user and removes their data from localStorage
+   * Signs out the current user and clears authentication state
    */
   const signOut = () => {
     setUser(null);
-    localStorage.removeItem('user');
   };
 
-  const isAuthenticated = !!user;
+  const value: AuthContextType = {
+    user,
+    isAuthenticated: !!user,
+    signIn,
+    signOut,
+  };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, signIn, signOut }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
@@ -73,10 +76,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 /**
  * Custom hook to access authentication context
- * @returns Authentication context with user data and auth methods
+ * @returns Authentication context with user state and auth functions
  * @throws Error if used outside of AuthProvider
  */
-export function useAuth() {
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
