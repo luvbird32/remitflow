@@ -28,33 +28,42 @@ export function AmountDestinationStep({
   errors
 }: AmountDestinationStepProps) {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
-        <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">1</div>
-        Amount & Recipient
+    <div className="space-y-8 animate-fade-in">
+      <div className="flex items-center gap-3 text-sm font-semibold text-teal-600">
+        <div className="step-indicator">1</div>
+        <div>
+          <h3 className="text-lg font-bold text-slate-800">Amount & Recipient Details</h3>
+          <p className="text-sm text-slate-500 font-normal">Enter the transfer amount and recipient information</p>
+        </div>
       </div>
       
-      <div className="grid md:grid-cols-2 gap-4">
-        <AmountInput
-          amount={amount}
-          setAmount={setAmount}
-          fromCurrency={fromCurrency}
-          setFromCurrency={setFromCurrency}
-          error={errors.amount}
-        />
+      <div className="grid lg:grid-cols-2 gap-6">
+        <div className="modern-card p-6 animate-scale-in" style={{animationDelay: '0.1s'}}>
+          <AmountInput
+            amount={amount}
+            setAmount={setAmount}
+            fromCurrency={fromCurrency}
+            setFromCurrency={setFromCurrency}
+            error={errors.amount}
+          />
+        </div>
 
-        <CountrySelect
-          recipientCountry={recipientCountry}
-          onCountryChange={onCountryChange}
-          error={errors.recipientCountry}
-        />
+        <div className="modern-card p-6 animate-scale-in" style={{animationDelay: '0.2s'}}>
+          <CountrySelect
+            recipientCountry={recipientCountry}
+            onCountryChange={onCountryChange}
+            error={errors.recipientCountry}
+          />
+        </div>
       </div>
 
-      <RecipientNameInput
-        recipientName={recipientName}
-        setRecipientName={setRecipientName}
-        error={errors.recipientName}
-      />
+      <div className="modern-card p-6 animate-scale-in" style={{animationDelay: '0.3s'}}>
+        <RecipientNameInput
+          recipientName={recipientName}
+          setRecipientName={setRecipientName}
+          error={errors.recipientName}
+        />
+      </div>
     </div>
   )
 }
