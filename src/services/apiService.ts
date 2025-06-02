@@ -1,9 +1,8 @@
-
 /**
  * API Service for handling backend communication
  */
 export class ApiService {
-  private static baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001/api'
+  private static baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
   /**
    * Generic request handler with error handling
