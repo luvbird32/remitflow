@@ -8,30 +8,30 @@ import { Send, History, TrendingUp } from 'lucide-react';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-yellow-50">
       <Header />
       
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="mb-8 text-center">
+          <h2 className="text-4xl font-bold text-blue-700 mb-2">
             Send Money Worldwide
           </h2>
-          <p className="text-gray-600">
+          <p className="text-blue-600 text-lg">
             Fast, secure, and affordable international money transfers
           </p>
         </div>
 
         <Tabs defaultValue="send" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="send" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-3 bg-white border border-blue-200">
+            <TabsTrigger value="send" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
               <Send className="h-4 w-4" />
               Send Money
             </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-2">
+            <TabsTrigger value="history" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
               <History className="h-4 w-4" />
               History
             </TabsTrigger>
-            <TabsTrigger value="rates" className="flex items-center gap-2">
+            <TabsTrigger value="rates" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
               <TrendingUp className="h-4 w-4" />
               Exchange Rates
             </TabsTrigger>
