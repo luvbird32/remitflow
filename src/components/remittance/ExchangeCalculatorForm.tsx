@@ -1,102 +1,38 @@
 
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowUpDown } from "lucide-react"
+import { ExchangeCalculatorForm as ExchangeCalculatorFormComponent } from './ExchangeCalculator/ExchangeCalculatorForm'
 import { Currency } from './transferUtils'
 
+/**
+ * Props interface for the ExchangeCalculatorForm component
+ */
 interface ExchangeCalculatorFormProps {
+  /** Amount to convert */
   amount: string
+  /** Function to update the amount */
   setAmount: (amount: string) => void
+  /** Source currency code */
   fromCurrency: string
+  /** Function to update the source currency */
   setFromCurrency: (currency: string) => void
+  /** Target currency code */
   toCurrency: string
+  /** Function to update the target currency */
   setToCurrency: (currency: string) => void
+  /** Available currencies for selection */
   currencies: Currency[]
+  /** Function to swap source and target currencies */
   onSwapCurrencies: () => void
 }
 
-export function ExchangeCalculatorForm({
-  amount,
-  setAmount,
-  fromCurrency,
-  setFromCurrency,
-  toCurrency,
-  setToCurrency,
-  currencies,
-  onSwapCurrencies
-}: ExchangeCalculatorFormProps) {
-  return (
-    <div className="space-y-6">
-      {/* Amount Input */}
-      <div>
-        <label htmlFor="calc-amount" className="block text-sm font-medium mb-2">
-          Amount
-        </label>
-        <Input
-          id="calc-amount"
-          type="number"
-          placeholder="Enter amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="text-lg"
-          step="0.01"
-          min="0"
-        />
-      </div>
-
-      {/* Currency Selection */}
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-2">From</label>
-          <Select value={fromCurrency} onValueChange={setFromCurrency}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {currencies.map((currency) => (
-                <SelectItem key={currency.code} value={currency.code}>
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{currency.code}</span>
-                    <span className="text-sm text-gray-500">{currency.name}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Swap Button */}
-        <div className="flex justify-center">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={onSwapCurrencies}
-            className="rounded-full"
-          >
-            <ArrowUpDown className="h-4 w-4" />
-          </Button>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">To</label>
-          <Select value={toCurrency} onValueChange={setToCurrency}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {currencies.map((currency) => (
-                <SelectItem key={currency.code} value={currency.code}>
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{currency.code}</span>
-                    <span className="text-sm text-gray-500">{currency.name}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-    </div>
-  )
+/**
+ * Exchange calculator form wrapper component.
+ * 
+ * This component serves as a wrapper that delegates to the actual
+ * ExchangeCalculatorForm implementation for better code organization.
+ * 
+ * @param props - Component props containing form state and handlers
+ * @returns JSX element with the calculator form inputs
+ */
+export function ExchangeCalculatorForm(props: ExchangeCalculatorFormProps) {
+  return <ExchangeCalculatorFormComponent {...props} />
 }
