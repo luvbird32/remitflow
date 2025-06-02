@@ -1,4 +1,3 @@
-
 import { Header } from '@/components/layout/Header';
 import { TransferForm } from '@/components/remittance/TransferForm';
 import { TransferHistory } from '@/components/remittance/TransferHistory';
@@ -8,76 +7,130 @@ import { TrackTransfer } from '@/components/remittance/TrackTransfer';
 import { UserProfile } from '@/components/profile/UserProfile';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Send, History, TrendingUp, Calculator, Search, User } from 'lucide-react';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/layout/AppSidebar';
+import { useState } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Index = () => {
+  const [activeTab, setActiveTab] = useState('send');
+  const isMobile = useIsMobile();
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'send':
+        return <TransferForm />;
+      case 'track':
+        return <TrackTransfer />;
+      case 'calculator':
+        return <ExchangeCalculator />;
+      case 'history':
+        return <TransferHistory />;
+      case 'rates':
+        return <ExchangeRates />;
+      case 'profile':
+        return <UserProfile />;
+      default:
+        return <TransferForm />;
+    }
+  };
+
+  if (isMobile) {
+    // Mobile: Keep existing tab layout
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-yellow-50">
+        <Header />
+        
+        <main className="container mx-auto px-4 py-8">
+          <div className="mb-8 text-center">
+            <h2 className="text-4xl font-bold text-blue-700 mb-2">
+              Send Money Worldwide
+            </h2>
+            <p className="text-blue-600 text-lg">
+              Fast, secure, and affordable international money transfers
+            </p>
+          </div>
+
+          <Tabs defaultValue="send" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-6 bg-white border border-blue-200">
+              <TabsTrigger value="send" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
+                <Send className="h-4 w-4" />
+                Send Money
+              </TabsTrigger>
+              <TabsTrigger value="track" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
+                <Search className="h-4 w-4" />
+                Track Transfer
+              </TabsTrigger>
+              <TabsTrigger value="calculator" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
+                <Calculator className="h-4 w-4" />
+                Calculator
+              </TabsTrigger>
+              <TabsTrigger value="history" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
+                <History className="h-4 w-4" />
+                History
+              </TabsTrigger>
+              <TabsTrigger value="rates" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
+                <TrendingUp className="h-4 w-4" />
+                Exchange Rates
+              </TabsTrigger>
+              <TabsTrigger value="profile" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
+                <User className="h-4 w-4" />
+                Profile
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="send">
+              <TransferForm />
+            </TabsContent>
+
+            <TabsContent value="track">
+              <TrackTransfer />
+            </TabsContent>
+
+            <TabsContent value="calculator">
+              <ExchangeCalculator />
+            </TabsContent>
+
+            <TabsContent value="history">
+              <TransferHistory />
+            </TabsContent>
+
+            <TabsContent value="rates">
+              <ExchangeRates />
+            </TabsContent>
+
+            <TabsContent value="profile">
+              <UserProfile />
+            </TabsContent>
+          </Tabs>
+        </main>
+      </div>
+    );
+  }
+
+  // Desktop: Use sidebar layout
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-yellow-50">
-      <Header />
-      
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8 text-center">
-          <h2 className="text-4xl font-bold text-blue-700 mb-2">
-            Send Money Worldwide
-          </h2>
-          <p className="text-blue-600 text-lg">
-            Fast, secure, and affordable international money transfers
-          </p>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-blue-50 to-yellow-50">
+        <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        <div className="flex-1 flex flex-col">
+          <Header />
+          
+          <main className="flex-1 container mx-auto px-4 py-8">
+            <div className="mb-8 text-center">
+              <h2 className="text-4xl font-bold text-blue-700 mb-2">
+                Send Money Worldwide
+              </h2>
+              <p className="text-blue-600 text-lg">
+                Fast, secure, and affordable international money transfers
+              </p>
+            </div>
+
+            {renderContent()}
+          </main>
         </div>
-
-        <Tabs defaultValue="send" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 bg-white border border-blue-200">
-            <TabsTrigger value="send" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
-              <Send className="h-4 w-4" />
-              Send Money
-            </TabsTrigger>
-            <TabsTrigger value="track" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
-              <Search className="h-4 w-4" />
-              Track Transfer
-            </TabsTrigger>
-            <TabsTrigger value="calculator" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
-              <Calculator className="h-4 w-4" />
-              Calculator
-            </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
-              <History className="h-4 w-4" />
-              History
-            </TabsTrigger>
-            <TabsTrigger value="rates" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
-              <TrendingUp className="h-4 w-4" />
-              Exchange Rates
-            </TabsTrigger>
-            <TabsTrigger value="profile" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
-              <User className="h-4 w-4" />
-              Profile
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="send">
-            <TransferForm />
-          </TabsContent>
-
-          <TabsContent value="track">
-            <TrackTransfer />
-          </TabsContent>
-
-          <TabsContent value="calculator">
-            <ExchangeCalculator />
-          </TabsContent>
-
-          <TabsContent value="history">
-            <TransferHistory />
-          </TabsContent>
-
-          <TabsContent value="rates">
-            <ExchangeRates />
-          </TabsContent>
-
-          <TabsContent value="profile">
-            <UserProfile />
-          </TabsContent>
-        </Tabs>
-      </main>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
