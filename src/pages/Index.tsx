@@ -5,8 +5,9 @@ import { TransferHistory } from '@/components/remittance/TransferHistory';
 import { ExchangeRates } from '@/components/remittance/ExchangeRates';
 import { ExchangeCalculator } from '@/components/remittance/ExchangeCalculator';
 import { TrackTransfer } from '@/components/remittance/TrackTransfer';
+import { UserProfile } from '@/components/profile/UserProfile';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Send, History, TrendingUp, Calculator, Search } from 'lucide-react';
+import { Send, History, TrendingUp, Calculator, Search, User } from 'lucide-react';
 
 const Index = () => {
   return (
@@ -24,7 +25,7 @@ const Index = () => {
         </div>
 
         <Tabs defaultValue="send" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 bg-white border border-blue-200">
+          <TabsList className="grid w-full grid-cols-6 bg-white border border-blue-200">
             <TabsTrigger value="send" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
               <Send className="h-4 w-4" />
               Send Money
@@ -44,6 +45,10 @@ const Index = () => {
             <TabsTrigger value="rates" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
               <TrendingUp className="h-4 w-4" />
               Exchange Rates
+            </TabsTrigger>
+            <TabsTrigger value="profile" className="flex items-center gap-2 data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
+              <User className="h-4 w-4" />
+              Profile
             </TabsTrigger>
           </TabsList>
 
@@ -65,6 +70,10 @@ const Index = () => {
 
           <TabsContent value="rates">
             <ExchangeRates />
+          </TabsContent>
+
+          <TabsContent value="profile">
+            <UserProfile />
           </TabsContent>
         </Tabs>
       </main>
