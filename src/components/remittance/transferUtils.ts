@@ -94,11 +94,11 @@ export const loadCurrenciesAndCountries = async () => {
       ApiService.getCountries().catch(() => countries)
     ])
     
-    // Update the exported arrays if we got data from backend
-    if (currenciesData && currenciesData.length > 0) {
+    // Type check and update the exported arrays if we got valid data from backend
+    if (Array.isArray(currenciesData) && currenciesData.length > 0) {
       currencies.splice(0, currencies.length, ...currenciesData)
     }
-    if (countriesData && countriesData.length > 0) {
+    if (Array.isArray(countriesData) && countriesData.length > 0) {
       countries.splice(0, countries.length, ...countriesData)
     }
   } catch (error) {

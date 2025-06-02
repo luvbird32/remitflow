@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowUpDown, Calculator } from "lucide-react"
 import { ApiService } from '@/services/apiService'
+import { Currency } from './transferUtils'
 
 export function ExchangeCalculator() {
   const [amount, setAmount] = useState("")
   const [fromCurrency, setFromCurrency] = useState("USD")
   const [toCurrency, setToCurrency] = useState("EUR")
-  const [currencies, setCurrencies] = useState<any[]>([])
+  const [currencies, setCurrencies] = useState<Currency[]>([])
   const [conversionResult, setConversionResult] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -20,7 +21,10 @@ export function ExchangeCalculator() {
     const loadCurrencies = async () => {
       try {
         const data = await ApiService.getCurrencies()
-        setCurrencies(data)
+        // Type check the response
+        if (Array.isArray(data)) {
+          setCurrencies(data)
+        }
       } catch (error) {
         console.error('Failed to load currencies:', error)
       }
