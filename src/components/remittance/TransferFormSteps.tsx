@@ -32,13 +32,13 @@ export function TransferFormSteps({
       {/* Step 1: Amount and Destination */}
       <AmountDestinationStep
         amount={formData.amount}
-        setAmount={(amount) => setFormData(prev => ({ ...prev, amount }))}
+        setAmount={(amount) => updateFormData({ amount })}
         recipientName={formData.recipientName}
-        setRecipientName={(name) => setFormData(prev => ({ ...prev, recipientName: name }))}
+        setRecipientName={(name) => updateFormData({ recipientName: name })}
         recipientCountry={formData.recipientCountry}
         onCountryChange={onCountryChange}
         fromCurrency={formData.fromCurrency}
-        setFromCurrency={(currency) => setFormData(prev => ({ ...prev, fromCurrency: currency }))}
+        setFromCurrency={(currency) => updateFormData({ fromCurrency: currency })}
         errors={errors}
       />
 
@@ -52,7 +52,7 @@ export function TransferFormSteps({
           <DeliveryMethodStep
             recipientCountry={formData.recipientCountry}
             deliveryMethod={formData.deliveryMethod}
-            setDeliveryMethod={(method) => setFormData(prev => ({ ...prev, deliveryMethod: method }))}
+            setDeliveryMethod={(method) => updateFormData({ deliveryMethod: method })}
             errors={errors}
           />
         </>
