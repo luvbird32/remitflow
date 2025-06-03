@@ -1,5 +1,4 @@
-
-import { ValidationResult } from './types'
+import { ValidationResult } from './validationTypes'
 
 /**
  * Individual field validation functions
