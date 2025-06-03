@@ -14,7 +14,7 @@ export function RecipientInfo({ formData }: RecipientInfoProps) {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <User className="h-4 w-4 text-slate-500" />
-        <span className="font-medium text-slate-700">Recipient</span>
+        <span className="font-medium text-slate-700">Who's receiving it</span>
       </div>
       <div className="pl-6 space-y-2">
         <div className="font-semibold text-slate-800">{formData.recipientName}</div>

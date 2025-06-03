@@ -11,6 +11,10 @@ interface PaymentMethodFieldsProps {
 }
 
 export function PaymentMethodFields({ formData, onFieldChange, errors }: PaymentMethodFieldsProps) {
+  if (!formData.deliveryMethod) {
+    return null
+  }
+
   switch (formData.deliveryMethod) {
     case 'bank':
       return <BankTransferFields formData={formData} onFieldChange={onFieldChange} errors={errors} />
@@ -22,6 +26,10 @@ export function PaymentMethodFields({ formData, onFieldChange, errors }: Payment
       return <WalletPaymentFields formData={formData} onFieldChange={onFieldChange} errors={errors} />
     
     default:
-      return null
+      return (
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+          <p className="text-gray-600">Please select how you want the money to be delivered</p>
+        </div>
+      )
   }
 }
