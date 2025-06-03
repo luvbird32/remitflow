@@ -77,6 +77,7 @@ export function useFormErrorHandling() {
 
   return {
     errors,
+    setErrors,
     addError,
     removeError,
     clearErrors,

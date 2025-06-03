@@ -14,7 +14,8 @@ export function useTransferForm() {
   const { isDataLoaded } = useDataLoading()
   const { handleCountryChange } = useCountryHandling(updateFormData)
   const { 
-    errors, 
+    errors,
+    setErrors,
     clearErrors, 
     handleFormError, 
     validateField, 
@@ -55,6 +56,7 @@ export function useTransferForm() {
     showSuccessDialog,
     setShowSuccessDialog,
     errors,
+    setErrors,
     transferResult,
     setTransferResult,
     isDataLoaded,
