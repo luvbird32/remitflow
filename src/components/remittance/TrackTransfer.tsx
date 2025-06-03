@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -110,9 +109,14 @@ export function TrackTransfer() {
       if (localTransfer) {
         const trackingSteps = generateTrackingSteps(localTransfer.status, 'bank')
         
+        // Ensure status is properly typed
+        const validStatus = ['pending', 'processing', 'in_transit', 'delivered', 'failed'].includes(localTransfer.status) 
+          ? localTransfer.status as 'pending' | 'processing' | 'in_transit' | 'delivered' | 'failed'
+          : 'pending'
+        
         setTransferData({
           id: localTransfer.id,
-          status: localTransfer.status,
+          status: validStatus,
           amount: localTransfer.amount,
           currency: localTransfer.currency,
           recipientName: localTransfer.recipientName,
@@ -129,7 +133,7 @@ export function TrackTransfer() {
       } else {
         // Try API call for demo data
         try {
-          const result = await ApiService.trackTransfer(trackingNumber)
+          const result = await ApiService.trackTransfer(trackingNumber) as TransferTrackingData
           setTransferData(result)
         } catch (error) {
           // Use demo data if API fails

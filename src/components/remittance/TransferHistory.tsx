@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -33,7 +32,7 @@ export function TransferHistory() {
       
       // Add some demo data if no transfers exist
       if (transferHistory.length === 0) {
-        const demoTransfers = [
+        const demoTransfers: TransferHistoryItem[] = [
           {
             id: "TXN87654321",
             amount: 1000,
@@ -60,7 +59,14 @@ export function TransferHistory() {
         localStorage.setItem('transferHistory', JSON.stringify(demoTransfers))
         setTransfers(demoTransfers)
       } else {
-        setTransfers(transferHistory)
+        // Ensure status values are properly typed
+        const typedTransfers: TransferHistoryItem[] = transferHistory.map((transfer: any) => ({
+          ...transfer,
+          status: ['pending', 'processing', 'delivered', 'failed'].includes(transfer.status) 
+            ? transfer.status as 'pending' | 'processing' | 'delivered' | 'failed'
+            : 'pending'
+        }))
+        setTransfers(typedTransfers)
       }
       
       setIsLoading(false)
@@ -122,8 +128,6 @@ export function TransferHistory() {
   }
 
   const handleTrackTransfer = (transferId: string) => {
-    // This would typically navigate to track transfer section
-    // For now, we'll just show a message
     console.log('Track transfer:', transferId)
   }
 
