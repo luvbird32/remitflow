@@ -16,7 +16,7 @@ export function NetworkStatus() {
 
   const getStatusColor = () => {
     if (!networkStatus.isOnline) return 'destructive'
-    if (networkStatus.isSlowConnection) return 'warning'
+    if (networkStatus.isSlowConnection) return 'secondary'
     return 'default'
   }
 
