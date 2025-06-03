@@ -65,15 +65,18 @@ class HttpClient {
     // Request interceptor
     this.client.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
+        // Ensure headers object exists
+        if (!config.headers) {
+          config.headers = {} as any;
+        }
+
         // Add auth header if available
         const token = localStorage.getItem('auth_token');
         if (token) {
-          config.headers = config.headers || {};
           config.headers.Authorization = `Bearer ${token}`;
         }
 
         // Add request ID for tracking
-        config.headers = config.headers || {};
         config.headers['X-Request-ID'] = `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         
         // Log request
