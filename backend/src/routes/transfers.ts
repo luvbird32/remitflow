@@ -2,6 +2,7 @@
 import express from 'express';
 import { TransferService } from '../services/transferService';
 import { TransferRequest, TransferResponse } from '../types/transfer';
+import { validateTransferInput } from '../middleware/security';
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ const router = express.Router();
 const transfers: Map<string, TransferRequest> = new Map();
 
 // Validate transfer data
-router.post('/validate', async (req, res) => {
+router.post('/validate', validateTransferInput, async (req, res) => {
   try {
     const transferData: TransferRequest = req.body;
     
@@ -26,7 +27,7 @@ router.post('/validate', async (req, res) => {
 });
 
 // Create a new transfer
-router.post('/', async (req, res) => {
+router.post('/', validateTransferInput, async (req, res) => {
   try {
     const transferData: TransferRequest = req.body;
     
@@ -56,6 +57,9 @@ router.post('/', async (req, res) => {
     };
     transfers.set(transferId, transfer);
 
+    // Log transfer creation for audit
+    console.log(`[AUDIT] Transfer created: ${transferId} - Amount: ${transferData.amount} ${transferData.fromCurrency}`);
+
     // Simulate processing delay
     setTimeout(() => {
       const storedTransfer = transfers.get(transferId);
@@ -63,6 +67,7 @@ router.post('/', async (req, res) => {
         storedTransfer.status = 'completed';
         storedTransfer.updatedAt = new Date().toISOString();
         transfers.set(transferId, storedTransfer);
+        console.log(`[AUDIT] Transfer completed: ${transferId}`);
       }
     }, 2000);
 
