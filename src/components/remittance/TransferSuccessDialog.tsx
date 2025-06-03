@@ -13,6 +13,7 @@ interface TransferSuccessDialogProps {
   onClose: () => void
   formData: TransferFormData
   transferResult?: any
+  onTrackTransfer?: () => void
 }
 
 /**
@@ -21,9 +22,10 @@ interface TransferSuccessDialogProps {
  * @param onClose - Callback function to close the dialog
  * @param formData - Transfer form data
  * @param transferResult - Result from the transfer API
+ * @param onTrackTransfer - Callback to navigate to track transfer section
  * @returns JSX element containing the success dialog
  */
-export function TransferSuccessDialog({ isOpen, onClose, formData, transferResult }: TransferSuccessDialogProps) {
+export function TransferSuccessDialog({ isOpen, onClose, formData, transferResult, onTrackTransfer }: TransferSuccessDialogProps) {
   const fromCurrencyData = currencies.find(c => c.code === formData.fromCurrency)
   const toCurrencyData = currencies.find(c => c.code === formData.toCurrency)
   const selectedCountry = countries.find(c => c.code === formData.recipientCountry)
@@ -39,6 +41,16 @@ export function TransferSuccessDialog({ isOpen, onClose, formData, transferResul
    */
   const copyReference = () => {
     navigator.clipboard.writeText(transferRef)
+  }
+
+  /**
+   * Handles track transfer button click
+   */
+  const handleTrackTransfer = () => {
+    onClose()
+    if (onTrackTransfer) {
+      onTrackTransfer()
+    }
   }
 
   return (
@@ -155,7 +167,7 @@ export function TransferSuccessDialog({ isOpen, onClose, formData, transferResul
             </Button>
             <Button 
               className="btn-primary flex-1 h-10 text-sm font-semibold" 
-              onClick={onClose}
+              onClick={handleTrackTransfer}
             >
               Track Transfer
               <ArrowRight className="ml-1 h-3 w-3" />
