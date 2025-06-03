@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -156,36 +157,36 @@ export function UserProfile() {
 
   if (isLoading && !userInfo.name) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4 px-4">
         <div className="animate-pulse">
-          <div className="h-32 bg-gray-200 rounded-lg mb-6"></div>
-          <div className="h-96 bg-gray-200 rounded-lg"></div>
+          <div className="h-24 sm:h-32 bg-gray-200 rounded-lg mb-4"></div>
+          <div className="h-64 sm:h-96 bg-gray-200 rounded-lg"></div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      {/* Profile Header */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                <User className="h-8 w-8 text-blue-600" />
+    <div className="space-y-4 px-2 sm:px-4">
+      {/* Profile Header - Responsive */}
+      <Card className="overflow-hidden">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto sm:mx-0">
+                <User className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
-              <div>
-                <CardTitle className="text-blue-700">{userInfo.name}</CardTitle>
-                <CardDescription className="flex items-center gap-2">
-                  <Mail className="h-4 w-4" />
-                  {userInfo.email}
+              <div className="text-center sm:text-left">
+                <CardTitle className="text-lg sm:text-xl text-slate-700 break-words">{userInfo.name}</CardTitle>
+                <CardDescription className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <Mail className="h-3 w-3 sm:h-4 sm:w-4 mx-auto sm:mx-0" />
+                  <span className="break-all">{userInfo.email}</span>
                 </CardDescription>
-                <div className="flex gap-2 mt-2">
-                  <Badge className="bg-green-100 text-green-800 border-green-200">
+                <div className="flex flex-wrap gap-2 mt-2 justify-center sm:justify-start">
+                  <Badge className="bg-green-100 text-green-800 border-green-200 text-xs">
                     Verified
                   </Badge>
-                  <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+                  <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 text-xs">
                     Premium Member
                   </Badge>
                 </div>
@@ -194,113 +195,130 @@ export function UserProfile() {
             <Button
               onClick={() => setIsEditing(!isEditing)}
               variant="outline"
-              className="border-blue-200 text-blue-600 hover:bg-blue-50"
+              size="sm"
+              className="border-teal-200 text-teal-600 hover:bg-teal-50 w-full sm:w-auto text-xs sm:text-sm"
               disabled={isLoading}
             >
-              <Edit className="h-4 w-4 mr-2" />
+              <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
               {isEditing ? "Cancel" : "Edit Profile"}
             </Button>
           </div>
         </CardHeader>
       </Card>
 
-      {/* Profile Tabs */}
-      <Tabs defaultValue="personal" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 bg-white border border-blue-200">
-          <TabsTrigger value="personal" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
-            Personal Info
+      {/* Profile Tabs - Mobile Optimized */}
+      <Tabs defaultValue="personal" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 bg-white border border-slate-200 h-auto p-1">
+          <TabsTrigger 
+            value="personal" 
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white text-xs sm:text-sm py-2 px-1"
+          >
+            Personal
           </TabsTrigger>
-          <TabsTrigger value="security" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
+          <TabsTrigger 
+            value="security" 
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white text-xs sm:text-sm py-2 px-1"
+          >
             Security
           </TabsTrigger>
-          <TabsTrigger value="preferences" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
+          <TabsTrigger 
+            value="preferences" 
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white text-xs sm:text-sm py-2 px-1"
+          >
             Preferences
           </TabsTrigger>
-          <TabsTrigger value="payment" className="data-[state=active]:bg-yellow-400 data-[state=active]:text-blue-700">
-            Payment Methods
+          <TabsTrigger 
+            value="payment" 
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white text-xs sm:text-sm py-2 px-1"
+          >
+            Payment
           </TabsTrigger>
         </TabsList>
 
         {/* Personal Information */}
-        <TabsContent value="personal">
+        <TabsContent value="personal" className="mt-4">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5 text-blue-600" />
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <User className="h-4 w-4 sm:h-5 sm:w-5 text-teal-600" />
                 Personal Information
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
                 Manage your personal details and contact information
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="text-sm font-medium text-blue-700">Full Name</label>
+                  <label className="text-xs sm:text-sm font-medium text-slate-700 block mb-1">Full Name</label>
                   <Input
                     value={userInfo.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
                     disabled={!isEditing}
-                    className="mt-1"
+                    className="text-sm"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-blue-700">Email Address</label>
+                  <label className="text-xs sm:text-sm font-medium text-slate-700 block mb-1">Email Address</label>
                   <Input
                     value={userInfo.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     disabled={!isEditing}
-                    className="mt-1"
+                    className="text-sm"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-blue-700">Phone Number</label>
+                  <label className="text-xs sm:text-sm font-medium text-slate-700 block mb-1">Phone Number</label>
                   <Input
                     value={userInfo.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
                     disabled={!isEditing}
-                    className="mt-1"
+                    className="text-sm"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-blue-700">Date of Birth</label>
+                  <label className="text-xs sm:text-sm font-medium text-slate-700 block mb-1">Date of Birth</label>
                   <Input
                     type="date"
                     value={userInfo.dateOfBirth}
                     onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
                     disabled={!isEditing}
-                    className="mt-1"
+                    className="text-sm"
                   />
                 </div>
-                <div className="md:col-span-2">
-                  <label className="text-sm font-medium text-blue-700">Address</label>
+                <div className="sm:col-span-2">
+                  <label className="text-xs sm:text-sm font-medium text-slate-700 block mb-1">Address</label>
                   <Input
                     value={userInfo.address}
                     onChange={(e) => handleInputChange("address", e.target.value)}
                     disabled={!isEditing}
-                    className="mt-1"
+                    className="text-sm"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-blue-700">Nationality</label>
+                  <label className="text-xs sm:text-sm font-medium text-slate-700 block mb-1">Nationality</label>
                   <Input
                     value={userInfo.nationality}
                     onChange={(e) => handleInputChange("nationality", e.target.value)}
                     disabled={!isEditing}
-                    className="mt-1"
+                    className="text-sm"
                   />
                 </div>
               </div>
               {isEditing && (
-                <div className="flex gap-2 pt-4">
+                <div className="flex flex-col sm:flex-row gap-2 pt-4">
                   <Button 
                     onClick={handleSaveProfile} 
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-teal-600 hover:bg-teal-700 text-sm w-full sm:w-auto"
                     disabled={isLoading}
                   >
                     {isLoading ? "Saving..." : "Save Changes"}
                   </Button>
-                  <Button variant="outline" onClick={() => setIsEditing(false)}>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsEditing(false)}
+                    className="text-sm w-full sm:w-auto"
+                  >
                     Cancel
                   </Button>
                 </div>
@@ -310,27 +328,28 @@ export function UserProfile() {
         </TabsContent>
 
         {/* Security */}
-        <TabsContent value="security">
+        <TabsContent value="security" className="mt-4">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-blue-600" />
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-teal-600" />
                 Security Settings
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
                 Manage your account security and authentication
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 border border-blue-200 rounded-lg">
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 border border-slate-200 rounded-lg">
                   <div>
-                    <h4 className="font-medium text-blue-700">Password</h4>
-                    <p className="text-sm text-gray-600">Last changed 30 days ago</p>
+                    <h4 className="font-medium text-slate-700 text-sm sm:text-base">Password</h4>
+                    <p className="text-xs sm:text-sm text-gray-600">Last changed 30 days ago</p>
                   </div>
                   <Button 
                     variant="outline" 
-                    className="border-blue-200"
+                    size="sm"
+                    className="border-teal-200 text-teal-600 hover:bg-teal-50 w-full sm:w-auto text-xs sm:text-sm"
                     onClick={() => {
                       toast({
                         title: "Password Change",
@@ -341,14 +360,15 @@ export function UserProfile() {
                     Change Password
                   </Button>
                 </div>
-                <div className="flex items-center justify-between p-4 border border-blue-200 rounded-lg">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 border border-slate-200 rounded-lg">
                   <div>
-                    <h4 className="font-medium text-blue-700">Two-Factor Authentication</h4>
-                    <p className="text-sm text-gray-600">Add an extra layer of security</p>
+                    <h4 className="font-medium text-slate-700 text-sm sm:text-base">Two-Factor Authentication</h4>
+                    <p className="text-xs sm:text-sm text-gray-600">Add an extra layer of security</p>
                   </div>
                   <Button 
                     variant="outline" 
-                    className="border-blue-200"
+                    size="sm"
+                    className="border-teal-200 text-teal-600 hover:bg-teal-50 w-full sm:w-auto text-xs sm:text-sm"
                     onClick={() => {
                       toast({
                         title: "2FA Setup",
@@ -359,14 +379,15 @@ export function UserProfile() {
                     Enable 2FA
                   </Button>
                 </div>
-                <div className="flex items-center justify-between p-4 border border-blue-200 rounded-lg">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 border border-slate-200 rounded-lg">
                   <div>
-                    <h4 className="font-medium text-blue-700">Login History</h4>
-                    <p className="text-sm text-gray-600">View recent account activity</p>
+                    <h4 className="font-medium text-slate-700 text-sm sm:text-base">Login History</h4>
+                    <p className="text-xs sm:text-sm text-gray-600">View recent account activity</p>
                   </div>
                   <Button 
                     variant="outline" 
-                    className="border-blue-200"
+                    size="sm"
+                    className="border-teal-200 text-teal-600 hover:bg-teal-50 w-full sm:w-auto text-xs sm:text-sm"
                     onClick={() => {
                       toast({
                         title: "Login History",
@@ -383,60 +404,62 @@ export function UserProfile() {
         </TabsContent>
 
         {/* Preferences */}
-        <TabsContent value="preferences">
+        <TabsContent value="preferences" className="mt-4">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bell className="h-5 w-5 text-blue-600" />
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-teal-600" />
                 Preferences
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
                 Customize your account preferences and notifications
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div>
-                    <h4 className="font-medium text-blue-700">Email Notifications</h4>
-                    <p className="text-sm text-gray-600">Receive updates via email</p>
+                    <h4 className="font-medium text-slate-700 text-sm sm:text-base">Email Notifications</h4>
+                    <p className="text-xs sm:text-sm text-gray-600">Receive updates via email</p>
                   </div>
                   <Button
                     variant={preferences.emailNotifications ? "default" : "outline"}
+                    size="sm"
                     onClick={() => handlePreferenceChange("emailNotifications", !preferences.emailNotifications)}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-teal-600 hover:bg-teal-700 w-full sm:w-auto text-xs sm:text-sm"
                   >
                     {preferences.emailNotifications ? "Enabled" : "Disabled"}
                   </Button>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div>
-                    <h4 className="font-medium text-blue-700">SMS Notifications</h4>
-                    <p className="text-sm text-gray-600">Receive updates via SMS</p>
+                    <h4 className="font-medium text-slate-700 text-sm sm:text-base">SMS Notifications</h4>
+                    <p className="text-xs sm:text-sm text-gray-600">Receive updates via SMS</p>
                   </div>
                   <Button
                     variant={preferences.smsNotifications ? "default" : "outline"}
+                    size="sm"
                     onClick={() => handlePreferenceChange("smsNotifications", !preferences.smsNotifications)}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-teal-600 hover:bg-teal-700 w-full sm:w-auto text-xs sm:text-sm"
                   >
                     {preferences.smsNotifications ? "Enabled" : "Disabled"}
                   </Button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-2">
                   <div>
-                    <label className="text-sm font-medium text-blue-700">Preferred Currency</label>
+                    <label className="text-xs sm:text-sm font-medium text-slate-700 block mb-1">Preferred Currency</label>
                     <Input
                       value={preferences.currency}
                       onChange={(e) => handlePreferenceChange("currency", e.target.value)}
-                      className="mt-1"
+                      className="text-sm"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-blue-700">Language</label>
+                    <label className="text-xs sm:text-sm font-medium text-slate-700 block mb-1">Language</label>
                     <Input
                       value={preferences.language}
                       onChange={(e) => handlePreferenceChange("language", e.target.value)}
-                      className="mt-1"
+                      className="text-sm"
                     />
                   </div>
                 </div>
@@ -446,23 +469,23 @@ export function UserProfile() {
         </TabsContent>
 
         {/* Payment Methods */}
-        <TabsContent value="payment">
+        <TabsContent value="payment" className="mt-4">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5 text-blue-600" />
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-teal-600" />
                 Payment Methods
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
                 Manage your saved payment methods
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {savedCards.map((card) => (
-                  <div key={card.id} className="flex items-center justify-between p-4 border border-blue-200 rounded-lg">
+                  <div key={card.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 border border-slate-200 rounded-lg">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-6 rounded flex items-center justify-center ${
+                      <div className={`w-8 h-5 sm:w-10 sm:h-6 rounded flex items-center justify-center ${
                         card.brand === 'Visa' ? 'bg-blue-600' : 'bg-red-600'
                       }`}>
                         <span className="text-white text-xs font-bold">
@@ -470,14 +493,14 @@ export function UserProfile() {
                         </span>
                       </div>
                       <div>
-                        <p className="font-medium text-blue-700">•••• •••• •••• {card.last4}</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="font-medium text-slate-700 text-sm sm:text-base">•••• •••• •••• {card.last4}</p>
+                        <p className="text-xs sm:text-sm text-gray-600">
                           Expires {card.expiryMonth.toString().padStart(2, '0')}/{card.expiryYear}
                         </p>
                       </div>
                     </div>
                     {card.isDefault ? (
-                      <Badge className="bg-green-100 text-green-800 border-green-200">
+                      <Badge className="bg-green-100 text-green-800 border-green-200 text-xs w-fit">
                         Primary
                       </Badge>
                     ) : (
@@ -485,6 +508,7 @@ export function UserProfile() {
                         variant="outline" 
                         size="sm"
                         onClick={() => handleRemoveCard(card.id)}
+                        className="text-xs sm:text-sm w-full sm:w-auto"
                       >
                         Remove
                       </Button>
@@ -493,7 +517,7 @@ export function UserProfile() {
                 ))}
                 <Button 
                   variant="outline" 
-                  className="w-full border-blue-200 text-blue-600 hover:bg-blue-50"
+                  className="w-full border-teal-200 text-teal-600 hover:bg-teal-50 text-sm"
                   onClick={() => {
                     toast({
                       title: "Add Payment Method",
