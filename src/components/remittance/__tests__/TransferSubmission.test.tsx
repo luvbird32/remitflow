@@ -1,4 +1,6 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+
+import { render } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/dom';
 import { TransferFormContainer } from '../TransferForm/TransferFormContainer';
 import { ValidationProvider } from '../hooks/validation/ValidationContext';
 
