@@ -24,37 +24,37 @@ const menuItems = [
     title: "Send Money",
     value: "send",
     icon: Send,
-    description: "Transfer funds globally"
+    description: "Send money globally"
   },
   {
-    title: "Track Transfer",
+    title: "Check Status",
     value: "track",
     icon: Search,
-    description: "Monitor your transfers"
+    description: "Track your transfers"
   },
   {
-    title: "Calculator",
+    title: "Calculate",
     value: "calculator",
     icon: Calculator,
-    description: "Calculate exchange rates"
+    description: "Calculate rates"
   },
   {
     title: "History",
     value: "history",
     icon: History,
-    description: "View past transactions"
+    description: "Past transfers"
   },
   {
-    title: "Exchange Rates",
+    title: "Current Rates",
     value: "rates",
     icon: TrendingUp,
-    description: "Live market rates"
+    description: "Live exchange rates"
   },
   {
     title: "Profile",
     value: "profile",
     icon: User,
-    description: "Account settings"
+    description: "Your account"
   },
 ]
 
@@ -76,7 +76,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
           <SidebarGroup>
             {!isCollapsed && (
               <SidebarGroupLabel className="text-slate-500 font-bold text-xs uppercase tracking-wider px-3 py-2 mb-2 transition-opacity duration-200">
-                Navigation
+                Menu
               </SidebarGroupLabel>
             )}
             <SidebarGroupContent>

@@ -44,22 +44,27 @@ export function useFormErrorHandling() {
     if (!rules) return
 
     if (rules.required && !value.trim()) {
-      addError(field, `${field} is required`)
+      addError(field, field === 'amount' ? 'Please enter an amount' :
+                     field === 'recipientName' ? 'Please enter recipient name' :
+                     field === 'recipientCountry' ? 'Please choose a country' :
+                     `${field} is required`)
       return false
     }
 
     if (rules.minLength && value.length < rules.minLength) {
-      addError(field, `${field} must be at least ${rules.minLength} characters`)
+      addError(field, `Must be at least ${rules.minLength} characters`)
       return false
     }
 
     if (rules.maxLength && value.length > rules.maxLength) {
-      addError(field, `${field} must be no more than ${rules.maxLength} characters`)
+      addError(field, `Must be no more than ${rules.maxLength} characters`)
       return false
     }
 
     if (rules.pattern && !rules.pattern.test(value)) {
-      addError(field, `${field} format is invalid`)
+      addError(field, field === 'amount' ? 'Please enter a valid amount' :
+                     field === 'recipientName' ? 'Please use only letters and spaces' :
+                     'Invalid format')
       return false
     }
 

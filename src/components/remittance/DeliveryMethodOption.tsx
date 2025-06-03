@@ -21,6 +21,15 @@ export function DeliveryMethodOption({ method, isSelected, onClick }: DeliveryMe
     return method === 'bank' ? 'text-green-600 bg-green-50' : 'text-amber-600 bg-amber-50'
   }
 
+  const getSimpleLabel = (method: string) => {
+    switch (method) {
+      case 'bank': return 'Bank account'
+      case 'card': return 'Debit card'
+      case 'wallet': return 'Mobile wallet'
+      default: return deliveryMethodLabels[method as keyof typeof deliveryMethodLabels]
+    }
+  }
+
   return (
     <button
       type="button"
@@ -48,7 +57,7 @@ export function DeliveryMethodOption({ method, isSelected, onClick }: DeliveryMe
           </div>
           <div>
             <div className="font-bold text-slate-800 text-lg mb-1">
-              {deliveryMethodLabels[method as keyof typeof deliveryMethodLabels]}
+              {getSimpleLabel(method)}
             </div>
             <div className="text-sm text-slate-500 flex items-center gap-2 font-medium">
               <Clock className="h-4 w-4" />

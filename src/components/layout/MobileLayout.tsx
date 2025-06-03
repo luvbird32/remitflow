@@ -52,14 +52,14 @@ export function MobileLayout() {
                 className="flex flex-col items-center gap-1 py-3 px-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-800"
               >
                 <Search className="h-5 w-5" />
-                <span className="text-xs font-medium">Track</span>
+                <span className="text-xs font-medium">Status</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="calculator" 
                 className="flex flex-col items-center gap-1 py-3 px-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-800"
               >
                 <Calculator className="h-5 w-5" />
-                <span className="text-xs font-medium">Calculator</span>
+                <span className="text-xs font-medium">Calculate</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="history" 

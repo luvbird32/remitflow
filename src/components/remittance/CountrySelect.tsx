@@ -18,11 +18,11 @@ export function CountrySelect({
     <div>
       <label className="block text-sm font-medium mb-2">
         <MapPin className="h-4 w-4 inline mr-1" />
-        Recipient Country
+        Which Country?
       </label>
       <Select value={recipientCountry} onValueChange={onCountryChange}>
         <SelectTrigger className={`w-full ${error ? "border-red-500" : ""}`}>
-          <SelectValue placeholder="Select country" />
+          <SelectValue placeholder="Choose country" />
         </SelectTrigger>
         <SelectContent className="bg-white border shadow-lg rounded-md z-50 max-h-60 overflow-y-auto">
           {countries.map((country) => (
@@ -43,7 +43,7 @@ export function CountrySelect({
       {error && (
         <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
           <AlertCircle className="h-3 w-3" />
-          {error}
+          Please choose a country
         </p>
       )}
     </div>

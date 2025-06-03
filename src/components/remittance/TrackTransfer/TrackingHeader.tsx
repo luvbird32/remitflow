@@ -9,10 +9,10 @@ export function TrackingHeader() {
       </div>
       <div>
         <h3 className="text-2xl font-bold text-slate-800 tracking-tight">
-          Track Your Transfer
+          Check Your Transfer
         </h3>
         <p className="text-slate-600 font-medium">
-          Enter your tracking number to see the status of your money transfer
+          Enter your reference number to see where your money is
         </p>
       </div>
     </div>

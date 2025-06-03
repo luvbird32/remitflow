@@ -60,13 +60,13 @@ export function AmountDestinationStep({
   }, [recipientName, validateField])
 
   return (
-    <RemittanceErrorBoundary step="Amount & Destination">
+    <RemittanceErrorBoundary step="Amount & Recipient">
       <div className="space-y-8 animate-fade-in">
         <div className="flex items-center gap-3 text-sm font-semibold text-teal-600">
           <div className="step-indicator">1</div>
           <div>
-            <h3 className="text-lg font-bold text-slate-800">Amount & Recipient Details</h3>
-            <p className="text-sm text-slate-500 font-normal">Enter the transfer amount and recipient information</p>
+            <h3 className="text-lg font-bold text-slate-800">Send Money To</h3>
+            <p className="text-sm text-slate-500 font-normal">How much and to whom are you sending money?</p>
           </div>
         </div>
         
@@ -100,7 +100,7 @@ export function AmountDestinationStep({
 
         {errors.general && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-            <p className="font-medium">Error</p>
+            <p className="font-medium">Something went wrong</p>
             <p className="text-sm">{errors.general}</p>
           </div>
         )}

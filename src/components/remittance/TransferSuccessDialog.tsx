@@ -26,15 +26,15 @@ export function TransferSuccessDialog({
     navigator.clipboard.writeText(transferResult?.id || '')
     toast({
       title: "Copied!",
-      description: "Transfer ID copied to clipboard"
+      description: "Reference number copied"
     })
   }
 
   const getDeliveryMethodLabel = (method: string) => {
     const labels = {
-      bank: 'Bank Transfer',
-      card: 'Debit Card',
-      wallet: 'Mobile Wallet'
+      bank: 'Bank account',
+      card: 'Debit card',
+      wallet: 'Mobile wallet'
     }
     return labels[method as keyof typeof labels] || method
   }
@@ -63,19 +63,19 @@ export function TransferSuccessDialog({
             <CheckCircle className="w-8 h-8 text-white" />
           </div>
           <DialogTitle className="text-2xl font-bold text-green-600">
-            Transfer Successful!
+            Money Sent Successfully!
           </DialogTitle>
           <DialogDescription className="text-slate-600">
-            Your money transfer has been processed successfully. Use the details below to track your transfer.
+            Your money is on its way! Use the details below to check the status of your transfer.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 mt-6">
-          {/* Transfer ID */}
+          {/* Reference Number */}
           <div className="modern-card p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Transfer ID</p>
+                <p className="text-sm font-medium text-slate-600">Reference Number</p>
                 <p className="text-lg font-mono font-bold text-slate-800">{transferResult.id}</p>
               </div>
               <Button
@@ -96,7 +96,7 @@ export function TransferSuccessDialog({
               <span className="font-semibold">{formData.fromCurrency} {formData.amount}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-600">Recipient gets</span>
+              <span className="text-slate-600">They will receive</span>
               <span className="font-semibold">{formData.toCurrency} {transferResult.convertedAmount}</span>
             </div>
             <div className="flex justify-between text-sm">
@@ -128,7 +128,7 @@ export function TransferSuccessDialog({
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-600">Delivery method</span>
+                <span className="text-slate-600">How they'll get it</span>
                 <span className="font-medium flex items-center gap-1">
                   <CreditCard className="h-3 w-3" />
                   {getDeliveryMethodLabel(formData.deliveryMethod)}
@@ -144,7 +144,7 @@ export function TransferSuccessDialog({
                 <Clock className="h-4 w-4 text-blue-600" />
               </div>
               <div>
-                <p className="font-medium text-slate-800">Estimated delivery</p>
+                <p className="font-medium text-slate-800">Expected arrival</p>
                 <p className="text-sm text-slate-600">{transferResult.estimatedDelivery}</p>
               </div>
             </div>
@@ -157,7 +157,7 @@ export function TransferSuccessDialog({
               className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600"
             >
               <ExternalLink className="mr-2 h-4 w-4" />
-              Track Transfer
+              Check Status
             </Button>
             
             <Button 

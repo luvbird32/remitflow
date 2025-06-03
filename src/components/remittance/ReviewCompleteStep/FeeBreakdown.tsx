@@ -14,15 +14,15 @@ export function FeeBreakdown({ formData }: FeeBreakdownProps) {
   return (
     <div className="border-t border-slate-200 pt-4 space-y-3">
       <div className="flex justify-between text-slate-600">
-        <span>Transfer amount</span>
+        <span>Amount</span>
         <span>{fromCurrencyData?.symbol}{formData.amount}</span>
       </div>
       <div className="flex justify-between text-slate-600">
-        <span>Transfer fee</span>
+        <span>Fee</span>
         <span>{fromCurrencyData?.symbol}{fee.toFixed(2)}</span>
       </div>
       <div className="flex justify-between font-bold text-lg text-slate-800 border-t border-slate-200 pt-3">
-        <span>Total amount</span>
+        <span>Total you pay</span>
         <span>{fromCurrencyData?.symbol}{totalAmount}</span>
       </div>
     </div>

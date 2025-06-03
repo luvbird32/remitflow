@@ -1,39 +1,23 @@
 
 import { TransferFormData } from '../types'
 
-interface StepNavigationProps {
+interface UseStepNavigationProps {
   formData: TransferFormData
 }
 
-export function useStepNavigation({ formData }: StepNavigationProps) {
-  const showStep2 = Boolean(
-    formData.amount && 
-    formData.recipientName && 
-    formData.recipientCountry
-  )
+export function useStepNavigation({ formData }: UseStepNavigationProps) {
+  // Step 2: Show when basic info is complete
+  const showStep2 = !!(formData.amount && formData.recipientName && formData.recipientCountry)
   
-  const showStep3 = Boolean(
-    showStep2 && 
-    formData.deliveryMethod
-  )
+  // Step 3: Show when delivery method is selected
+  const showStep3 = showStep2 && !!formData.deliveryMethod
   
-  const showStep4 = Boolean(
-    showStep3 && 
-    isPaymentDetailsComplete(formData)
-  )
+  // Step 4: Show when all previous steps are complete
+  const showStep4 = showStep3
 
-  return { showStep2, showStep3, showStep4 }
-}
-
-function isPaymentDetailsComplete(formData: TransferFormData): boolean {
-  switch (formData.deliveryMethod) {
-    case 'bank':
-      return Boolean(formData.accountNumber && formData.bankName)
-    case 'card':
-      return Boolean(formData.cardNumber && formData.cardIssuer)
-    case 'wallet':
-      return Boolean(formData.mobileNumber && formData.mobileProvider)
-    default:
-      return false
+  return {
+    showStep2,
+    showStep3,
+    showStep4
   }
 }

@@ -22,7 +22,7 @@ export function AmountInput({
   return (
     <div>
       <label htmlFor="amount" className="block text-sm font-medium mb-2">
-        You Send
+        How Much?
       </label>
       <div className="flex gap-2">
         <div className="flex-1">
@@ -39,7 +39,9 @@ export function AmountInput({
           {error && (
             <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
               <AlertCircle className="h-3 w-3" />
-              {error}
+              {error.includes('greater than 0') ? 'Please enter an amount' : 
+               error.includes('exceed') ? 'Amount too large (max $50,000)' : 
+               'Please enter a valid amount'}
             </p>
           )}
         </div>

@@ -13,7 +13,7 @@ export function TrackingForm({ trackingNumber, setTrackingNumber, onTrack, isSea
   return (
     <div className="flex gap-3">
       <Input
-        placeholder="Enter tracking number (e.g., TXN12345678)"
+        placeholder="Enter reference number (e.g., TXN12345678)"
         value={trackingNumber}
         onChange={(e) => setTrackingNumber(e.target.value)}
         className="flex-1 h-12"
@@ -23,7 +23,7 @@ export function TrackingForm({ trackingNumber, setTrackingNumber, onTrack, isSea
         disabled={!trackingNumber || isSearching}
         className="h-12 px-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
       >
-        {isSearching ? "Searching..." : "Track"}
+        {isSearching ? "Looking..." : "Check Status"}
       </Button>
     </div>
   )
