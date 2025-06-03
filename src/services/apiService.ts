@@ -29,6 +29,11 @@ export class ApiService {
     }
   }
 
+  // Generic request method for external use
+  static async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
+    return this.request<T>(endpoint, options)
+  }
+
   // Currency endpoints
   static async getCurrencies() {
     return this.request('/currencies')
@@ -91,5 +96,17 @@ export class ApiService {
 
   static async getTransferHistory() {
     return this.request('/transfers')
+  }
+
+  // User profile endpoints
+  static async getUserProfile(userId: string) {
+    return this.request(`/users/profile/${userId}`)
+  }
+
+  static async updateUserProfile(userId: string, profileData: any) {
+    return this.request(`/users/profile/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(profileData),
+    })
   }
 }

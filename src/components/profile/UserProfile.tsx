@@ -1,15 +1,45 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { User, Mail, Phone, MapPin, Shield, Bell, CreditCard, Edit } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
+import { ApiService } from "@/services/apiService"
+
+interface UserInfo {
+  name: string
+  email: string
+  phone: string
+  address: string
+  dateOfBirth: string
+  nationality: string
+}
+
+interface UserPreferences {
+  emailNotifications: boolean
+  smsNotifications: boolean
+  currency: string
+  language: string
+}
+
+interface SavedCard {
+  id: string
+  last4: string
+  brand: string
+  expiryMonth: number
+  expiryYear: number
+  isDefault: boolean
+}
 
 export function UserProfile() {
   const [isEditing, setIsEditing] = useState(false)
-  const [userInfo, setUserInfo] = useState({
+  const [isLoading, setIsLoading] = useState(false)
+  const { toast } = useToast()
+  
+  const [userInfo, setUserInfo] = useState<UserInfo>({
     name: "John Doe",
     email: "john.doe@example.com",
     phone: "+1 (555) 123-4567",
@@ -18,21 +48,145 @@ export function UserProfile() {
     nationality: "United States"
   })
 
-  const [preferences, setPreferences] = useState({
+  const [preferences, setPreferences] = useState<UserPreferences>({
     emailNotifications: true,
     smsNotifications: false,
     currency: "USD",
     language: "English"
   })
 
-  const handleSaveProfile = () => {
-    setIsEditing(false)
-    // Here you would typically save to backend
-    console.log("Profile saved:", userInfo)
+  const [savedCards] = useState<SavedCard[]>([
+    {
+      id: "card_1",
+      last4: "4567",
+      brand: "Visa",
+      expiryMonth: 12,
+      expiryYear: 25,
+      isDefault: true
+    },
+    {
+      id: "card_2",
+      last4: "8901",
+      brand: "Mastercard",
+      expiryMonth: 8,
+      expiryYear: 26,
+      isDefault: false
+    }
+  ])
+
+  // Load user profile on component mount
+  useEffect(() => {
+    loadUserProfile()
+  }, [])
+
+  const loadUserProfile = async () => {
+    try {
+      setIsLoading(true)
+      // In a real app, get user ID from auth context
+      const userId = "1"
+      const profile = await ApiService.request(`/users/profile/${userId}`, { method: 'GET' })
+      
+      if (profile) {
+        setUserInfo({
+          name: profile.name || userInfo.name,
+          email: profile.email || userInfo.email,
+          phone: profile.phone || userInfo.phone,
+          address: profile.address || userInfo.address,
+          dateOfBirth: profile.dateOfBirth || userInfo.dateOfBirth,
+          nationality: profile.nationality || userInfo.nationality
+        })
+      }
+    } catch (error) {
+      console.log("Failed to load user profile, using defaults:", error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleSaveProfile = async () => {
+    try {
+      setIsLoading(true)
+      // In a real app, get user ID from auth context
+      const userId = "1"
+      
+      await ApiService.request(`/users/profile/${userId}`, {
+        method: 'PUT',
+        body: JSON.stringify(userInfo)
+      })
+      
+      setIsEditing(false)
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been successfully updated.",
+      })
+    } catch (error) {
+      console.error("Failed to save profile:", error)
+      toast({
+        title: "Update Failed",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive"
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleInputChange = (field: keyof UserInfo, value: string) => {
     setUserInfo(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handlePreferenceChange = (field: keyof UserPreferences, value: boolean | string) => {
+    setPreferences(prev => ({ ...prev, [field]: value }))
+    
+    // Save preferences immediately
+    savePreferences({ ...preferences, [field]: value })
+  }
+
+  const savePreferences = async (newPreferences: UserPreferences) => {
+    try {
+      // In a real app, save to backend
+      console.log("Saving preferences:", newPreferences)
+      toast({
+        title: "Preferences Updated",
+        description: "Your preferences have been saved.",
+      })
+    } catch (error) {
+      console.error("Failed to save preferences:", error)
+      toast({
+        title: "Save Failed",
+        description: "Failed to save preferences. Please try again.",
+        variant: "destructive"
+      })
+    }
+  }
+
+  const handleRemoveCard = async (cardId: string) => {
+    try {
+      // In a real app, call API to remove card
+      console.log("Removing card:", cardId)
+      toast({
+        title: "Card Removed",
+        description: "Payment method has been removed successfully.",
+      })
+    } catch (error) {
+      console.error("Failed to remove card:", error)
+      toast({
+        title: "Removal Failed",
+        description: "Failed to remove payment method. Please try again.",
+        variant: "destructive"
+      })
+    }
+  }
+
+  if (isLoading && !userInfo.name) {
+    return (
+      <div className="space-y-6">
+        <div className="animate-pulse">
+          <div className="h-32 bg-gray-200 rounded-lg mb-6"></div>
+          <div className="h-96 bg-gray-200 rounded-lg"></div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -65,6 +219,7 @@ export function UserProfile() {
               onClick={() => setIsEditing(!isEditing)}
               variant="outline"
               className="border-blue-200 text-blue-600 hover:bg-blue-50"
+              disabled={isLoading}
             >
               <Edit className="h-4 w-4 mr-2" />
               {isEditing ? "Cancel" : "Edit Profile"}
@@ -162,8 +317,12 @@ export function UserProfile() {
               </div>
               {isEditing && (
                 <div className="flex gap-2 pt-4">
-                  <Button onClick={handleSaveProfile} className="bg-blue-600 hover:bg-blue-700">
-                    Save Changes
+                  <Button 
+                    onClick={handleSaveProfile} 
+                    className="bg-blue-600 hover:bg-blue-700"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Saving..." : "Save Changes"}
                   </Button>
                   <Button variant="outline" onClick={() => setIsEditing(false)}>
                     Cancel
@@ -193,7 +352,16 @@ export function UserProfile() {
                     <h4 className="font-medium text-blue-700">Password</h4>
                     <p className="text-sm text-gray-600">Last changed 30 days ago</p>
                   </div>
-                  <Button variant="outline" className="border-blue-200">
+                  <Button 
+                    variant="outline" 
+                    className="border-blue-200"
+                    onClick={() => {
+                      toast({
+                        title: "Password Change",
+                        description: "Password change functionality would be implemented here.",
+                      })
+                    }}
+                  >
                     Change Password
                   </Button>
                 </div>
@@ -202,7 +370,16 @@ export function UserProfile() {
                     <h4 className="font-medium text-blue-700">Two-Factor Authentication</h4>
                     <p className="text-sm text-gray-600">Add an extra layer of security</p>
                   </div>
-                  <Button variant="outline" className="border-blue-200">
+                  <Button 
+                    variant="outline" 
+                    className="border-blue-200"
+                    onClick={() => {
+                      toast({
+                        title: "2FA Setup",
+                        description: "Two-factor authentication setup would be implemented here.",
+                      })
+                    }}
+                  >
                     Enable 2FA
                   </Button>
                 </div>
@@ -211,7 +388,16 @@ export function UserProfile() {
                     <h4 className="font-medium text-blue-700">Login History</h4>
                     <p className="text-sm text-gray-600">View recent account activity</p>
                   </div>
-                  <Button variant="outline" className="border-blue-200">
+                  <Button 
+                    variant="outline" 
+                    className="border-blue-200"
+                    onClick={() => {
+                      toast({
+                        title: "Login History",
+                        description: "Login history view would be implemented here.",
+                      })
+                    }}
+                  >
                     View History
                   </Button>
                 </div>
@@ -241,7 +427,7 @@ export function UserProfile() {
                   </div>
                   <Button
                     variant={preferences.emailNotifications ? "default" : "outline"}
-                    onClick={() => setPreferences(prev => ({ ...prev, emailNotifications: !prev.emailNotifications }))}
+                    onClick={() => handlePreferenceChange("emailNotifications", !preferences.emailNotifications)}
                     className="bg-blue-600 hover:bg-blue-700"
                   >
                     {preferences.emailNotifications ? "Enabled" : "Disabled"}
@@ -254,7 +440,7 @@ export function UserProfile() {
                   </div>
                   <Button
                     variant={preferences.smsNotifications ? "default" : "outline"}
-                    onClick={() => setPreferences(prev => ({ ...prev, smsNotifications: !prev.smsNotifications }))}
+                    onClick={() => handlePreferenceChange("smsNotifications", !preferences.smsNotifications)}
                     className="bg-blue-600 hover:bg-blue-700"
                   >
                     {preferences.smsNotifications ? "Enabled" : "Disabled"}
@@ -265,7 +451,7 @@ export function UserProfile() {
                     <label className="text-sm font-medium text-blue-700">Preferred Currency</label>
                     <Input
                       value={preferences.currency}
-                      onChange={(e) => setPreferences(prev => ({ ...prev, currency: e.target.value }))}
+                      onChange={(e) => handlePreferenceChange("currency", e.target.value)}
                       className="mt-1"
                     />
                   </div>
@@ -273,7 +459,7 @@ export function UserProfile() {
                     <label className="text-sm font-medium text-blue-700">Language</label>
                     <Input
                       value={preferences.language}
-                      onChange={(e) => setPreferences(prev => ({ ...prev, language: e.target.value }))}
+                      onChange={(e) => handlePreferenceChange("language", e.target.value)}
                       className="mt-1"
                     />
                   </div>
@@ -297,35 +483,48 @@ export function UserProfile() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 border border-blue-200 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-6 bg-blue-600 rounded flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">VISA</span>
+                {savedCards.map((card) => (
+                  <div key={card.id} className="flex items-center justify-between p-4 border border-blue-200 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-6 rounded flex items-center justify-center ${
+                        card.brand === 'Visa' ? 'bg-blue-600' : 'bg-red-600'
+                      }`}>
+                        <span className="text-white text-xs font-bold">
+                          {card.brand === 'Visa' ? 'VISA' : 'MC'}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-blue-700">•••• •••• •••• {card.last4}</p>
+                        <p className="text-sm text-gray-600">
+                          Expires {card.expiryMonth.toString().padStart(2, '0')}/{card.expiryYear}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-blue-700">•••• •••• •••• 4567</p>
-                      <p className="text-sm text-gray-600">Expires 12/25</p>
-                    </div>
+                    {card.isDefault ? (
+                      <Badge className="bg-green-100 text-green-800 border-green-200">
+                        Primary
+                      </Badge>
+                    ) : (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleRemoveCard(card.id)}
+                      >
+                        Remove
+                      </Button>
+                    )}
                   </div>
-                  <Badge className="bg-green-100 text-green-800 border-green-200">
-                    Primary
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between p-4 border border-blue-200 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-6 bg-red-600 rounded flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">MC</span>
-                    </div>
-                    <div>
-                      <p className="font-medium text-blue-700">•••• •••• •••• 8901</p>
-                      <p className="text-sm text-gray-600">Expires 08/26</p>
-                    </div>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    Remove
-                  </Button>
-                </div>
-                <Button variant="outline" className="w-full border-blue-200 text-blue-600 hover:bg-blue-50">
+                ))}
+                <Button 
+                  variant="outline" 
+                  className="w-full border-blue-200 text-blue-600 hover:bg-blue-50"
+                  onClick={() => {
+                    toast({
+                      title: "Add Payment Method",
+                      description: "Add new payment method functionality would be implemented here.",
+                    })
+                  }}
+                >
                   Add New Payment Method
                 </Button>
               </div>
