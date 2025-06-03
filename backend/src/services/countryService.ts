@@ -7,9 +7,6 @@ export interface Country {
   deliveryMethods: string[]
 }
 
-// Note: This is just a type definition file now.
-// All business logic has been moved to the backend CountryService.
-// These fallback countries are only used when the backend is unavailable.
 export const countries: Country[] = [
   { code: "US", name: "United States", currency: "USD", flag: "🇺🇸", deliveryMethods: ["bank", "card"] },
   { code: "GB", name: "United Kingdom", currency: "GBP", flag: "🇬🇧", deliveryMethods: ["bank", "card"] },
@@ -20,3 +17,22 @@ export const countries: Country[] = [
   { code: "CA", name: "Canada", currency: "CAD", flag: "🇨🇦", deliveryMethods: ["bank", "card"] },
   { code: "JP", name: "Japan", currency: "JPY", flag: "🇯🇵", deliveryMethods: ["bank", "card"] }
 ]
+
+export class CountryService {
+  static getAllCountries(): Country[] {
+    return countries
+  }
+
+  static getCountryByCode(code: string): Country | undefined {
+    return countries.find(c => c.code === code)
+  }
+
+  static getCountriesByCurrency(currencyCode: string): Country[] {
+    return countries.filter(c => c.currency === currencyCode)
+  }
+
+  static getDeliveryMethods(countryCode: string): string[] {
+    const country = this.getCountryByCode(countryCode)
+    return country?.deliveryMethods || []
+  }
+}

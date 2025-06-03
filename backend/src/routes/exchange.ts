@@ -1,31 +1,32 @@
 
 import express from 'express';
-import { currencies, countries } from '../services/transferService';
+import { CurrencyService } from '../services/currencyService';
+import { CountryService } from '../services/countryService';
 
 const router = express.Router();
 
 // Get all currencies
 router.get('/currencies', (req, res) => {
-  res.json(currencies);
+  res.json(CurrencyService.getAllCurrencies());
 });
 
 // Get all countries
 router.get('/countries', (req, res) => {
-  res.json(countries);
+  res.json(CountryService.getAllCountries());
 });
 
 // Get exchange rate between two currencies
 router.get('/rate/:from/:to', (req, res) => {
   const { from, to } = req.params;
   
-  const fromCurrency = currencies.find(c => c.code === from);
-  const toCurrency = currencies.find(c => c.code === to);
+  const fromCurrency = CurrencyService.getCurrencyByCode(from);
+  const toCurrency = CurrencyService.getCurrencyByCode(to);
   
   if (!fromCurrency || !toCurrency) {
     return res.status(404).json({ error: 'Currency not found' });
   }
   
-  const rate = toCurrency.rate / fromCurrency.rate;
+  const rate = CurrencyService.calculateExchangeRate(from, to);
   
   res.json({
     from,
@@ -45,15 +46,15 @@ router.post('/convert', (req, res) => {
     return res.status(400).json({ error: 'Missing required fields' });
   }
   
-  const fromCurrency = currencies.find(c => c.code === from);
-  const toCurrency = currencies.find(c => c.code === to);
+  const fromCurrency = CurrencyService.getCurrencyByCode(from);
+  const toCurrency = CurrencyService.getCurrencyByCode(to);
   
   if (!fromCurrency || !toCurrency) {
     return res.status(404).json({ error: 'Currency not found' });
   }
   
-  const rate = toCurrency.rate / fromCurrency.rate;
-  const convertedAmount = (parseFloat(amount) * rate).toFixed(2);
+  const rate = CurrencyService.calculateExchangeRate(from, to);
+  const convertedAmount = CurrencyService.calculateConvertedAmount(amount, from, to);
   
   res.json({
     originalAmount: amount,

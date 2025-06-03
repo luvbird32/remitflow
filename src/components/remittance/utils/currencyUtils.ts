@@ -6,6 +6,9 @@ export interface Currency {
   rate: number
 }
 
+// Note: This is just a type definition file now.
+// All business logic has been moved to the backend CurrencyService.
+// These fallback currencies are only used when the backend is unavailable.
 export const currencies: Currency[] = [
   { code: "USD", name: "US Dollar", symbol: "$", rate: 1 },
   { code: "EUR", name: "Euro", symbol: "€", rate: 0.85 },
@@ -18,6 +21,7 @@ export const currencies: Currency[] = [
   { code: "ZAR", name: "South African Rand", symbol: "R", rate: 18.75 }
 ]
 
+// Fallback functions for when backend is unavailable
 export const calculateConvertedAmount = (amount: string, fromCurrency: string, toCurrency: string): string => {
   if (!amount) return "0"
   const fromRate = currencies.find(c => c.code === fromCurrency)?.rate || 1
