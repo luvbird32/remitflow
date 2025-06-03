@@ -38,6 +38,16 @@ export function TransferFormContainer() {
     setShowSuccessDialog
   })
 
+  /**
+   * Handles navigation to track transfer section
+   */
+  const handleTrackTransfer = () => {
+    // For now, we'll just log this - in a real app this would navigate to track transfer page
+    console.log('Navigating to track transfer section for transfer:', transferResult?.id)
+    // You could implement actual navigation here, e.g.:
+    // navigate('/track-transfer', { state: { transferId: transferResult?.id } })
+  }
+
   // Show loading state until required data is loaded
   if (!isDataLoaded) {
     return (
@@ -82,6 +92,7 @@ export function TransferFormContainer() {
         onClose={handleSuccessDialogClose}
         formData={formData}
         transferResult={transferResult}
+        onTrackTransfer={handleTrackTransfer}
       />
     </>
   )
