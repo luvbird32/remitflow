@@ -1,139 +1,91 @@
 
-import { httpClient } from './httpClient'
+import { BaseApiService } from './api/baseApiService'
+import { DataApiService } from './api/dataApiService'
+import { TransactionApiService } from './api/transactionApiService'
+import { UserManagementService } from './api/userManagementService'
 import { TransferFormData } from '@/components/remittance/types'
-import { CurrencyApiService } from './currencyApiService'
-import { CountryApiService } from './countryApiService'
-import { ExchangeApiService } from './exchangeApiService'
-import { ExternalApiService } from './externalApiService'
-import { UserApiService } from './userApiService'
-import { TransferApiService } from './transferApiService'
 
 /**
- * API Service for handling transfer operations
- * This service acts as a bridge between the frontend and backend APIs
+ * Main API Service - delegates to specialized services
  */
 export class ApiService {
-  /**
-   * Creates a new transfer by calling the backend API
-   * @param transferData - The complete transfer form data
-   * @returns Promise resolving to the transfer creation response
-   */
+  // Core transfer operations
   static async createTransfer(transferData: TransferFormData) {
-    try {
-      console.log('ApiService: Creating transfer with data:', transferData)
-      
-      // Transform the frontend form data to match backend expectations
-      const backendData = {
-        amount: transferData.amount,
-        recipientName: transferData.recipientName,
-        recipientEmail: transferData.recipientEmail,
-        recipientCountry: transferData.recipientCountry,
-        deliveryMethod: transferData.deliveryMethod,
-        fromCurrency: transferData.fromCurrency,
-        toCurrency: transferData.toCurrency,
-        accountNumber: transferData.accountNumber,
-        bankName: transferData.bankName,
-        cardNumber: transferData.cardNumber,
-        cardIssuer: transferData.cardIssuer,
-        mobileNumber: transferData.mobileNumber,
-        mobileProvider: transferData.mobileProvider
-      }
-
-      const response = await httpClient.post('/transfers', backendData)
-      console.log('ApiService: Transfer created successfully:', response)
-      return response
-    } catch (error) {
-      console.error('ApiService: Transfer creation failed:', error)
-      throw error
-    }
+    return BaseApiService.createTransfer(transferData)
   }
 
-  /**
-   * Validates transfer data before submission
-   * @param transferData - The transfer data to validate
-   * @returns Promise resolving to validation result
-   */
   static async validateTransfer(transferData: TransferFormData) {
-    try {
-      const response = await httpClient.post('/transfers/validate', transferData)
-      return response
-    } catch (error) {
-      console.error('ApiService: Transfer validation failed:', error)
-      throw error
-    }
+    return BaseApiService.validateTransfer(transferData)
   }
 
-  // Currency API methods
+  // Data operations
   static async getCurrencies() {
-    return CurrencyApiService.getCurrencies()
+    return DataApiService.getCurrencies()
   }
 
   static async getCurrency(code: string) {
-    return CurrencyApiService.getCurrency(code)
+    return DataApiService.getCurrency(code)
   }
 
   static async getExchangeRate(from: string, to: string) {
-    return CurrencyApiService.getExchangeRate(from, to)
+    return DataApiService.getExchangeRate(from, to)
   }
 
-  // Country API methods
   static async getCountries() {
-    return CountryApiService.getCountries()
+    return DataApiService.getCountries()
   }
 
   static async getCountry(code: string) {
-    return CountryApiService.getCountry(code)
+    return DataApiService.getCountry(code)
   }
 
   static async getDeliveryMethods(countryCode: string) {
-    return CountryApiService.getDeliveryMethods(countryCode)
+    return DataApiService.getDeliveryMethods(countryCode)
   }
 
-  // Exchange API methods
+  // Transaction operations
   static async convertCurrency(data: { amount: string; from: string; to: string }) {
-    return ExchangeApiService.convertCurrency(data)
+    return TransactionApiService.convertCurrency(data)
   }
 
-  // External API methods
-  static async getExternalRates() {
-    return ExternalApiService.getExternalRates()
-  }
-
-  static async notifyExternalService(data: any) {
-    return ExternalApiService.notifyExternalService(data)
-  }
-
-  static async webhookCall(url: string, data: any) {
-    return ExternalApiService.webhookCall(url, data)
-  }
-
-  // User API methods
-  static async getUserProfile(userId: string) {
-    return UserApiService.getUserProfile(userId)
-  }
-
-  static async updateUserProfile(userId: string, profileData: any) {
-    return UserApiService.updateUserProfile(userId, profileData)
-  }
-
-  static async updateUserPreferences(userId: string, preferences: any) {
-    return UserApiService.updateUserPreferences(userId, preferences)
-  }
-
-  static async removePaymentMethod(userId: string, paymentMethodId: string) {
-    return UserApiService.removePaymentMethod(userId, paymentMethodId)
-  }
-
-  // Transfer API methods
   static async getTransferPreview(data: { amount: string; fromCurrency: string; toCurrency: string; deliveryMethod: string }) {
-    return TransferApiService.getTransferPreview(data)
+    return TransactionApiService.getTransferPreview(data)
   }
 
   static async trackTransfer(transferId: string) {
-    return TransferApiService.trackTransfer(transferId)
+    return TransactionApiService.trackTransfer(transferId)
   }
 
   static async getTransferHistory() {
-    return TransferApiService.getTransferHistory()
+    return TransactionApiService.getTransferHistory()
+  }
+
+  // User management operations
+  static async getUserProfile(userId: string) {
+    return UserManagementService.getUserProfile(userId)
+  }
+
+  static async updateUserProfile(userId: string, profileData: any) {
+    return UserManagementService.updateUserProfile(userId, profileData)
+  }
+
+  static async updateUserPreferences(userId: string, preferences: any) {
+    return UserManagementService.updateUserPreferences(userId, preferences)
+  }
+
+  static async removePaymentMethod(userId: string, paymentMethodId: string) {
+    return UserManagementService.removePaymentMethod(userId, paymentMethodId)
+  }
+
+  static async getExternalRates() {
+    return UserManagementService.getExternalRates()
+  }
+
+  static async notifyExternalService(data: any) {
+    return UserManagementService.notifyExternalService(data)
+  }
+
+  static async webhookCall(url: string, data: any) {
+    return UserManagementService.webhookCall(url, data)
   }
 }

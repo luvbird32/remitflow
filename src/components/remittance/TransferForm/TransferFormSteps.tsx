@@ -1,10 +1,9 @@
 
-import { DeliveryMethodStep } from '../DeliveryMethodStep'
-import { ReviewCompleteStep } from '../ReviewCompleteStep'
-import { PaymentMethodFields } from '../PaymentMethodFields'
 import { TransferFormData, FormErrors } from '../types'
-import { FormStep } from './FormStep'
 import { AmountDestinationStepContainer } from './steps/AmountDestinationStepContainer'
+import { DeliveryMethodStepContainer } from './steps/DeliveryMethodStepContainer'
+import { PaymentDetailsStepContainer } from './steps/PaymentDetailsStepContainer'
+import { ReviewStepContainer } from './steps/ReviewStepContainer'
 
 interface TransferFormStepsProps {
   formData: TransferFormData
@@ -31,11 +30,7 @@ export function TransferFormSteps({
   const showReviewStep = hasDeliveryMethod
 
   console.log('TransferFormSteps: Rendering with form data:', formData)
-  console.log('TransferFormSteps: hasBasicInfo:', hasBasicInfo)
-  console.log('TransferFormSteps: hasDeliveryMethod:', hasDeliveryMethod)
-  console.log('TransferFormSteps: showPaymentDetails:', showPaymentDetails)
-  console.log('TransferFormSteps: showReviewStep:', showReviewStep)
-  console.log('TransferFormSteps: errors:', errors)
+  console.log('TransferFormSteps: hasBasicInfo:', hasBasicInfo, 'hasDeliveryMethod:', hasDeliveryMethod)
 
   return (
     <form onSubmit={onSubmit} className="space-y-8">
@@ -47,60 +42,29 @@ export function TransferFormSteps({
       />
 
       {hasBasicInfo && (
-        <FormStep
-          stepNumber={2}
-          title="Delivery Method"
-          description="Choose how the recipient will receive the money"
-          showArrow
-          isVisible={true}
-        >
-          <DeliveryMethodStep
-            recipientCountry={formData.recipientCountry}
-            deliveryMethod={formData.deliveryMethod}
-            setDeliveryMethod={(method) => {
-              console.log('TransferFormSteps: Setting delivery method to:', method)
-              updateFormData({ deliveryMethod: method })
-            }}
-            errors={errors}
-          />
-        </FormStep>
+        <DeliveryMethodStepContainer
+          recipientCountry={formData.recipientCountry}
+          deliveryMethod={formData.deliveryMethod}
+          setDeliveryMethod={(method) => updateFormData({ deliveryMethod: method })}
+          errors={errors}
+        />
       )}
 
       {showPaymentDetails && (
-        <FormStep
-          stepNumber={3}
-          title="Payment Details"
-          description="Enter your payment information"
-          showArrow
-          isVisible={true}
-        >
-          <PaymentMethodFields
-            formData={formData}
-            onFieldChange={(field, value) => {
-              console.log('TransferFormSteps: Setting field', field, 'to:', value)
-              updateFormData({ [field]: value })
-            }}
-            errors={errors}
-          />
-        </FormStep>
+        <PaymentDetailsStepContainer
+          formData={formData}
+          onFieldChange={(field, value) => updateFormData({ [field]: value })}
+          errors={errors}
+        />
       )}
 
       {showReviewStep && (
-        <FormStep
-          stepNumber={4}
-          title="Review & Complete Transfer"
-          description="Verify all details and complete your transfer"
-          showArrow
-          isHighlighted
-          isVisible={true}
-        >
-          <ReviewCompleteStep
-            formData={formData}
-            setFormData={setFormData}
-            isSubmitting={isSubmitting}
-            errors={errors}
-          />
-        </FormStep>
+        <ReviewStepContainer
+          formData={formData}
+          setFormData={setFormData}
+          isSubmitting={isSubmitting}
+          errors={errors}
+        />
       )}
 
       {errors.general && (
