@@ -1,5 +1,5 @@
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { CheckCircle, Copy, ExternalLink, Clock, MapPin, CreditCard } from "lucide-react"
 import { TransferFormData } from './types'
@@ -65,6 +65,9 @@ export function TransferSuccessDialog({
           <DialogTitle className="text-2xl font-bold text-green-600">
             Transfer Successful!
           </DialogTitle>
+          <DialogDescription className="text-slate-600">
+            Your money transfer has been processed successfully. Use the details below to track your transfer.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 mt-6">
