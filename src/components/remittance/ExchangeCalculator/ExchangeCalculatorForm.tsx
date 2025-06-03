@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowUpDown } from "lucide-react"
-import { Currency } from '../transferUtils'
+import { Currency } from '../utils/currencyUtils'
 
 /**
  * Props interface for the ExchangeCalculatorForm component

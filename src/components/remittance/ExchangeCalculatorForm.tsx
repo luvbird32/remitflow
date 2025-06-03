@@ -1,6 +1,6 @@
 
 import { ExchangeCalculatorForm as ExchangeCalculatorFormComponent } from './ExchangeCalculator/ExchangeCalculatorForm'
-import { Currency } from './transferUtils'
+import { Currency } from './utils/currencyUtils'
 
 /**
  * Props interface for the ExchangeCalculatorForm component

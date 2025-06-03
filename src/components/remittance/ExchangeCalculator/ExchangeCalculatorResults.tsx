@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button"
-import { Currency } from '../transferUtils'
+import { Currency } from '../utils/currencyUtils'
 
 /**
  * Props interface for the ExchangeCalculatorResults component
