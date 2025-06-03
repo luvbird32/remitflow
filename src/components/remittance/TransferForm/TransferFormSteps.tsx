@@ -50,20 +50,38 @@ export function TransferFormSteps({
   const showStep2 = formData.amount && formData.recipientName && formData.recipientCountry
   const showStep3 = showStep2 && formData.deliveryMethod
 
+  console.log('Form state:', {
+    amount: formData.amount,
+    recipientName: formData.recipientName,
+    recipientCountry: formData.recipientCountry,
+    deliveryMethod: formData.deliveryMethod,
+    showStep2,
+    showStep3
+  })
+
   return (
     <form onSubmit={onSubmit} className="space-y-8">
       {/* Step 1: Amount and Destination - Always visible */}
-      <AmountDestinationStep
-        amount={formData.amount}
-        setAmount={(amount) => updateFormData({ amount })}
-        recipientName={formData.recipientName}
-        setRecipientName={(name) => updateFormData({ recipientName: name })}
-        recipientCountry={formData.recipientCountry}
-        onCountryChange={onCountryChange}
-        fromCurrency={formData.fromCurrency}
-        setFromCurrency={(currency) => updateFormData({ fromCurrency: currency })}
-        errors={errors}
-      />
+      <div className="modern-card p-6">
+        <div className="flex items-center gap-3 mb-6 text-sm font-semibold text-teal-600">
+          <div className="step-indicator">1</div>
+          <div>
+            <h3 className="text-lg font-bold text-slate-800">Amount & Destination</h3>
+            <p className="text-sm text-slate-500 font-normal">Enter transfer amount and recipient details</p>
+          </div>
+        </div>
+        <AmountDestinationStep
+          amount={formData.amount}
+          setAmount={(amount) => updateFormData({ amount })}
+          recipientName={formData.recipientName}
+          setRecipientName={(name) => updateFormData({ recipientName: name })}
+          recipientCountry={formData.recipientCountry}
+          onCountryChange={onCountryChange}
+          fromCurrency={formData.fromCurrency}
+          setFromCurrency={(currency) => updateFormData({ fromCurrency: currency })}
+          errors={errors}
+        />
+      </div>
 
       {/* Step 2: Delivery Method - Shown after step 1 completion */}
       {showStep2 && (
@@ -72,12 +90,21 @@ export function TransferFormSteps({
             <ArrowDown className="h-5 w-5 text-gray-400" />
           </div>
           
-          <DeliveryMethodStep
-            recipientCountry={formData.recipientCountry}
-            deliveryMethod={formData.deliveryMethod}
-            setDeliveryMethod={(method) => updateFormData({ deliveryMethod: method })}
-            errors={errors}
-          />
+          <div className="modern-card p-6">
+            <div className="flex items-center gap-3 mb-6 text-sm font-semibold text-teal-600">
+              <div className="step-indicator">2</div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-800">Delivery Method</h3>
+                <p className="text-sm text-slate-500 font-normal">Choose how the recipient will receive the money</p>
+              </div>
+            </div>
+            <DeliveryMethodStep
+              recipientCountry={formData.recipientCountry}
+              deliveryMethod={formData.deliveryMethod}
+              setDeliveryMethod={(method) => updateFormData({ deliveryMethod: method })}
+              errors={errors}
+            />
+          </div>
         </>
       )}
 
@@ -88,12 +115,14 @@ export function TransferFormSteps({
             <ArrowDown className="h-5 w-5 text-gray-400" />
           </div>
           
-          <ReviewCompleteStep
-            formData={formData}
-            setFormData={updateFormData}
-            isSubmitting={isSubmitting}
-            errors={errors}
-          />
+          <div className="modern-card p-6 border-2 border-coral-200 bg-gradient-to-r from-coral-50 to-orange-50">
+            <ReviewCompleteStep
+              formData={formData}
+              setFormData={setFormData}
+              isSubmitting={isSubmitting}
+              errors={errors}
+            />
+          </div>
         </>
       )}
 
