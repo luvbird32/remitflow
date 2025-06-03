@@ -29,9 +29,12 @@ export function useTransferForm() {
   useEffect(() => {
     const loadData = async () => {
       try {
+        console.log('Loading currencies and countries data...')
         await loadCurrenciesAndCountries()
+        console.log('Data loaded successfully')
       } catch (error) {
-        console.log('Using fallback data for transfer form')
+        console.log('API unavailable, using fallback data for transfer form')
+        console.error('Data loading error:', error)
       } finally {
         setIsDataLoaded(true)
       }
@@ -40,38 +43,52 @@ export function useTransferForm() {
   }, [])
 
   const handleCountryChange = (countryCode: string) => {
-    const country = countries.find((c: any) => c.code === countryCode)
-    setFormData(prev => ({
-      ...prev,
-      recipientCountry: countryCode,
-      toCurrency: (country as any)?.currency || prev.toCurrency,
-      deliveryMethod: ""
-    }))
+    try {
+      const country = countries.find((c: any) => c?.code === countryCode)
+      console.log('Country selected:', countryCode, country)
+      
+      setFormData(prev => ({
+        ...prev,
+        recipientCountry: countryCode,
+        toCurrency: (country as any)?.currency || prev.toCurrency,
+        deliveryMethod: ""
+      }))
+    } catch (error) {
+      console.error('Error handling country change:', error)
+    }
   }
 
   const updateFormData = (updates: Partial<TransferFormData>) => {
-    setFormData(prev => ({ ...prev, ...updates }))
+    try {
+      setFormData(prev => ({ ...prev, ...updates }))
+    } catch (error) {
+      console.error('Error updating form data:', error)
+    }
   }
 
   const handleSuccessDialogClose = () => {
-    setShowSuccessDialog(false)
-    setTransferResult(null)
-    setFormData({
-      amount: "",
-      recipientName: "",
-      recipientEmail: "",
-      recipientCountry: "",
-      deliveryMethod: "",
-      fromCurrency: "USD",
-      toCurrency: "EUR",
-      accountNumber: "",
-      bankName: "",
-      cardNumber: "",
-      cardIssuer: "",
-      mobileNumber: "",
-      mobileProvider: ""
-    })
-    setErrors({})
+    try {
+      setShowSuccessDialog(false)
+      setTransferResult(null)
+      setFormData({
+        amount: "",
+        recipientName: "",
+        recipientEmail: "",
+        recipientCountry: "",
+        deliveryMethod: "",
+        fromCurrency: "USD",
+        toCurrency: "EUR",
+        accountNumber: "",
+        bankName: "",
+        cardNumber: "",
+        cardIssuer: "",
+        mobileNumber: "",
+        mobileProvider: ""
+      })
+      setErrors({})
+    } catch (error) {
+      console.error('Error closing success dialog:', error)
+    }
   }
 
   return {
