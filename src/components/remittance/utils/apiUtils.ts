@@ -8,6 +8,9 @@ export const loadCurrenciesAndCountries = async () => {
   // - DeliveryService: handles delivery method operations
   // - FeeService: handles fee calculations
   // - TransferService: orchestrates transfer operations
+  // - ExchangeService: handles currency conversion
+  // - TrackingService: handles transfer tracking
+  // - ValidationService: handles all validation logic
   return Promise.resolve()
 }
 

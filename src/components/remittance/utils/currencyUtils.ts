@@ -1,3 +1,4 @@
+
 // Frontend utility - only types and API communication
 export interface Currency {
   code: string
@@ -12,5 +13,8 @@ export const fallbackCurrencies: Currency[] = [
   { code: "EUR", name: "Euro", symbol: "€", rate: 0.85 },
   { code: "GBP", name: "British Pound", symbol: "£", rate: 0.73 }
 ]
+
+// Re-export from countryUtils for backwards compatibility
+export { fallbackCountries } from './countryUtils'
 
 // All business logic moved to backend CurrencyService
