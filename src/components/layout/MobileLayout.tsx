@@ -8,11 +8,18 @@ import { TrackTransfer } from '@/components/remittance/TrackTransfer';
 import { UserProfile } from '@/components/profile/UserProfile';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Send, History, TrendingUp, Calculator, Search, User } from 'lucide-react';
+import { useState } from 'react';
 
 export function MobileLayout() {
+  const [activeTab, setActiveTab] = useState('send');
+
+  const handleProfileClick = () => {
+    setActiveTab('profile');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-coral-50">
-      <Header />
+      <Header onProfileClick={handleProfileClick} />
       
       <main className="container mx-auto px-3 py-4 pb-20">
         <div className="mb-6 text-center">
@@ -29,10 +36,10 @@ export function MobileLayout() {
           </p>
         </div>
 
-        <Tabs defaultValue="send" className="space-y-4">
-          {/* Fixed bottom navigation for better mobile UX */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          {/* Fixed bottom navigation for main features */}
           <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-slate-200/50 shadow-lg">
-            <TabsList className="grid w-full grid-cols-3 bg-transparent border-none p-2 h-auto">
+            <TabsList className="grid w-full grid-cols-5 bg-transparent border-none p-2 h-auto">
               <TabsTrigger 
                 value="send" 
                 className="flex flex-col items-center gap-1 py-3 px-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-800"
@@ -54,32 +61,19 @@ export function MobileLayout() {
                 <Calculator className="h-5 w-5" />
                 <span className="text-xs font-medium">Calculator</span>
               </TabsTrigger>
-            </TabsList>
-          </div>
-
-          {/* Secondary navigation for additional features */}
-          <div className="bg-white/80 backdrop-blur-sm border border-slate-200/50 shadow-md rounded-2xl p-1">
-            <TabsList className="grid w-full grid-cols-3 bg-transparent border-none h-auto">
               <TabsTrigger 
                 value="history" 
-                className="flex flex-col items-center gap-1 py-2 px-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-800"
+                className="flex flex-col items-center gap-1 py-3 px-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-800"
               >
-                <History className="h-4 w-4" />
+                <History className="h-5 w-5" />
                 <span className="text-xs font-medium">History</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="rates" 
-                className="flex flex-col items-center gap-1 py-2 px-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-800"
+                className="flex flex-col items-center gap-1 py-3 px-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-800"
               >
-                <TrendingUp className="h-4 w-4" />
+                <TrendingUp className="h-5 w-5" />
                 <span className="text-xs font-medium">Rates</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="profile" 
-                className="flex flex-col items-center gap-1 py-2 px-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-800"
-              >
-                <User className="h-4 w-4" />
-                <span className="text-xs font-medium">Profile</span>
               </TabsTrigger>
             </TabsList>
           </div>

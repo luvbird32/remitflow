@@ -5,7 +5,11 @@ import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/hooks/useAuth"
 import { useIsMobile } from "@/hooks/use-mobile"
 
-export function Header() {
+interface HeaderProps {
+  onProfileClick?: () => void
+}
+
+export function Header({ onProfileClick }: HeaderProps) {
   const { toast } = useToast()
   const { user, signOut } = useAuth()
   const isMobile = useIsMobile()
@@ -25,9 +29,27 @@ export function Header() {
     })
   }
 
+  const handleProfileClick = () => {
+    if (onProfileClick) {
+      onProfileClick()
+    }
+  }
+
   return (
     <header className="glass backdrop-blur-xl shadow-lg border-b border-slate-200/30 sticky top-0 z-40">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-end">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Mobile Profile Button */}
+        {isMobile && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="text-slate-600 hover:text-teal-600 hover:bg-teal-50/80 rounded-xl transition-all duration-200 hover:scale-105 h-10 w-10"
+            onClick={handleProfileClick}
+          >
+            <User className="h-4 w-4" />
+          </Button>
+        )}
+
         {/* User Actions */}
         <div className="flex items-center space-x-2">
           {!isMobile && (
