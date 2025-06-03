@@ -43,87 +43,83 @@ export function TransferSuccessDialog({ isOpen, onClose, formData, transferResul
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] modern-card border-none shadow-2xl overflow-y-auto">
-        <DialogHeader className="text-center pb-4 sm:pb-6">
-          <div className="flex justify-center mb-4 sm:mb-6">
+      <DialogContent className="w-[90vw] max-w-md max-h-[85vh] modern-card border-none shadow-2xl overflow-y-auto">
+        <DialogHeader className="text-center pb-2">
+          <div className="flex justify-center mb-3">
             <div className="relative">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-emerald-500 to-green-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-500/25 animate-scale-in">
-                <CheckCircle className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/25 animate-scale-in">
+                <CheckCircle className="h-6 w-6 text-white" />
               </div>
-              <div className="absolute -top-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-coral-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-                <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+              <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-coral-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                <Sparkles className="h-2.5 w-2.5 text-white" />
               </div>
             </div>
           </div>
-          <DialogTitle className="text-xl sm:text-2xl font-bold gradient-text mb-2 sm:mb-3">
+          <DialogTitle className="text-lg font-bold gradient-text mb-1">
             Transfer Sent Successfully!
           </DialogTitle>
-          <DialogDescription className="text-slate-600 text-base sm:text-lg px-2">
-            Your money transfer to <span className="font-semibold text-slate-800">{formData.recipientName}</span> has been initiated and is being processed.
+          <DialogDescription className="text-slate-600 text-sm px-2">
+            Your transfer to <span className="font-semibold text-slate-800">{formData.recipientName}</span> is being processed.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 sm:space-y-6 mt-4 sm:mt-8">
+        <div className="space-y-3 mt-4">
           {/* Transfer Summary */}
-          <div className="modern-card p-4 sm:p-6 bg-gradient-to-r from-emerald-50 to-green-50 border-emerald-200">
-            <div className="text-center space-y-3 sm:space-y-4">
-              <div className="flex items-center justify-center gap-2 sm:gap-4">
+          <div className="modern-card p-3 bg-gradient-to-r from-emerald-50 to-green-50 border-emerald-200">
+            <div className="text-center space-y-2">
+              <div className="flex items-center justify-center gap-3">
                 <div className="text-center">
-                  <div className="text-lg sm:text-2xl font-bold text-emerald-700">
+                  <div className="text-lg font-bold text-emerald-700">
                     {fromCurrencyData?.symbol}{formData.amount}
                   </div>
-                  <div className="text-xs sm:text-sm text-emerald-600 font-medium">{formData.fromCurrency}</div>
+                  <div className="text-xs text-emerald-600 font-medium">{formData.fromCurrency}</div>
                 </div>
-                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl flex items-center justify-center shadow-lg">
-                  <ArrowRight className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+                <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl flex items-center justify-center shadow-md">
+                  <ArrowRight className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-center">
-                  <div className="text-lg sm:text-2xl font-bold text-emerald-700">
+                  <div className="text-lg font-bold text-emerald-700">
                     {toCurrencyData?.symbol}{convertedAmount}
                   </div>
-                  <div className="text-xs sm:text-sm text-emerald-600 font-medium">{formData.toCurrency}</div>
+                  <div className="text-xs text-emerald-600 font-medium">{formData.toCurrency}</div>
                 </div>
               </div>
-              <div className="flex items-center justify-center gap-2 text-emerald-700 font-semibold text-sm sm:text-base">
-                <span className="text-base sm:text-lg">{selectedCountry?.flag}</span>
+              <div className="flex items-center justify-center gap-2 text-emerald-700 font-semibold text-sm">
+                <span className="text-sm">{selectedCountry?.flag}</span>
                 <span>to {formData.recipientName} in {selectedCountry?.name}</span>
               </div>
-              <div className="flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-emerald-100 rounded-xl">
-                <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-emerald-600" />
-                <span className="text-xs sm:text-sm font-semibold text-emerald-700">
-                  Expected delivery: {deliveryTimeframes[formData.deliveryMethod as keyof typeof deliveryTimeframes]}
+              <div className="flex items-center justify-center gap-1 px-2 py-1 bg-emerald-100 rounded-lg">
+                <Clock className="h-3 w-3 text-emerald-600" />
+                <span className="text-xs font-semibold text-emerald-700">
+                  {deliveryTimeframes[formData.deliveryMethod as keyof typeof deliveryTimeframes]}
                 </span>
               </div>
             </div>
           </div>
 
           {/* Transaction Details */}
-          <div className="modern-card p-4 sm:p-6 bg-gradient-to-r from-slate-50 to-slate-100/50 border-slate-200">
-            <h4 className="text-base sm:text-lg font-bold text-slate-800 mb-3 sm:mb-4 flex items-center gap-2">
-              <Gift className="h-4 w-4 sm:h-5 sm:w-5" />
+          <div className="modern-card p-3 bg-gradient-to-r from-slate-50 to-slate-100/50 border-slate-200">
+            <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1">
+              <Gift className="h-3 w-3" />
               Transaction Details
             </h4>
-            <div className="space-y-2 sm:space-y-3">
-              <div className="flex justify-between items-center p-2 sm:p-3 bg-white/80 rounded-xl">
-                <span className="text-slate-600 font-medium text-sm sm:text-base">Amount sent:</span>
-                <span className="font-bold text-slate-800 text-sm sm:text-base">{fromCurrencyData?.symbol}{formData.amount}</span>
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center p-2 bg-white/80 rounded-lg">
+                <span className="text-slate-600 font-medium text-xs">Amount sent:</span>
+                <span className="font-bold text-slate-800 text-xs">{fromCurrencyData?.symbol}{formData.amount}</span>
               </div>
-              <div className="flex justify-between items-center p-2 sm:p-3 bg-white/80 rounded-xl">
-                <span className="text-slate-600 font-medium text-sm sm:text-base">Transfer fee:</span>
-                <span className="font-bold text-amber-600 text-sm sm:text-base">${fee.toFixed(2)}</span>
+              <div className="flex justify-between items-center p-2 bg-white/80 rounded-lg">
+                <span className="text-slate-600 font-medium text-xs">Transfer fee:</span>
+                <span className="font-bold text-amber-600 text-xs">${fee.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center p-2 sm:p-3 bg-gradient-to-r from-slate-100 to-slate-50 rounded-xl border border-slate-200">
-                <span className="text-slate-700 font-semibold text-sm sm:text-base">Total charged:</span>
-                <span className="font-bold text-slate-800 text-sm sm:text-base">{fromCurrencyData?.symbol}{totalAmount}</span>
+              <div className="flex justify-between items-center p-2 bg-gradient-to-r from-slate-100 to-slate-50 rounded-lg border border-slate-200">
+                <span className="text-slate-700 font-semibold text-xs">Total charged:</span>
+                <span className="font-bold text-slate-800 text-xs">{fromCurrencyData?.symbol}{totalAmount}</span>
               </div>
-              <div className="flex justify-between items-center p-2 sm:p-3 bg-white/80 rounded-xl">
-                <span className="text-slate-600 font-medium text-sm sm:text-base">Exchange rate:</span>
-                <span className="font-semibold text-slate-800 text-sm sm:text-base">1 {formData.fromCurrency} = {toCurrencyData?.rate} {formData.toCurrency}</span>
-              </div>
-              <div className="flex justify-between items-center p-2 sm:p-3 bg-white/80 rounded-xl">
-                <span className="text-slate-600 font-medium text-sm sm:text-base">Delivery method:</span>
-                <span className="font-semibold text-slate-800 flex items-center gap-2 text-sm sm:text-base">
-                  <CreditCard className="h-3 w-3 sm:h-4 sm:w-4" />
+              <div className="flex justify-between items-center p-2 bg-white/80 rounded-lg">
+                <span className="text-slate-600 font-medium text-xs">Delivery method:</span>
+                <span className="font-semibold text-slate-800 flex items-center gap-1 text-xs">
+                  <CreditCard className="h-3 w-3" />
                   {deliveryMethodLabels[formData.deliveryMethod as keyof typeof deliveryMethodLabels]}
                 </span>
               </div>
@@ -131,61 +127,38 @@ export function TransferSuccessDialog({ isOpen, onClose, formData, transferResul
           </div>
 
           {/* Transfer Reference */}
-          <div className="modern-card p-4 sm:p-6 bg-gradient-to-r from-teal-50 to-cyan-50 border-teal-200">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex-1">
-                <p className="text-teal-700 font-semibold mb-1 text-sm sm:text-base">Transfer Reference</p>
-                <p className="font-mono font-bold text-lg sm:text-xl text-teal-800 break-all">{transferRef}</p>
+          <div className="modern-card p-3 bg-gradient-to-r from-teal-50 to-cyan-50 border-teal-200">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-teal-700 font-semibold mb-1 text-xs">Transfer Reference</p>
+                <p className="font-mono font-bold text-sm text-teal-800 break-all">{transferRef}</p>
               </div>
               <Button 
                 variant="outline" 
                 onClick={copyReference}
-                className="btn-primary h-10 sm:h-12 px-4 sm:px-6 w-full sm:w-auto"
+                className="btn-primary h-8 px-3 text-xs"
               >
-                <Copy className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                <Copy className="h-3 w-3 mr-1" />
                 Copy
               </Button>
             </div>
           </div>
 
-          {/* Next Steps */}
-          <div className="modern-card p-4 sm:p-6 border-coral-200 bg-gradient-to-r from-coral-50 to-orange-50">
-            <h4 className="font-bold text-slate-800 mb-3 sm:mb-4 text-base sm:text-lg">What happens next?</h4>
-            <ul className="space-y-2 sm:space-y-3 text-slate-700">
-              <li className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-coral-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="font-medium text-sm sm:text-base">We'll send you email updates on the transfer status</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-coral-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="font-medium text-sm sm:text-base">{formData.recipientName} will be notified when funds are available</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-coral-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="font-medium text-sm sm:text-base">You can track your transfer anytime using the reference number</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-coral-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="font-medium text-sm sm:text-base">Funds will be available within {deliveryTimeframes[formData.deliveryMethod as keyof typeof deliveryTimeframes]}</span>
-              </li>
-            </ul>
-          </div>
-
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
+          <div className="flex gap-2 pt-2">
             <Button 
               variant="outline" 
-              className="flex-1 h-12 sm:h-14 text-base sm:text-lg font-semibold border-2 hover:bg-slate-50" 
+              className="flex-1 h-10 text-sm font-semibold border-2 hover:bg-slate-50" 
               onClick={onClose}
             >
-              Send Another Transfer
+              Send Another
             </Button>
             <Button 
-              className="btn-primary flex-1 h-12 sm:h-14 text-base sm:text-lg font-semibold" 
+              className="btn-primary flex-1 h-10 text-sm font-semibold" 
               onClick={onClose}
             >
               Track Transfer
-              <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+              <ArrowRight className="ml-1 h-3 w-3" />
             </Button>
           </div>
         </div>
