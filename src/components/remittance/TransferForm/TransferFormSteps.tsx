@@ -4,6 +4,9 @@ import { AmountDestinationStepContainer } from './steps/AmountDestinationStepCon
 import { DeliveryMethodStepContainer } from './steps/DeliveryMethodStepContainer'
 import { PaymentDetailsStepContainer } from './steps/PaymentDetailsStepContainer'
 import { ReviewStepContainer } from './steps/ReviewStepContainer'
+import { FormLayout } from './FormLayout'
+import { FormErrorDisplay } from './FormErrorDisplay'
+import { useStepVisibility } from './StepVisibilityManager'
 
 interface TransferFormStepsProps {
   formData: TransferFormData
@@ -24,16 +27,13 @@ export function TransferFormSteps({
   isSubmitting,
   onSubmit
 }: TransferFormStepsProps) {
-  const hasBasicInfo = !!(formData.amount && formData.recipientName && formData.recipientCountry)
-  const hasDeliveryMethod = hasBasicInfo && !!formData.deliveryMethod
-  const showPaymentDetails = hasDeliveryMethod
-  const showReviewStep = hasDeliveryMethod
+  const { hasBasicInfo, showPaymentDetails, showReviewStep } = useStepVisibility({ formData })
 
   console.log('TransferFormSteps: Rendering with form data:', formData)
-  console.log('TransferFormSteps: hasBasicInfo:', hasBasicInfo, 'hasDeliveryMethod:', hasDeliveryMethod)
+  console.log('TransferFormSteps: hasBasicInfo:', hasBasicInfo, 'showPaymentDetails:', showPaymentDetails)
 
   return (
-    <form onSubmit={onSubmit} className="space-y-8">
+    <FormLayout onSubmit={onSubmit}>
       <AmountDestinationStepContainer
         formData={formData}
         updateFormData={updateFormData}
@@ -67,11 +67,7 @@ export function TransferFormSteps({
         />
       )}
 
-      {errors.general && (
-        <div className="text-red-500 text-sm text-center">
-          {errors.general}
-        </div>
-      )}
-    </form>
+      <FormErrorDisplay errors={errors} />
+    </FormLayout>
   )
 }
