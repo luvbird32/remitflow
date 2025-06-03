@@ -1,8 +1,7 @@
 
 import { useState, useEffect } from "react"
 import { TransferFormData, FormErrors } from '../types'
-import { ApiService } from '@/services/apiService'
-import { countries, loadCurrenciesAndCountries } from '../transferUtils'
+import { loadCurrenciesAndCountries } from '../transferUtils'
 
 export function useTransferForm() {
   const [formData, setFormData] = useState<TransferFormData>({
@@ -20,7 +19,6 @@ export function useTransferForm() {
     mobileNumber: "",
     mobileProvider: ""
   })
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
   const [transferResult, setTransferResult] = useState<any>(null)
@@ -44,6 +42,7 @@ export function useTransferForm() {
 
   const handleCountryChange = (countryCode: string) => {
     try {
+      const { countries } = require('../transferUtils')
       const country = countries.find((c: any) => c?.code === countryCode)
       console.log('Country selected:', countryCode, country)
       
@@ -94,8 +93,6 @@ export function useTransferForm() {
   return {
     formData,
     setFormData,
-    isSubmitting,
-    setIsSubmitting,
     showSuccessDialog,
     setShowSuccessDialog,
     errors,
