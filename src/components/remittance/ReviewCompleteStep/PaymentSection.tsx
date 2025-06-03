@@ -1,20 +1,11 @@
 
-import { useState, useEffect } from "react"
 import { CreditCard, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { TransferFormData, FormErrors } from '../types'
 import { PaymentMethodSelector } from './PaymentSection/PaymentMethodSelector'
 import { FallbackPaymentForm } from './PaymentSection/FallbackPaymentForm'
-
-interface SavedCard {
-  id: string
-  last4: string
-  brand: string
-  expiryMonth: number
-  expiryYear: number
-  isDefault: boolean
-}
+import { usePaymentMethodManager } from './PaymentSection/PaymentMethodManager'
 
 interface PaymentSectionProps {
   formData: TransferFormData
@@ -33,50 +24,13 @@ export function PaymentSection({
   isSubmitting,
   errors
 }: PaymentSectionProps) {
-  const [savedCards, setSavedCards] = useState<SavedCard[]>([])
-  const [selectedCard, setSelectedCard] = useState<string | null>(null)
-  const [useNewCard, setUseNewCard] = useState(false)
-
-  // Mock saved cards - in real app, this would come from user profile/API
-  useEffect(() => {
-    const mockSavedCards: SavedCard[] = [
-      {
-        id: "card_1",
-        last4: "4567",
-        brand: "Visa",
-        expiryMonth: 12,
-        expiryYear: 25,
-        isDefault: true
-      },
-      {
-        id: "card_2", 
-        last4: "8901",
-        brand: "Mastercard",
-        expiryMonth: 8,
-        expiryYear: 26,
-        isDefault: false
-      }
-    ]
-    setSavedCards(mockSavedCards)
-    
-    // Auto-select default card if available
-    const defaultCard = mockSavedCards.find(card => card.isDefault)
-    if (defaultCard) {
-      setSelectedCard(defaultCard.id)
-    }
-  }, [])
-
-  const handleCardSelection = (cardId: string) => {
-    setSelectedCard(cardId)
-    setUseNewCard(false)
-    setShowPaymentFields(false)
-  }
-
-  const handleUseNewCard = () => {
-    setUseNewCard(true)
-    setSelectedCard(null)
-    setShowPaymentFields(true)
-  }
+  const {
+    savedCards,
+    selectedCard,
+    useNewCard,
+    handleCardSelection,
+    handleUseNewCard
+  } = usePaymentMethodManager()
 
   return (
     <Card className="modern-card">
@@ -91,7 +45,7 @@ export function PaymentSection({
         {savedCards.length > 0 ? (
           <div className="space-y-4">
             <p className="text-slate-600">
-              Choose a payment method for this transfer
+              Choose how to pay for this transfer
             </p>
             
             <PaymentMethodSelector
@@ -99,8 +53,8 @@ export function PaymentSection({
               selectedCard={selectedCard}
               useNewCard={useNewCard}
               showPaymentFields={showPaymentFields}
-              onCardSelection={handleCardSelection}
-              onUseNewCard={handleUseNewCard}
+              onCardSelection={(cardId) => handleCardSelection(cardId, setShowPaymentFields)}
+              onUseNewCard={() => handleUseNewCard(setShowPaymentFields)}
               onFieldChange={onPaymentFieldChange}
             />
 
@@ -112,11 +66,11 @@ export function PaymentSection({
               {isSubmitting ? (
                 <div className="flex items-center gap-2">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  Processing Transfer...
+                  Sending money...
                 </div>
               ) : (
                 <>
-                  Complete Transfer
+                  Send Money
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </>
               )}
