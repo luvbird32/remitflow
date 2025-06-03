@@ -8,6 +8,7 @@ import { useTransferTracking } from './hooks/useTransferTracking'
 import { useFormData } from '../hooks/useFormData'
 import { useDataLoading } from '../hooks/useDataLoading'
 import { useCountryHandling } from '../hooks/useCountryHandling'
+import { useEffect } from 'react'
 
 export function TransferFormContainer() {
   const {
@@ -33,6 +34,15 @@ export function TransferFormContainer() {
     setShowSuccessDialog
   })
 
+  // Reset form when dialog closes
+  useEffect(() => {
+    if (!showSuccessDialog && transferResult) {
+      console.log('Dialog closed, resetting form data')
+      resetFormData()
+      setErrors({})
+    }
+  }, [showSuccessDialog, transferResult, resetFormData, setErrors])
+
   const onTrackTransfer = () => {
     handleTrackTransfer(transferResult, formData, handleSuccessDialogClose)
   }
@@ -41,25 +51,34 @@ export function TransferFormContainer() {
     return <LoadingState />
   }
 
-  return (
-    <>
-      <TransferFormCard
-        formData={formData}
-        setFormData={setFormData}
-        updateFormData={updateFormData}
-        onCountryChange={handleCountryChange}
-        errors={errors}
-        isSubmitting={isSubmitting}
-        onSubmit={handleSubmit}
-      />
+  try {
+    return (
+      <>
+        <TransferFormCard
+          formData={formData}
+          setFormData={setFormData}
+          updateFormData={updateFormData}
+          onCountryChange={handleCountryChange}
+          errors={errors}
+          isSubmitting={isSubmitting}
+          onSubmit={handleSubmit}
+        />
 
-      <TransferSuccessDialog
-        isOpen={showSuccessDialog}
-        onClose={handleSuccessDialogClose}
-        formData={formData}
-        transferResult={transferResult}
-        onTrackTransfer={onTrackTransfer}
-      />
-    </>
-  )
+        <TransferSuccessDialog
+          isOpen={showSuccessDialog}
+          onClose={handleSuccessDialogClose}
+          formData={formData}
+          transferResult={transferResult}
+          onTrackTransfer={onTrackTransfer}
+        />
+      </>
+    )
+  } catch (error) {
+    console.error('TransferFormContainer error:', error)
+    return (
+      <div className="modern-card p-6 text-center">
+        <p className="text-red-600">Something went wrong with the transfer form. Please refresh the page.</p>
+      </div>
+    )
+  }
 }

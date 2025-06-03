@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { TransferFormData } from '../types'
 import { CrashReporter } from '@/utils/crashReporter'
 
@@ -22,25 +22,27 @@ const initialFormData: TransferFormData = {
 export function useFormData() {
   const [formData, setFormData] = useState<TransferFormData>(initialFormData)
 
-  const updateFormData = (updates: Partial<TransferFormData>) => {
+  const updateFormData = useCallback((updates: Partial<TransferFormData>) => {
     try {
+      console.log('Updating form data:', updates)
       setFormData(prev => ({ ...prev, ...updates }))
     } catch (error) {
       CrashReporter.report('component_error', error as Error, 'Updating form data')
       console.error('Error updating form data:', error)
     }
-  }
+  }, [])
 
-  const resetFormData = () => {
+  const resetFormData = useCallback(() => {
     try {
+      console.log('Resetting form data to initial state')
       setFormData(initialFormData)
     } catch (error) {
       CrashReporter.report('component_error', error as Error, 'Resetting form data')
       console.error('Error resetting form data:', error)
     }
-  }
+  }, [])
 
-  const validateFormData = (step: number): boolean => {
+  const validateFormData = useCallback((step: number): boolean => {
     try {
       switch (step) {
         case 1:
@@ -56,7 +58,7 @@ export function useFormData() {
       CrashReporter.report('validation_error', error as Error, `Validating form data step ${step}`)
       return false
     }
-  }
+  }, [formData])
 
   return {
     formData,
