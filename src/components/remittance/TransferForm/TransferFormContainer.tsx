@@ -4,6 +4,7 @@ import { LoadingState } from './LoadingState'
 import { TransferFormCard } from './TransferFormCard'
 import { useTransferForm } from '../hooks/useTransferForm'
 import { useTransferSubmission } from '../hooks/useTransferSubmission'
+import { useToast } from '@/hooks/use-toast'
 
 /**
  * Main transfer form container component that manages the complete money transfer process.
@@ -15,6 +16,8 @@ import { useTransferSubmission } from '../hooks/useTransferSubmission'
  * @returns JSX element containing the complete transfer form with loading states and success dialog
  */
 export function TransferFormContainer() {
+  const { toast } = useToast()
+  
   const {
     formData,
     setFormData,
@@ -38,10 +41,35 @@ export function TransferFormContainer() {
   })
 
   /**
-   * Handles navigation to track transfer section
+   * Handles navigation to track transfer section with the transfer ID
    */
   const handleTrackTransfer = () => {
-    console.log('Navigating to track transfer section for transfer:', transferResult?.id)
+    if (transferResult?.id) {
+      console.log('Tracking transfer:', transferResult.id)
+      toast({
+        title: "Track Transfer",
+        description: `Use ID ${transferResult.id} to track your transfer status`,
+      })
+      
+      // Store transfer ID in localStorage for tracking
+      const existingTransfers = JSON.parse(localStorage.getItem('transferHistory') || '[]')
+      const newTransfer = {
+        id: transferResult.id,
+        amount: formData.amount,
+        currency: formData.fromCurrency,
+        recipientName: formData.recipientName,
+        recipientCountry: formData.recipientCountry,
+        status: transferResult.status,
+        createdAt: new Date().toISOString(),
+        estimatedDelivery: transferResult.estimatedDelivery
+      }
+      
+      const updatedTransfers = [newTransfer, ...existingTransfers.slice(0, 9)] // Keep last 10
+      localStorage.setItem('transferHistory', JSON.stringify(updatedTransfers))
+      
+      // Close dialog after storing
+      handleSuccessDialogClose()
+    }
   }
 
   // Show loading state until required data is loaded
