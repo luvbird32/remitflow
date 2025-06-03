@@ -5,6 +5,7 @@ import { CountryService } from './countryService';
 import { DeliveryService } from './deliveryService';
 import { FeeService } from './feeService';
 import { ValidationService } from './validationService';
+import { TransferIdService } from './transferIdService';
 
 // Re-export for backward compatibility
 export const currencies = CurrencyService.getAllCurrencies();
@@ -28,6 +29,6 @@ export class TransferService {
   }
 
   static generateTransferId(): string {
-    return 'TXN' + Date.now() + Math.random().toString(36).substr(2, 9);
+    return TransferIdService.generateId();
   }
 }
