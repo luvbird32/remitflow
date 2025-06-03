@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { User, Mail, Phone, MapPin, Shield, Bell, CreditCard, Edit } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { ApiService } from "@/services/apiService"
+import { EnhancedApiService } from "@/services/enhancedApiService"
 import { UserInfo, UserPreferences, SavedCard, UserProfileResponse } from "./types"
 
 export function UserProfile() {
@@ -59,7 +59,7 @@ export function UserProfile() {
       setIsLoading(true)
       // In a real app, get user ID from auth context
       const userId = "1"
-      const profile = await ApiService.getUserProfile(userId) as UserProfileResponse
+      const profile = await EnhancedApiService.getUserProfile(userId) as UserProfileResponse
       
       if (profile) {
         setUserInfo({
@@ -88,7 +88,7 @@ export function UserProfile() {
       // In a real app, get user ID from auth context
       const userId = "1"
       
-      await ApiService.updateUserProfile(userId, userInfo)
+      await EnhancedApiService.updateUserProfile(userId, userInfo)
       
       setIsEditing(false)
       toast({
@@ -121,7 +121,7 @@ export function UserProfile() {
   const savePreferences = async (newPreferences: UserPreferences) => {
     try {
       const userId = "1"
-      await ApiService.updateUserPreferences(userId, newPreferences)
+      await EnhancedApiService.updateUserPreferences(userId, newPreferences)
       toast({
         title: "Preferences Updated",
         description: "Your preferences have been saved.",
@@ -139,7 +139,7 @@ export function UserProfile() {
   const handleRemoveCard = async (cardId: string) => {
     try {
       const userId = "1"
-      await ApiService.removePaymentMethod(userId, cardId)
+      await EnhancedApiService.removePaymentMethod(userId, cardId)
       toast({
         title: "Card Removed",
         description: "Payment method has been removed successfully.",

@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from 'react'
 import { TransferFormData, ConversionResult } from './types'
 import { currencies, countries, deliveryMethodLabels, deliveryTimeframes, calculateFee } from './transferUtils'
-import { ApiService } from '@/services/apiService'
+import { EnhancedApiService } from '@/services/enhancedApiService'
 import { ArrowRight, Clock, CreditCard, Globe, DollarSign } from 'lucide-react'
 
 interface TransferSummaryProps {
@@ -22,7 +23,7 @@ export function TransferSummary({ formData }: TransferSummaryProps) {
     const calculateConversion = async () => {
       if (formData.amount && parseFloat(formData.amount) > 0) {
         try {
-          const result = await ApiService.convertCurrency({
+          const result = await EnhancedApiService.convertCurrency({
             amount: formData.amount,
             from: formData.fromCurrency,
             to: formData.toCurrency
