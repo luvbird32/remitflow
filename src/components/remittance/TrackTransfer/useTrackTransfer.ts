@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react"
-import { EnhancedApiService } from "@/services/enhancedApiService"
+import { TransferApiService } from "@/services/transferApiService"
 import { useToast } from '@/hooks/use-toast'
 import { generateTrackingSteps, getDemoData } from './trackingUtils'
 
@@ -75,7 +75,7 @@ export function useTrackTransfer() {
       } else {
         // Try API call for demo data
         try {
-          const result = await EnhancedApiService.trackTransfer(trackingNumber) as TransferTrackingData
+          const result = await TransferApiService.trackTransfer(trackingNumber) as TransferTrackingData
           setTransferData(result)
         } catch (error) {
           // Use demo data if API fails

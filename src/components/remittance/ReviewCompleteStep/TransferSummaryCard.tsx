@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Clock } from "lucide-react"
 import { TransferFormData, ConversionResult } from '../types'
 import { useState, useEffect } from 'react'
-import { EnhancedApiService } from '@/services/enhancedApiService'
+import { ExchangeApiService } from '@/services/exchangeApiService'
 import { AmountDisplay } from './AmountDisplay'
 import { RecipientInfo } from './RecipientInfo'
 import { DeliveryInfo } from './DeliveryInfo'
@@ -25,7 +25,7 @@ export function TransferSummaryCard({ formData }: TransferSummaryCardProps) {
     const calculateConversion = async () => {
       if (formData.amount && parseFloat(formData.amount) > 0) {
         try {
-          const result = await EnhancedApiService.convertCurrency({
+          const result = await ExchangeApiService.convertCurrency({
             amount: formData.amount,
             from: formData.fromCurrency,
             to: formData.toCurrency
