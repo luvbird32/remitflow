@@ -1,3 +1,6 @@
+
+import { ConversionResult } from '@/components/remittance/types'
+
 /**
  * API Service for handling backend communication
  */
@@ -45,8 +48,8 @@ export class ApiService {
   /**
    * Convert currency
    */
-  static async convertCurrency(data: { amount: string; from: string; to: string }) {
-    return this.request('/convert', {
+  static async convertCurrency(data: { amount: string; from: string; to: string }): Promise<ConversionResult> {
+    return this.request<ConversionResult>('/convert', {
       method: 'POST',
       body: JSON.stringify(data),
     })

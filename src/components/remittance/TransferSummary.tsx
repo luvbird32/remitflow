@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react'
-import { TransferFormData } from './types'
+import { TransferFormData, ConversionResult } from './types'
 import { currencies, countries, deliveryMethodLabels, deliveryTimeframes, calculateFee } from './transferUtils'
 import { ApiService } from '@/services/apiService'
 import { ArrowRight, Clock, CreditCard, Globe, DollarSign } from 'lucide-react'
@@ -10,8 +9,7 @@ interface TransferSummaryProps {
 }
 
 export function TransferSummary({ formData }: TransferSummaryProps) {
-  const [convertedAmount, setConvertedAmount] = useState<string>("0.00")
-  const [exchangeRate, setExchangeRate] = useState<number>(0)
+  const [conversionResult, setConversionResult] = useState<ConversionResult | null>(null)
   
   const fromCurrencyData = currencies.find(c => c.code === formData.fromCurrency)
   const toCurrencyData = currencies.find(c => c.code === formData.toCurrency)
@@ -29,8 +27,7 @@ export function TransferSummary({ formData }: TransferSummaryProps) {
             from: formData.fromCurrency,
             to: formData.toCurrency
           })
-          setConvertedAmount(result.convertedAmount)
-          setExchangeRate(result.rate)
+          setConversionResult(result)
         } catch (error) {
           console.error('Conversion error:', error)
           // Fallback to local calculation
@@ -38,13 +35,18 @@ export function TransferSummary({ formData }: TransferSummaryProps) {
           const toRate = toCurrencyData?.rate || 1
           const rate = toRate / fromRate
           const fallbackAmount = (parseFloat(formData.amount) * rate).toFixed(2)
-          setConvertedAmount(fallbackAmount)
-          setExchangeRate(rate)
+          setConversionResult({
+            convertedAmount: fallbackAmount,
+            rate: rate
+          })
         }
       }
     }
     calculateConversion()
   }, [formData.amount, formData.fromCurrency, formData.toCurrency, fromCurrencyData?.rate, toCurrencyData?.rate])
+
+  const convertedAmount = conversionResult?.convertedAmount || "0.00"
+  const exchangeRate = conversionResult?.rate || 0
 
   return (
     <div className="space-y-6">

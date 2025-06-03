@@ -1,7 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, User, CreditCard, Clock } from "lucide-react"
-import { TransferFormData } from '../types'
+import { TransferFormData, ConversionResult } from '../types'
 import { currencies, countries, calculateFee } from '../transferUtils'
 import { useState, useEffect } from 'react'
 import { ApiService } from '@/services/apiService'
@@ -28,7 +28,7 @@ interface TransferSummaryCardProps {
  * @returns JSX element with transfer summary information
  */
 export function TransferSummaryCard({ formData }: TransferSummaryCardProps) {
-  const [convertedAmount, setConvertedAmount] = useState<string>("0.00")
+  const [conversionResult, setConversionResult] = useState<ConversionResult | null>(null)
   
   const fromCurrencyData = currencies.find(c => c.code === formData.fromCurrency)
   const toCurrencyData = currencies.find(c => c.code === formData.toCurrency)
@@ -46,19 +46,24 @@ export function TransferSummaryCard({ formData }: TransferSummaryCardProps) {
             from: formData.fromCurrency,
             to: formData.toCurrency
           })
-          setConvertedAmount(result.convertedAmount)
+          setConversionResult(result)
         } catch (error) {
           console.error('Conversion error:', error)
           // Fallback to local calculation
           const fromRate = fromCurrencyData?.rate || 1
           const toRate = toCurrencyData?.rate || 1
           const fallbackAmount = (parseFloat(formData.amount) / fromRate) * toRate
-          setConvertedAmount(fallbackAmount.toFixed(2))
+          setConversionResult({
+            convertedAmount: fallbackAmount.toFixed(2),
+            rate: toRate / fromRate
+          })
         }
       }
     }
     calculateConversion()
   }, [formData.amount, formData.fromCurrency, formData.toCurrency, fromCurrencyData?.rate, toCurrencyData?.rate])
+
+  const convertedAmount = conversionResult?.convertedAmount || "0.00"
 
   return (
     <Card className="modern-card overflow-hidden">

@@ -2,13 +2,14 @@
 import { useState, useEffect } from "react"
 import { ApiService } from '@/services/apiService'
 import { Currency } from '../transferUtils'
+import { ConversionResult } from '../types'
 
 export function useExchangeCalculator() {
   const [amount, setAmount] = useState("")
   const [fromCurrency, setFromCurrency] = useState("USD")
   const [toCurrency, setToCurrency] = useState("EUR")
   const [currencies, setCurrencies] = useState<Currency[]>([])
-  const [conversionResult, setConversionResult] = useState<any>(null)
+  const [conversionResult, setConversionResult] = useState<ConversionResult | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   // Load currencies from backend

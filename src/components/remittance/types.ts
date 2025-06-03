@@ -1,4 +1,3 @@
-
 export interface TransferFormData {
   amount: string
   recipientName: string
@@ -28,4 +27,9 @@ export interface FormErrors {
   mobileNumber?: string
   mobileProvider?: string
   general?: string
+}
+
+export interface ConversionResult {
+  convertedAmount: string
+  rate: number
 }
