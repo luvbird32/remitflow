@@ -1,3 +1,4 @@
+
 // Placeholder for API utilities - can be expanded based on needs
 export const loadCurrenciesAndCountries = async () => {
   // This function is referenced in useTransferForm but not actually needed
@@ -6,6 +7,6 @@ export const loadCurrenciesAndCountries = async () => {
 }
 
 export const apiConfig = {
-  baseUrl: process.env.REACT_APP_API_URL || 'http://localhost:3001',
+  baseUrl: import.meta.env.VITE_API_URL || 'http://localhost:3001',
   timeout: 10000
 }
