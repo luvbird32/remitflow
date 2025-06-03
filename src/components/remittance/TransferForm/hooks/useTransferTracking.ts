@@ -7,6 +7,10 @@ export function useTransferTracking() {
   const handleTrackTransfer = (transferResult: any, formData: any, handleSuccessDialogClose: () => void) => {
     if (transferResult?.id) {
       console.log('Tracking transfer:', transferResult.id)
+      toast({
+        title: "Track Transfer",
+        description: `Use ID ${transferResult.id} to track your transfer status`,
+      })
       
       // Store transfer ID in localStorage for tracking
       const existingTransfers = JSON.parse(localStorage.getItem('transferHistory') || '[]')
@@ -24,22 +28,7 @@ export function useTransferTracking() {
       const updatedTransfers = [newTransfer, ...existingTransfers.slice(0, 9)]
       localStorage.setItem('transferHistory', JSON.stringify(updatedTransfers))
       
-      // Close the dialog first
       handleSuccessDialogClose()
-      
-      // Switch to track tab and set the tracking ID
-      setTimeout(() => {
-        // Trigger tab change to track
-        const event = new CustomEvent('switchToTrack', { 
-          detail: { transferId: transferResult.id } 
-        })
-        window.dispatchEvent(event)
-        
-        toast({
-          title: "Switched to Tracking",
-          description: `Now tracking transfer ${transferResult.id}`,
-        })
-      }, 100)
     }
   }
 

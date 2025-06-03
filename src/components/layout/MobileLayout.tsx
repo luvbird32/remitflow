@@ -8,38 +8,14 @@ import { TrackTransfer } from '@/components/remittance/TrackTransfer';
 import { UserProfile } from '@/components/profile/UserProfile';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Send, History, TrendingUp, Calculator, Search, User } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export function MobileLayout() {
   const [activeTab, setActiveTab] = useState('send');
-  const [transferFormKey, setTransferFormKey] = useState(0);
 
   const handleProfileClick = () => {
     setActiveTab('profile');
   };
-
-  useEffect(() => {
-    // Listen for track transfer events
-    const handleSwitchToTrack = (event: CustomEvent) => {
-      setActiveTab('track');
-    };
-
-    // Listen for dialog close events to refresh the form
-    const handleDialogClose = () => {
-      if (activeTab === 'send') {
-        // Force re-render of transfer form by updating key
-        setTransferFormKey(prev => prev + 1);
-      }
-    };
-
-    window.addEventListener('switchToTrack', handleSwitchToTrack as EventListener);
-    window.addEventListener('transferDialogClosed', handleDialogClose);
-
-    return () => {
-      window.removeEventListener('switchToTrack', handleSwitchToTrack as EventListener);
-      window.removeEventListener('transferDialogClosed', handleDialogClose);
-    };
-  }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-coral-50">
@@ -103,7 +79,7 @@ export function MobileLayout() {
           </div>
 
           <TabsContent value="send" className="mt-6">
-            <TransferForm key={transferFormKey} />
+            <TransferForm />
           </TabsContent>
 
           <TabsContent value="track" className="mt-6">
