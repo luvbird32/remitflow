@@ -9,31 +9,6 @@ import { useToast } from "@/hooks/use-toast"
 import { ApiService } from "@/services/apiService"
 import { UserInfo, UserPreferences, SavedCard, UserProfileResponse } from "./types"
 
-interface UserInfo {
-  name: string
-  email: string
-  phone: string
-  address: string
-  dateOfBirth: string
-  nationality: string
-}
-
-interface UserPreferences {
-  emailNotifications: boolean
-  smsNotifications: boolean
-  currency: string
-  language: string
-}
-
-interface SavedCard {
-  id: string
-  last4: string
-  brand: string
-  expiryMonth: number
-  expiryYear: number
-  isDefault: boolean
-}
-
 export function UserProfile() {
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
