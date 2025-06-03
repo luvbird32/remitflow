@@ -1,8 +1,10 @@
 
+import { useEffect } from 'react'
 import { FormErrors } from './types'
 import { AmountInput } from './AmountInput'
 import { CountrySelect } from './CountrySelect'
 import { RecipientNameInput } from './RecipientNameInput'
+import { RemittanceErrorBoundary } from './ErrorBoundary'
 
 interface AmountDestinationStepProps {
   amount: string
@@ -14,6 +16,7 @@ interface AmountDestinationStepProps {
   fromCurrency: string
   setFromCurrency: (currency: string) => void
   errors: FormErrors
+  validateField?: (field: keyof FormErrors, value: string, rules?: any) => boolean
 }
 
 export function AmountDestinationStep({
@@ -25,45 +28,83 @@ export function AmountDestinationStep({
   onCountryChange,
   fromCurrency,
   setFromCurrency,
-  errors
+  errors,
+  validateField
 }: AmountDestinationStepProps) {
+  
+  // Validate fields on change if validation function is provided
+  useEffect(() => {
+    if (validateField && amount) {
+      validateField('amount', amount, {
+        required: true,
+        pattern: /^\d+(\.\d{1,2})?$/,
+        custom: (value: string) => {
+          const num = parseFloat(value)
+          if (num <= 0) return 'Amount must be greater than 0'
+          if (num > 50000) return 'Amount cannot exceed $50,000'
+          return null
+        }
+      })
+    }
+  }, [amount, validateField])
+
+  useEffect(() => {
+    if (validateField && recipientName) {
+      validateField('recipientName', recipientName, {
+        required: true,
+        minLength: 2,
+        maxLength: 100,
+        pattern: /^[a-zA-Z\s'-]+$/
+      })
+    }
+  }, [recipientName, validateField])
+
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="flex items-center gap-3 text-sm font-semibold text-teal-600">
-        <div className="step-indicator">1</div>
-        <div>
-          <h3 className="text-lg font-bold text-slate-800">Amount & Recipient Details</h3>
-          <p className="text-sm text-slate-500 font-normal">Enter the transfer amount and recipient information</p>
+    <RemittanceErrorBoundary step="Amount & Destination">
+      <div className="space-y-8 animate-fade-in">
+        <div className="flex items-center gap-3 text-sm font-semibold text-teal-600">
+          <div className="step-indicator">1</div>
+          <div>
+            <h3 className="text-lg font-bold text-slate-800">Amount & Recipient Details</h3>
+            <p className="text-sm text-slate-500 font-normal">Enter the transfer amount and recipient information</p>
+          </div>
         </div>
-      </div>
-      
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="modern-card p-6 animate-scale-in" style={{animationDelay: '0.1s'}}>
-          <AmountInput
-            amount={amount}
-            setAmount={setAmount}
-            fromCurrency={fromCurrency}
-            setFromCurrency={setFromCurrency}
-            error={errors.amount}
+        
+        <div className="grid lg:grid-cols-2 gap-6">
+          <div className="modern-card p-6 animate-scale-in" style={{animationDelay: '0.1s'}}>
+            <AmountInput
+              amount={amount}
+              setAmount={setAmount}
+              fromCurrency={fromCurrency}
+              setFromCurrency={setFromCurrency}
+              error={errors.amount}
+            />
+          </div>
+
+          <div className="modern-card p-6 animate-scale-in" style={{animationDelay: '0.2s'}}>
+            <CountrySelect
+              recipientCountry={recipientCountry}
+              onCountryChange={onCountryChange}
+              error={errors.recipientCountry}
+            />
+          </div>
+        </div>
+
+        <div className="modern-card p-6 animate-scale-in" style={{animationDelay: '0.3s'}}>
+          <RecipientNameInput
+            recipientName={recipientName}
+            setRecipientName={setRecipientName}
+            error={errors.recipientName}
           />
         </div>
 
-        <div className="modern-card p-6 animate-scale-in" style={{animationDelay: '0.2s'}}>
-          <CountrySelect
-            recipientCountry={recipientCountry}
-            onCountryChange={onCountryChange}
-            error={errors.recipientCountry}
-          />
-        </div>
+        {errors.general && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+            <p className="font-medium">Error</p>
+            <p className="text-sm">{errors.general}</p>
+          </div>
+        )}
       </div>
-
-      <div className="modern-card p-6 animate-scale-in" style={{animationDelay: '0.3s'}}>
-        <RecipientNameInput
-          recipientName={recipientName}
-          setRecipientName={setRecipientName}
-          error={errors.recipientName}
-        />
-      </div>
-    </div>
+    </RemittanceErrorBoundary>
   )
 }

@@ -1,6 +1,7 @@
 
 import { useState } from "react"
 import { TransferFormData } from '../types'
+import { CrashReporter } from '@/utils/crashReporter'
 
 const initialFormData: TransferFormData = {
   amount: "",
@@ -25,6 +26,7 @@ export function useFormData() {
     try {
       setFormData(prev => ({ ...prev, ...updates }))
     } catch (error) {
+      CrashReporter.report('component_error', error as Error, 'Updating form data')
       console.error('Error updating form data:', error)
     }
   }
@@ -33,7 +35,26 @@ export function useFormData() {
     try {
       setFormData(initialFormData)
     } catch (error) {
+      CrashReporter.report('component_error', error as Error, 'Resetting form data')
       console.error('Error resetting form data:', error)
+    }
+  }
+
+  const validateFormData = (step: number): boolean => {
+    try {
+      switch (step) {
+        case 1:
+          return !!(formData.amount && formData.recipientName && formData.recipientCountry)
+        case 2:
+          return !!formData.deliveryMethod
+        case 3:
+          return true // Additional validation can be added here
+        default:
+          return false
+      }
+    } catch (error) {
+      CrashReporter.report('validation_error', error as Error, `Validating form data step ${step}`)
+      return false
     }
   }
 
@@ -41,6 +62,7 @@ export function useFormData() {
     formData,
     setFormData,
     updateFormData,
-    resetFormData
+    resetFormData,
+    validateFormData
   }
 }

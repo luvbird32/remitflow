@@ -1,27 +1,51 @@
 
 import { useState } from "react"
-import { FormErrors } from '../types'
 import { useFormData } from './useFormData'
 import { useDataLoading } from './useDataLoading'
 import { useCountryHandling } from './useCountryHandling'
+import { useFormErrorHandling } from './useFormErrorHandling'
+import { useApiErrorHandling } from './useApiErrorHandling'
 
 export function useTransferForm() {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
-  const [errors, setErrors] = useState<FormErrors>({})
   const [transferResult, setTransferResult] = useState<any>(null)
 
   const { formData, setFormData, updateFormData, resetFormData } = useFormData()
   const { isDataLoaded } = useDataLoading()
   const { handleCountryChange } = useCountryHandling(updateFormData)
+  const { 
+    errors, 
+    clearErrors, 
+    handleFormError, 
+    validateField, 
+    hasErrors 
+  } = useFormErrorHandling()
+  const { handleApiError } = useApiErrorHandling()
 
   const handleSuccessDialogClose = () => {
     try {
       setShowSuccessDialog(false)
       setTransferResult(null)
       resetFormData()
-      setErrors({})
+      clearErrors()
     } catch (error) {
-      console.error('Error closing success dialog:', error)
+      handleFormError(error as Error, 'Closing success dialog')
+    }
+  }
+
+  const handleTransferSubmission = async (submitFn: () => Promise<any>) => {
+    try {
+      clearErrors()
+      const result = await submitFn()
+      setTransferResult(result)
+      setShowSuccessDialog(true)
+      return result
+    } catch (error) {
+      const shouldRetry = handleApiError(error, 'Transfer submission')
+      if (!shouldRetry) {
+        handleFormError(error as Error, 'Transfer submission failed')
+      }
+      throw error
     }
   }
 
@@ -31,12 +55,16 @@ export function useTransferForm() {
     showSuccessDialog,
     setShowSuccessDialog,
     errors,
-    setErrors,
     transferResult,
     setTransferResult,
     isDataLoaded,
+    hasErrors,
     handleCountryChange,
     updateFormData,
-    handleSuccessDialogClose
+    handleSuccessDialogClose,
+    handleTransferSubmission,
+    handleFormError,
+    validateField,
+    clearErrors
   }
 }
