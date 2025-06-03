@@ -26,7 +26,7 @@ export function useTransferSubmission({
     try {
       console.log('Starting transfer submission...')
       
-      const { isValid, errors } = validateForm(formData)
+      const { isValid, errors } = await validateForm(formData)
       if (!isValid) {
         console.log('Form validation failed:', errors)
         setErrors(errors)

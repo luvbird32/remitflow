@@ -8,6 +8,23 @@ const router = express.Router();
 // In-memory storage for demo (replace with database in production)
 const transfers: Map<string, TransferRequest> = new Map();
 
+// Validate transfer data
+router.post('/validate', async (req, res) => {
+  try {
+    const transferData: TransferRequest = req.body;
+    
+    const validationErrors = TransferService.validateTransfer(transferData);
+    if (validationErrors.length > 0) {
+      return res.status(400).json({ errors: validationErrors });
+    }
+
+    res.json({ valid: true });
+  } catch (error) {
+    console.error('Transfer validation error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Create a new transfer
 router.post('/', async (req, res) => {
   try {

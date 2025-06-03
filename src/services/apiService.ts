@@ -68,6 +68,16 @@ export class ApiService {
   }
 
   /**
+   * Validate transfer data using ValidationService
+   */
+  static async validateTransfer(transferData: any) {
+    return this.request('/transfers/validate', {
+      method: 'POST',
+      body: JSON.stringify(transferData),
+    })
+  }
+
+  /**
    * Get transfer preview using FeeService and other services
    */
   static async getTransferPreview(data: { amount: string; fromCurrency: string; toCurrency: string; deliveryMethod: string }) {

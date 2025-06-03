@@ -1,8 +1,21 @@
 
 import { TransferFormData, FormErrors } from '../types'
+import { ApiService } from '@/services/apiService'
 
 export function useFormValidation() {
-  const validateForm = (formData: TransferFormData): { isValid: boolean; errors: FormErrors } => {
+  const validateForm = async (formData: TransferFormData): Promise<{ isValid: boolean; errors: FormErrors }> => {
+    try {
+      // Try to validate using backend API
+      const response = await ApiService.validateTransfer(formData)
+      return { isValid: true, errors: {} }
+    } catch (error: any) {
+      // If backend validation fails, fall back to frontend validation
+      console.log('Backend validation unavailable, using frontend validation')
+      return validateFormFrontend(formData)
+    }
+  }
+
+  const validateFormFrontend = (formData: TransferFormData): { isValid: boolean; errors: FormErrors } => {
     const newErrors: FormErrors = {}
 
     // Validate amount
