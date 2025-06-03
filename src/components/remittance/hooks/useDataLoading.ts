@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react"
-import { EnhancedApiService } from '@/services/enhancedApiService'
+import { ApiService } from '@/services/apiService'
 
 export function useDataLoading() {
   const [isDataLoaded, setIsDataLoaded] = useState(false)
@@ -9,8 +9,8 @@ export function useDataLoading() {
     const loadData = async () => {
       try {
         console.log('Loading currencies and countries from backend...')
-        await EnhancedApiService.getCurrencies()
-        await EnhancedApiService.getCountries()
+        await ApiService.getCurrencies()
+        await ApiService.getCountries()
         console.log('Backend data loaded successfully')
       } catch (error) {
         console.log('Backend unavailable, using fallback data')

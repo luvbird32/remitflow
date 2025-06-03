@@ -1,12 +1,11 @@
-
 import { TransferFormData, FormErrors } from '../types'
-import { EnhancedApiService } from '@/services/enhancedApiService'
+import { ApiService } from '@/services/apiService'
 
 export function useFormValidation() {
   const validateForm = async (formData: TransferFormData): Promise<{ isValid: boolean; errors: FormErrors }> => {
     try {
       // Try to validate using backend API
-      const response = await EnhancedApiService.validateTransfer(formData)
+      const response = await ApiService.validateTransfer(formData)
       return { isValid: true, errors: {} }
     } catch (error: any) {
       // If backend validation fails, fall back to frontend validation

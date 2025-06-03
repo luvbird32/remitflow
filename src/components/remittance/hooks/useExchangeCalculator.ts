@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react"
-import { EnhancedApiService } from '@/services/enhancedApiService'
+import { ApiService } from '@/services/apiService'
 import { Currency } from '../transferUtils'
 import { ConversionResult } from '../types'
 
@@ -16,7 +16,7 @@ export function useExchangeCalculator() {
   useEffect(() => {
     const loadCurrencies = async () => {
       try {
-        const data = await EnhancedApiService.getCurrencies()
+        const data = await ApiService.getCurrencies()
         if (Array.isArray(data)) {
           setCurrencies(data)
         }
@@ -44,7 +44,7 @@ export function useExchangeCalculator() {
     
     setIsLoading(true)
     try {
-      const result = await EnhancedApiService.convertCurrency({
+      const result = await ApiService.convertCurrency({
         amount,
         from: fromCurrency,
         to: toCurrency

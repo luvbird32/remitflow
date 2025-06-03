@@ -1,7 +1,7 @@
 
 import { useState } from "react"
 import { TransferFormData, FormErrors } from '../types'
-import { EnhancedApiService } from '@/services/enhancedApiService'
+import { ApiService } from '@/services/apiService'
 import { useFormValidation } from './useFormValidation'
 import { useToast } from '@/hooks/use-toast'
 import { TransferProcessingService } from '../services/transferProcessingService'
@@ -54,7 +54,7 @@ export function useTransferSubmission({
       
       let result
       try {
-        result = await EnhancedApiService.createTransfer(formData)
+        result = await ApiService.createTransfer(formData)
         console.log('Transfer API response:', result)
       } catch (apiError) {
         console.log('Backend unavailable, simulating transfer processing')

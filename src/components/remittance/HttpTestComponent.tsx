@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { EnhancedApiService } from '@/services/enhancedApiService'
+import { ApiService } from '@/services/apiService'
 import { httpClient } from '@/services/httpClient'
 import { useToast } from '@/hooks/use-toast'
 
@@ -20,13 +20,13 @@ export function HttpTestComponent() {
       
       switch (type) {
         case 'currencies':
-          response = await EnhancedApiService.getCurrencies()
+          response = await ApiService.getCurrencies()
           break
         case 'countries':
-          response = await EnhancedApiService.getCountries()
+          response = await ApiService.getCountries()
           break
         case 'external-rates':
-          response = await EnhancedApiService.getExternalRates()
+          response = await ApiService.getExternalRates()
           break
         case 'health':
           response = await httpClient.get('/external/health')
