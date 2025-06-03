@@ -10,6 +10,7 @@ interface SavedCard {
   isDefault: boolean
 }
 
+// Fallback data for when backend is unavailable
 const mockSavedCards: SavedCard[] = [
   {
     id: "card_1",
@@ -35,8 +36,11 @@ export function usePaymentMethodManager() {
   const [useNewCard, setUseNewCard] = useState(false)
 
   useEffect(() => {
+    // In production, this would call backend PaymentMethodService.getSavedCards()
+    // For now, using fallback data
     setSavedCards(mockSavedCards)
     
+    // In production, this would call backend PaymentMethodService.getDefaultCard()
     const defaultCard = mockSavedCards.find(card => card.isDefault)
     if (defaultCard) {
       setSelectedCard(defaultCard.id)

@@ -1,6 +1,6 @@
 
 import { TransferFormData } from '../types'
-import { currencies, calculateFee } from '../transferUtils'
+import { currencies } from '../transferUtils'
 
 interface FeeBreakdownProps {
   formData: TransferFormData
@@ -8,8 +8,15 @@ interface FeeBreakdownProps {
 
 export function FeeBreakdown({ formData }: FeeBreakdownProps) {
   const fromCurrencyData = currencies.find(c => c.code === formData.fromCurrency)
-  const fee = calculateFee(formData.amount, formData.deliveryMethod)
-  const totalAmount = (parseFloat(formData.amount) + fee).toFixed(2)
+  
+  // In production, these would be calculated by backend services:
+  // - Fee calculation: backend/src/services/feeService.ts
+  // - Currency conversion: backend/src/services/currencyService.ts
+  
+  // Fallback calculation for UI display
+  const amount = parseFloat(formData.amount) || 0
+  const fee = amount <= 100 ? 2.99 : amount <= 500 ? 4.99 : 7.99
+  const totalAmount = (amount + fee).toFixed(2)
 
   return (
     <div className="border-t border-slate-200 pt-4 space-y-3">

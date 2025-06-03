@@ -1,28 +1,5 @@
 
-// Frontend transfer utilities - UI data only, business logic moved to backend
-
-// Re-export types for frontend use
-export interface Currency {
-  code: string
-  name: string
-  symbol: string
-  rate: number
-}
-
-// UI labels only - business logic moved to backend services
-export const deliveryMethodLabels = {
-  bank: 'Bank Transfer',
-  card: 'Debit Card',
-  wallet: 'Mobile Wallet'
-}
-
-export const deliveryTimeframes = {
-  bank: '1-3 business days',
-  card: '1-2 hours',
-  wallet: 'Within minutes'
-}
-
-// Fallback data for UI - all business logic moved to backend
+// Backend transfer utilities - business logic only
 export const countries = [
   { code: "US", name: "United States", currency: "USD", flag: "🇺🇸", deliveryMethods: ["bank", "card"] },
   { code: "GB", name: "United Kingdom", currency: "GBP", flag: "🇬🇧", deliveryMethods: ["bank", "card"] },
@@ -50,19 +27,21 @@ export const currencies = [
   { code: "PHP", name: "Philippine Peso", symbol: "₱", rate: 50 }
 ]
 
-// All business logic functions moved to backend services:
-// - calculateFee -> backend/src/services/feeService.ts
-// - calculateConvertedAmount -> backend/src/services/currencyService.ts
-// - All validation logic -> backend/src/services/validationService.ts
-// - All transfer processing -> backend/src/services/transferService.ts
-
-// Deprecated functions - use backend services instead
-export const calculateFee = (amount: string, deliveryMethod: string): number => {
-  console.warn('calculateFee is deprecated. Use backend FeeService instead.')
-  return 0
+export interface Currency {
+  code: string
+  name: string
+  symbol: string
+  rate: number
 }
 
-export const calculateConvertedAmount = (amount: string, fromCurrency: string, toCurrency: string): string => {
-  console.warn('calculateConvertedAmount is deprecated. Use backend CurrencyService instead.')
-  return "0.00"
+export const deliveryMethodLabels = {
+  bank: 'Bank Transfer',
+  card: 'Debit Card',
+  wallet: 'Mobile Wallet'
+}
+
+export const deliveryTimeframes = {
+  bank: '1-3 business days',
+  card: '1-2 hours',
+  wallet: 'Within minutes'
 }
