@@ -1,4 +1,3 @@
-
 import {
   Sidebar,
   SidebarContent,
@@ -12,7 +11,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Send, History, TrendingUp, Calculator, Search, User, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { Send, History, TrendingUp, Calculator, Search, User, Menu, X } from 'lucide-react';
 
 interface AppSidebarProps {
   activeTab: string;
@@ -91,7 +90,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
               </div>
             )}
           </div>
-          <SidebarTrigger className="ml-auto hover:bg-slate-100 transition-colors" />
+          <SidebarTrigger className="ml-auto bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-lg p-2 transition-all duration-200 hover:shadow-md active:scale-95 group" />
         </div>
       </SidebarHeader>
       

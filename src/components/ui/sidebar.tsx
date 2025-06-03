@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { ChevronLeft } from "lucide-react"
+import { ChevronLeft, Menu, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -224,25 +224,32 @@ const SidebarTrigger = React.forwardRef<
   React.ElementRef<"button">,
   React.ComponentProps<"button">
 >(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, state } = useSidebar()
+  const isCollapsed = state === "collapsed"
 
   return (
     <button
       ref={ref}
       data-sidebar="trigger"
       className={cn(
-        "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors",
-        "hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        "h-7 w-7 p-0",
+        "inline-flex items-center justify-center rounded-lg text-sm font-medium ring-offset-background transition-all duration-200",
+        "bg-white hover:bg-slate-50 border border-slate-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "h-9 w-9 p-2 active:scale-95",
+        "text-slate-600 hover:text-slate-800",
         className
       )}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
+      title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       {...props}
     >
-      <ChevronLeft className="h-4 w-4" />
+      {isCollapsed ? (
+        <Menu className="h-4 w-4" />
+      ) : (
+        <X className="h-4 w-4" />
+      )}
       <span className="sr-only">Toggle Sidebar</span>
     </button>
   )
