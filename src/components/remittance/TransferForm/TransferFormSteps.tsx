@@ -1,11 +1,11 @@
 
-import { AmountDestinationStep } from '../AmountDestinationStep'
 import { DeliveryMethodStep } from '../DeliveryMethodStep'
 import { ReviewCompleteStep } from '../ReviewCompleteStep'
 import { PaymentMethodFields } from '../PaymentMethodFields'
 import { TransferFormData, FormErrors } from '../types'
 import { FormStep } from './FormStep'
 import { useStepNavigation } from './StepNavigation'
+import { AmountDestinationStepContainer } from './steps/AmountDestinationStepContainer'
 
 interface TransferFormStepsProps {
   formData: TransferFormData
@@ -30,23 +30,12 @@ export function TransferFormSteps({
 
   return (
     <form onSubmit={onSubmit} className="space-y-8">
-      <FormStep
-        stepNumber={1}
-        title="Amount & Destination"
-        description="Enter transfer amount and recipient details"
-      >
-        <AmountDestinationStep
-          amount={formData.amount}
-          setAmount={(amount) => updateFormData({ amount })}
-          recipientName={formData.recipientName}
-          setRecipientName={(name) => updateFormData({ recipientName: name })}
-          recipientCountry={formData.recipientCountry}
-          onCountryChange={onCountryChange}
-          fromCurrency={formData.fromCurrency}
-          setFromCurrency={(currency) => updateFormData({ fromCurrency: currency })}
-          errors={errors}
-        />
-      </FormStep>
+      <AmountDestinationStepContainer
+        formData={formData}
+        updateFormData={updateFormData}
+        onCountryChange={onCountryChange}
+        errors={errors}
+      />
 
       <FormStep
         stepNumber={2}
