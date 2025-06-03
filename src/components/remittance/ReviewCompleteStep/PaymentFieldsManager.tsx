@@ -8,20 +8,11 @@ interface PaymentFieldsManagerProps {
   errors: FormErrors
 }
 
-export function PaymentFieldsManager({
-  formData,
-  onPaymentFieldChange,
-  errors
-}: PaymentFieldsManagerProps) {
+export function usePaymentFieldsManager() {
   const [showPaymentFields, setShowPaymentFields] = useState(false)
 
   return {
     showPaymentFields,
-    setShowPaymentFields,
-    paymentFieldsProps: {
-      formData,
-      onPaymentFieldChange,
-      errors
-    }
+    setShowPaymentFields
   }
 }

@@ -2,13 +2,14 @@
 import { TransferFormData } from '../../types'
 import { FormValidationResult } from './validationTypes'
 import { FieldValidationService } from './fieldValidationService'
+import { DeliveryValidationService } from './deliveryValidationService'
 
 export class FormValidationService {
   static async validateForm(formData: TransferFormData): Promise<FormValidationResult> {
     const errors: Record<string, string> = {}
 
     try {
-      const fieldsToValidate = [
+      const coreFields = [
         { field: 'amount', value: formData.amount },
         { field: 'recipientName', value: formData.recipientName },
         { field: 'recipientEmail', value: formData.recipientEmail },
@@ -16,13 +17,21 @@ export class FormValidationService {
         { field: 'deliveryMethod', value: formData.deliveryMethod }
       ]
 
-      this.addDeliverySpecificFields(formData, fieldsToValidate)
-
-      const validationResults = await FieldValidationService.validateFields(fieldsToValidate)
+      const validationResults = await FieldValidationService.validateFields(coreFields)
       
       for (const [field, result] of Object.entries(validationResults)) {
         if (!result.isValid && result.error) {
           errors[field] = result.error
+        }
+      }
+
+      // Validate delivery-specific fields
+      if (formData.deliveryMethod) {
+        const deliveryResults = DeliveryValidationService.validateDeliveryFields(formData.deliveryMethod, formData)
+        for (const [field, result] of Object.entries(deliveryResults)) {
+          if (!result.isValid && result.error) {
+            errors[field] = result.error
+          }
         }
       }
 
@@ -36,30 +45,6 @@ export class FormValidationService {
         isValid: false,
         errors: { general: 'Something went wrong. Please try again.' }
       }
-    }
-  }
-
-  private static addDeliverySpecificFields(
-    formData: TransferFormData, 
-    fieldsToValidate: Array<{ field: string; value: any }>
-  ): void {
-    switch (formData.deliveryMethod) {
-      case 'bank':
-        fieldsToValidate.push(
-          { field: 'accountNumber', value: formData.accountNumber },
-          { field: 'bankName', value: formData.bankName }
-        )
-        break
-      case 'card':
-        fieldsToValidate.push(
-          { field: 'cardNumber', value: formData.cardNumber }
-        )
-        break
-      case 'wallet':
-        fieldsToValidate.push(
-          { field: 'mobileNumber', value: formData.mobileNumber }
-        )
-        break
     }
   }
 }

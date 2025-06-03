@@ -1,10 +1,10 @@
 
-import { useState } from "react"
 import { TransferFormData, FormErrors } from '../types'
 import { ReviewStepHeader } from './ReviewStepHeader'
 import { TransferSummaryCard } from './TransferSummaryCard'
 import { SecurityNotice } from './SecurityNotice'
 import { PaymentSection } from './PaymentSection'
+import { usePaymentFieldsManager } from './PaymentFieldsManager'
 
 interface ReviewCompleteStepProps {
   formData: TransferFormData
@@ -19,7 +19,7 @@ export function ReviewCompleteStep({
   isSubmitting,
   errors
 }: ReviewCompleteStepProps) {
-  const [showPaymentFields, setShowPaymentFields] = useState(false)
+  const { showPaymentFields, setShowPaymentFields } = usePaymentFieldsManager()
 
   const handlePaymentFieldChange = (field: string, value: string) => {
     setFormData({ ...formData, [field]: value })
