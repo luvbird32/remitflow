@@ -35,10 +35,10 @@ export function DesktopLayout({ activeTab, onTabChange }: DesktopLayoutProps) {
   };
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full gradient-bg">
         <AppSidebar activeTab={activeTab} onTabChange={onTabChange} />
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col transition-all duration-300 ease-in-out">
           <Header />
           
           <main className="flex-1 container mx-auto px-8 py-16">
