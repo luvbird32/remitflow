@@ -3,6 +3,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, User, CreditCard, Clock } from "lucide-react"
 import { TransferFormData } from '../types'
 import { currencies, countries, calculateFee } from '../transferUtils'
+import { useState, useEffect } from 'react'
+import { ApiService } from '@/services/apiService'
 
 /**
  * Props interface for the TransferSummaryCard component
@@ -26,11 +28,37 @@ interface TransferSummaryCardProps {
  * @returns JSX element with transfer summary information
  */
 export function TransferSummaryCard({ formData }: TransferSummaryCardProps) {
+  const [convertedAmount, setConvertedAmount] = useState<string>("0.00")
+  
   const fromCurrencyData = currencies.find(c => c.code === formData.fromCurrency)
   const toCurrencyData = currencies.find(c => c.code === formData.toCurrency)
   const countryData = countries.find(c => c.code === formData.recipientCountry)
   const fee = calculateFee(formData.amount, formData.deliveryMethod)
   const totalAmount = (parseFloat(formData.amount) + fee).toFixed(2)
+
+  // Calculate conversion using API
+  useEffect(() => {
+    const calculateConversion = async () => {
+      if (formData.amount && parseFloat(formData.amount) > 0) {
+        try {
+          const result = await ApiService.convertCurrency({
+            amount: formData.amount,
+            from: formData.fromCurrency,
+            to: formData.toCurrency
+          })
+          setConvertedAmount(result.convertedAmount)
+        } catch (error) {
+          console.error('Conversion error:', error)
+          // Fallback to local calculation
+          const fromRate = fromCurrencyData?.rate || 1
+          const toRate = toCurrencyData?.rate || 1
+          const fallbackAmount = (parseFloat(formData.amount) / fromRate) * toRate
+          setConvertedAmount(fallbackAmount.toFixed(2))
+        }
+      }
+    }
+    calculateConversion()
+  }, [formData.amount, formData.fromCurrency, formData.toCurrency, fromCurrencyData?.rate, toCurrencyData?.rate])
 
   return (
     <Card className="modern-card overflow-hidden">
@@ -54,7 +82,7 @@ export function TransferSummaryCard({ formData }: TransferSummaryCardProps) {
           <div className="flex justify-between items-center p-4 bg-gradient-to-r from-coral-50 to-orange-50 rounded-xl border border-coral-200">
             <span className="font-medium text-slate-700">They receive</span>
             <span className="text-xl font-bold text-coral-600">
-              {toCurrencyData?.symbol}0.00 {formData.toCurrency}
+              {toCurrencyData?.symbol}{convertedAmount} {formData.toCurrency}
             </span>
           </div>
         </div>

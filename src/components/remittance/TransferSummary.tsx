@@ -1,6 +1,8 @@
 
+import { useState, useEffect } from 'react'
 import { TransferFormData } from './types'
-import { currencies, countries, deliveryMethodLabels, deliveryTimeframes, calculateConvertedAmount, calculateFee } from './transferUtils'
+import { currencies, countries, deliveryMethodLabels, deliveryTimeframes, calculateFee } from './transferUtils'
+import { ApiService } from '@/services/apiService'
 import { ArrowRight, Clock, CreditCard, Globe, DollarSign } from 'lucide-react'
 
 interface TransferSummaryProps {
@@ -8,12 +10,41 @@ interface TransferSummaryProps {
 }
 
 export function TransferSummary({ formData }: TransferSummaryProps) {
+  const [convertedAmount, setConvertedAmount] = useState<string>("0.00")
+  const [exchangeRate, setExchangeRate] = useState<number>(0)
+  
   const fromCurrencyData = currencies.find(c => c.code === formData.fromCurrency)
   const toCurrencyData = currencies.find(c => c.code === formData.toCurrency)
   const selectedCountry = countries.find(c => c.code === formData.recipientCountry)
-  const convertedAmount = calculateConvertedAmount(formData.amount, formData.fromCurrency, formData.toCurrency)
   const fee = calculateFee(formData.amount, formData.deliveryMethod)
   const totalAmount = (parseFloat(formData.amount) + fee).toFixed(2)
+
+  // Calculate conversion using API
+  useEffect(() => {
+    const calculateConversion = async () => {
+      if (formData.amount && parseFloat(formData.amount) > 0) {
+        try {
+          const result = await ApiService.convertCurrency({
+            amount: formData.amount,
+            from: formData.fromCurrency,
+            to: formData.toCurrency
+          })
+          setConvertedAmount(result.convertedAmount)
+          setExchangeRate(result.rate)
+        } catch (error) {
+          console.error('Conversion error:', error)
+          // Fallback to local calculation
+          const fromRate = fromCurrencyData?.rate || 1
+          const toRate = toCurrencyData?.rate || 1
+          const rate = toRate / fromRate
+          const fallbackAmount = (parseFloat(formData.amount) * rate).toFixed(2)
+          setConvertedAmount(fallbackAmount)
+          setExchangeRate(rate)
+        }
+      }
+    }
+    calculateConversion()
+  }, [formData.amount, formData.fromCurrency, formData.toCurrency, fromCurrencyData?.rate, toCurrencyData?.rate])
 
   return (
     <div className="space-y-6">
@@ -41,7 +72,7 @@ export function TransferSummary({ formData }: TransferSummaryProps) {
           </div>
           <div className="flex items-center justify-between p-4 bg-white/80 rounded-xl border border-teal-100">
             <span className="text-slate-600 font-medium">Exchange rate:</span>
-            <span className="font-semibold text-slate-800">1 {formData.fromCurrency} = {toCurrencyData?.rate} {formData.toCurrency}</span>
+            <span className="font-semibold text-slate-800">1 {formData.fromCurrency} = {exchangeRate.toFixed(6)} {formData.toCurrency}</span>
           </div>
           <div className="flex items-center justify-center p-6 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-200">
             <div className="text-center">
