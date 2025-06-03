@@ -65,7 +65,7 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+        <label htmlFor="email" className="form-label">
           Email
         </label>
         <Input
@@ -75,11 +75,11 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
           required
-          className="w-full"
+          className="form-input"
         />
       </div>
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+        <label htmlFor="password" className="form-label">
           Password
         </label>
         <Input
@@ -89,12 +89,12 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Enter your password"
           required
-          className="w-full"
+          className="form-input"
         />
       </div>
       <Button 
         type="submit" 
-        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200"
+        className="btn-primary w-full"
         disabled={isLoading}
       >
         {isLoading ? "Signing In..." : "Sign In"}

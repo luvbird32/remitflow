@@ -21,16 +21,16 @@ export function AuthScreen({ onAuthenticated }: AuthScreenProps) {
   const [activeTab, setActiveTab] = useState('signin');
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen flex items-center justify-center gradient-bg p-4">
       <div className="w-full max-w-md">
         {/* Brand Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl mb-4 shadow-lg">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl mb-4 shadow-xl shadow-teal-500/25">
             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-purple-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-3xl font-bold gradient-text mb-2">
             RemitFlow
           </h1>
           <p className="text-slate-600">
@@ -38,7 +38,7 @@ export function AuthScreen({ onAuthenticated }: AuthScreenProps) {
           </p>
         </div>
 
-        <Card className="bg-white/80 backdrop-blur-md border-slate-200/50 shadow-xl">
+        <Card className="modern-card">
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-2xl font-bold text-slate-800">
               Welcome
@@ -79,25 +79,25 @@ export function AuthScreen({ onAuthenticated }: AuthScreenProps) {
 
         {/* Features */}
         <div className="mt-8 grid grid-cols-3 gap-4 text-center">
-          <div className="bg-white/60 backdrop-blur-sm rounded-lg p-4 border border-slate-200/50">
-            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-              <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="modern-card p-4">
+            <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <svg className="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
             <p className="text-xs font-medium text-slate-700">Secure</p>
           </div>
-          <div className="bg-white/60 backdrop-blur-sm rounded-lg p-4 border border-slate-200/50">
-            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="modern-card p-4">
+            <div className="w-8 h-8 bg-cyan-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <svg className="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <p className="text-xs font-medium text-slate-700">Fast</p>
           </div>
-          <div className="bg-white/60 backdrop-blur-sm rounded-lg p-4 border border-slate-200/50">
-            <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-              <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="modern-card p-4">
+            <div className="w-8 h-8 bg-coral-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <svg className="w-4 h-4 text-coral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
               </svg>
             </div>
