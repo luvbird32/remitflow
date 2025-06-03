@@ -9,6 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Send, History, TrendingUp, Calculator, Search, User } from 'lucide-react';
 
@@ -65,21 +66,24 @@ const menuItems: MenuItem[] = [
 
 export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
   return (
-    <div className="fixed left-0 top-0 h-screen w-64 z-40">
+    <div className="fixed left-0 top-0 h-screen z-40">
       <Sidebar className="border-r border-slate-200/30 glass backdrop-blur-xl h-full">
         <SidebarHeader className="p-4 border-b border-slate-200/30">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/25 transition-all duration-300 hover:shadow-teal-500/40 hover:scale-110">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/25 transition-all duration-300 hover:shadow-teal-500/40 hover:scale-110">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-lg font-bold gradient-text tracking-tight">
+                  RemitFlow
+                </h1>
+                <p className="text-xs text-slate-500 font-medium">Global Money Transfer</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-lg font-bold gradient-text tracking-tight">
-                RemitFlow
-              </h1>
-              <p className="text-xs text-slate-500 font-medium">Global Money Transfer</p>
-            </div>
+            <SidebarTrigger className="ml-auto" />
           </div>
         </SidebarHeader>
         
