@@ -41,34 +41,25 @@ export function TransferFormContainer() {
     return <LoadingState />
   }
 
-  try {
-    return (
-      <>
-        <TransferFormCard
-          formData={formData}
-          setFormData={setFormData}
-          updateFormData={updateFormData}
-          onCountryChange={handleCountryChange}
-          errors={errors}
-          isSubmitting={isSubmitting}
-          onSubmit={handleSubmit}
-        />
+  return (
+    <>
+      <TransferFormCard
+        formData={formData}
+        setFormData={setFormData}
+        updateFormData={updateFormData}
+        onCountryChange={handleCountryChange}
+        errors={errors}
+        isSubmitting={isSubmitting}
+        onSubmit={handleSubmit}
+      />
 
-        <TransferSuccessDialog
-          isOpen={showSuccessDialog}
-          onClose={handleSuccessDialogClose}
-          formData={formData}
-          transferResult={transferResult}
-          onTrackTransfer={onTrackTransfer}
-        />
-      </>
-    )
-  } catch (error) {
-    console.error('TransferFormContainer error:', error)
-    return (
-      <div className="modern-card p-6 text-center">
-        <p className="text-red-600">Something went wrong with the transfer form. Please refresh the page.</p>
-      </div>
-    )
-  }
+      <TransferSuccessDialog
+        isOpen={showSuccessDialog}
+        onClose={handleSuccessDialogClose}
+        formData={formData}
+        transferResult={transferResult}
+        onTrackTransfer={onTrackTransfer}
+      />
+    </>
+  )
 }
