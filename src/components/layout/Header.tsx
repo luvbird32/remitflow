@@ -27,23 +27,7 @@ export function Header() {
 
   return (
     <header className="glass backdrop-blur-xl shadow-lg border-b border-slate-200/30 sticky top-0 z-40">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo and Brand */}
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          {!isMobile && (
-            <div>
-              <h1 className="text-lg font-bold gradient-text tracking-tight">
-                RemitFlow
-              </h1>
-            </div>
-          )}
-        </div>
-
+      <div className="container mx-auto px-4 py-3 flex items-center justify-end">
         {/* User Actions */}
         <div className="flex items-center space-x-2">
           {!isMobile && (
