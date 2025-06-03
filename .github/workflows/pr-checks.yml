@@ -1,0 +1,82 @@
+
+name: Pull Request Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr-validation:
+    name: PR Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Check for breaking changes
+        run: |
+          echo "Checking for potential breaking changes..."
+          git diff --name-only origin/main...HEAD | grep -E '\.(ts|tsx)$' || true
+          
+      - name: Validate commit messages
+        run: |
+          echo "Validating commit message format..."
+          # Check if commits follow conventional commit format
+          git log --oneline origin/main..HEAD | while read line; do
+            if ! echo "$line" | grep -qE '^[a-f0-9]+ (feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+'; then
+              echo "Invalid commit message format: $line"
+              echo "Please use conventional commit format: type(scope): description"
+              exit 1
+            fi
+          done
+          
+      - name: Check bundle size
+        run: |
+          npm run build
+          echo "Checking bundle size..."
+          du -sh dist/
+          
+      - name: Performance check
+        run: |
+          echo "Running performance checks..."
+          # Add lighthouse CI or other performance tools here
+          
+  code-review:
+    name: Automated Code Review
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run ESLint with annotations
+        run: |
+          npx eslint . --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif || true
+          
+      - name: Upload ESLint results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: eslint-results.sarif
+          wait-for-processing: true
