@@ -9,7 +9,7 @@ import { useFormData } from '../hooks/useFormData'
 import { useDataLoading } from '../hooks/useDataLoading'
 import { useCountryHandling } from '../hooks/useCountryHandling'
 
-export function TransferFormContainer({ key }: { key?: React.Key }) {
+export function TransferFormContainer() {
   const {
     showSuccessDialog,
     setShowSuccessDialog,
