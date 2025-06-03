@@ -91,7 +91,21 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
               </div>
             )}
           </div>
-          <SidebarTrigger className="ml-auto hover:bg-slate-100 transition-colors" />
+          <SidebarTrigger className={`
+            ${isCollapsed ? 'w-10 h-10 p-2' : 'w-8 h-8 p-1'} 
+            bg-white/80 hover:bg-white shadow-md hover:shadow-lg 
+            border border-slate-200/50 hover:border-slate-300 
+            rounded-lg transition-all duration-200 
+            flex items-center justify-center
+            hover:scale-105 active:scale-95
+            backdrop-blur-sm
+          `}>
+            {isCollapsed ? (
+              <PanelLeftOpen className="h-5 w-5 text-slate-700" />
+            ) : (
+              <PanelLeftClose className="h-4 w-4 text-slate-700" />
+            )}
+          </SidebarTrigger>
         </div>
       </SidebarHeader>
       
