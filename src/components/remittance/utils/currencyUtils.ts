@@ -12,21 +12,32 @@ export const currencies: Currency[] = [
   { code: "GBP", name: "British Pound", symbol: "£", rate: 0.73 },
   { code: "JPY", name: "Japanese Yen", symbol: "¥", rate: 110.25 },
   { code: "CAD", name: "Canadian Dollar", symbol: "C$", rate: 1.35 },
-  { code: "AUD", name: "Australian Dollar", symbol: "A$", rate: 1.52 },
-  { code: "CHF", name: "Swiss Franc", symbol: "Fr", rate: 0.92 },
-  { code: "INR", name: "Indian Rupee", symbol: "₹", rate: 74.85 },
-  { code: "NGN", name: "Nigerian Naira", symbol: "₦", rate: 411.57 },
-  { code: "KES", name: "Kenyan Shilling", symbol: "KSh", rate: 107.50 },
-  { code: "GHS", name: "Ghanaian Cedi", symbol: "₵", rate: 6.18 },
-  { code: "ZAR", name: "South African Rand", symbol: "R", rate: 14.85 },
-  { code: "MXN", name: "Mexican Peso", symbol: "$", rate: 20.15 },
-  { code: "BRL", name: "Brazilian Real", symbol: "R$", rate: 5.24 },
-  { code: "PHP", name: "Philippine Peso", symbol: "₱", rate: 51.20 }
+  { code: "NGN", name: "Nigerian Naira", symbol: "₦", rate: 461.50 },
+  { code: "KES", name: "Kenyan Shilling", symbol: "KSh", rate: 147.25 },
+  { code: "GHS", name: "Ghanaian Cedi", symbol: "₵", rate: 12.15 },
+  { code: "ZAR", name: "South African Rand", symbol: "R", rate: 18.75 }
 ]
 
 export const calculateConvertedAmount = (amount: string, fromCurrency: string, toCurrency: string): string => {
+  if (!amount) return "0"
   const fromRate = currencies.find(c => c.code === fromCurrency)?.rate || 1
   const toRate = currencies.find(c => c.code === toCurrency)?.rate || 1
-  const convertedAmount = (parseFloat(amount) / fromRate) * toRate
-  return convertedAmount.toFixed(2)
+  return (parseFloat(amount) / fromRate * toRate).toFixed(2)
+}
+
+export const calculateFee = (amount: string, deliveryMethod: string): number => {
+  if (!amount) return 0
+  const transferAmount = parseFloat(amount)
+  let baseFee = 0
+  if (transferAmount <= 100) baseFee = 2.99
+  else if (transferAmount <= 500) baseFee = 4.99
+  else baseFee = 7.99
+
+  const deliveryFees = {
+    bank: 0,
+    card: 1.99,
+    wallet: 0.99
+  }
+  
+  return baseFee + (deliveryFees[deliveryMethod as keyof typeof deliveryFees] || 0)
 }

@@ -7,20 +7,10 @@ export const deliveryMethodLabels = {
 
 export const deliveryTimeframes = {
   bank: "1-3 business days",
-  card: "Within 30 minutes",
-  wallet: "Within 15 minutes"
+  card: "1-2 hours", 
+  wallet: "Within minutes"
 }
 
-export const calculateFee = (amount: string, deliveryMethod: string): number => {
-  const baseAmount = parseFloat(amount)
-  switch (deliveryMethod) {
-    case 'bank':
-      return 0 // Free
-    case 'card':
-      return 1.99
-    case 'wallet':
-      return 0.99
-    default:
-      return 0
-  }
+export const getEstimatedDelivery = (deliveryMethod: string): string => {
+  return deliveryTimeframes[deliveryMethod as keyof typeof deliveryTimeframes] || "Unknown"
 }

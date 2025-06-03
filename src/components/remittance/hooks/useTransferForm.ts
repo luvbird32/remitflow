@@ -24,6 +24,7 @@ export function useTransferForm() {
   const [transferResult, setTransferResult] = useState<any>(null)
   const [isDataLoaded, setIsDataLoaded] = useState(false)
 
+  // Always call useEffect unconditionally
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -38,7 +39,7 @@ export function useTransferForm() {
       }
     }
     loadData()
-  }, [])
+  }, []) // Empty dependency array - this effect runs once on mount
 
   const handleCountryChange = (countryCode: string) => {
     try {
