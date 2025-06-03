@@ -80,13 +80,17 @@ export function PaymentSection({
   const getBrandIcon = (brand: string) => {
     switch (brand.toLowerCase()) {
       case 'visa':
-        return <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center">
-          <span className="text-white text-xs font-bold">VISA</span>
-        </div>
+        return (
+          <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center">
+            <span className="text-white text-xs font-bold">VISA</span>
+          </div>
+        )
       case 'mastercard':
-        return <div className="w-8 h-5 bg-red-600 rounded flex items-center justify-center">
-          <span className="text-white text-xs font-bold">MC</span>
-        </div>
+        return (
+          <div className="w-8 h-5 bg-red-600 rounded flex items-center justify-center">
+            <span className="text-white text-xs font-bold">MC</span>
+          </div>
+        )
       default:
         return <CreditCard className="h-5 w-5 text-gray-600" />
     }
