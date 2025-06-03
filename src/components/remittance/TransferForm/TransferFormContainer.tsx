@@ -5,32 +5,41 @@ import { TransferFormCard } from './TransferFormCard'
 import { useTransferSubmission } from '../hooks/useTransferSubmission'
 import { useTransferFormState } from './hooks/useTransferFormState'
 import { useTransferTracking } from './hooks/useTransferTracking'
-import { useFormData } from '../hooks/useFormData'
+import { useFormState } from '../hooks/useFormState'
 import { useDataLoading } from '../hooks/useDataLoading'
 import { useCountryHandling } from '../hooks/useCountryHandling'
+import { ValidationProvider } from '../hooks/validation/ValidationContext'
 
-export function TransferFormContainer() {
+function TransferFormContent() {
   const {
     showSuccessDialog,
     setShowSuccessDialog,
     transferResult,
     setTransferResult,
-    errors,
-    setErrors,
     handleSuccessDialogClose
   } = useTransferFormState()
 
   const { handleTrackTransfer } = useTransferTracking()
   
-  const { formData, setFormData, updateFormData, resetFormData } = useFormData()
+  const {
+    formData,
+    setFormData,
+    updateFormData,
+    errors,
+    setErrors,
+    isSubmitting,
+    setIsSubmitting
+  } = useFormState()
+  
   const { isDataLoaded } = useDataLoading()
   const { handleCountryChange } = useCountryHandling(updateFormData)
 
-  const { handleSubmit, isSubmitting } = useTransferSubmission({
+  const { handleSubmit } = useTransferSubmission({
     formData,
     setErrors,
     setTransferResult,
-    setShowSuccessDialog
+    setShowSuccessDialog,
+    setIsSubmitting
   })
 
   const onTrackTransfer = () => {
@@ -61,5 +70,13 @@ export function TransferFormContainer() {
         onTrackTransfer={onTrackTransfer}
       />
     </>
+  )
+}
+
+export function TransferFormContainer() {
+  return (
+    <ValidationProvider>
+      <TransferFormContent />
+    </ValidationProvider>
   )
 }

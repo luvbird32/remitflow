@@ -1,23 +1,22 @@
 
 import { useState } from "react"
 import { TransferFormData, FormErrors } from '../types'
-import { FieldValidationService } from './validation/fieldValidationService'
-import { FormValidationService } from './validation/formValidationService'
+import { useValidation } from './validation/ValidationContext'
 
 /**
  * Simplified Form Validation Hook
  * 
- * A streamlined React hook for form validation that delegates
- * the actual validation logic to dedicated validator services.
+ * A streamlined React hook for form validation that uses the validation context
  */
 export function useFormValidation() {
   const [isValidating, setIsValidating] = useState(false)
+  const { validateField: contextValidateField, validateForm: contextValidateForm } = useValidation()
 
   /**
    * Validates a single form field
    */
-  const validateField = async (field: string, value: any, formData?: TransferFormData) => {
-    return await FieldValidationService.validateField(field, value)
+  const validateField = async (field: string, value: any) => {
+    return await contextValidateField(field, value)
   }
 
   /**
@@ -27,7 +26,7 @@ export function useFormValidation() {
     setIsValidating(true)
     
     try {
-      const result = await FormValidationService.validateForm(formData)
+      const result = await contextValidateForm(formData)
       return {
         isValid: result.isValid,
         errors: result.errors as FormErrors

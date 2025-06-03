@@ -2,12 +2,11 @@
 import { TransferFormData } from '../../types'
 import { FormValidationResult } from './validationTypes'
 import { FieldValidationService } from './fieldValidationService'
-import { ApiService } from '@/services/apiService'
 
 /**
  * Form Validation Service
  * 
- * Handles complete form validation including backend validation
+ * Handles complete form validation
  */
 export class FormValidationService {
   /**
@@ -17,8 +16,8 @@ export class FormValidationService {
     const errors: Record<string, string> = {}
 
     try {
-      // Validate all basic fields
-      const basicFields = [
+      // Define all fields to validate
+      const fieldsToValidate = [
         { field: 'amount', value: formData.amount },
         { field: 'recipientName', value: formData.recipientName },
         { field: 'recipientEmail', value: formData.recipientEmail },
@@ -26,20 +25,18 @@ export class FormValidationService {
         { field: 'deliveryMethod', value: formData.deliveryMethod }
       ]
 
-      const basicValidations = await FieldValidationService.validateFields(basicFields)
+      // Add delivery-specific fields
+      this.addDeliverySpecificFields(formData, fieldsToValidate)
+
+      // Validate all fields
+      const validationResults = await FieldValidationService.validateFields(fieldsToValidate)
       
-      // Collect basic field errors
-      for (const [field, result] of Object.entries(basicValidations)) {
+      // Collect errors
+      for (const [field, result] of Object.entries(validationResults)) {
         if (!result.isValid && result.error) {
           errors[field] = result.error
         }
       }
-
-      // Validate delivery-specific fields
-      await this.validateDeliverySpecificFields(formData, errors)
-
-      // Backend validation
-      await this.performBackendValidation(formData, errors)
 
       return {
         isValid: Object.keys(errors).length === 0,
@@ -55,53 +52,29 @@ export class FormValidationService {
   }
 
   /**
-   * Validates delivery method specific fields
+   * Add delivery method specific fields to validation
    */
-  private static async validateDeliverySpecificFields(
+  private static addDeliverySpecificFields(
     formData: TransferFormData, 
-    errors: Record<string, string>
-  ): Promise<void> {
-    const deliveryFields: Array<{ field: string; value: any }> = []
-
-    if (formData.deliveryMethod === 'bank') {
-      deliveryFields.push(
-        { field: 'accountNumber', value: formData.accountNumber },
-        { field: 'bankName', value: formData.bankName }
-      )
-    } else if (formData.deliveryMethod === 'card') {
-      deliveryFields.push(
-        { field: 'cardNumber', value: formData.cardNumber }
-      )
-    } else if (formData.deliveryMethod === 'wallet') {
-      deliveryFields.push(
-        { field: 'mobileNumber', value: formData.mobileNumber }
-      )
-    }
-
-    if (deliveryFields.length > 0) {
-      const deliveryValidations = await FieldValidationService.validateFields(deliveryFields)
-      
-      for (const [field, result] of Object.entries(deliveryValidations)) {
-        if (!result.isValid && result.error) {
-          errors[field] = result.error
-        }
-      }
-    }
-  }
-
-  /**
-   * Performs backend validation
-   */
-  private static async performBackendValidation(
-    formData: TransferFormData, 
-    errors: Record<string, string>
-  ): Promise<void> {
-    try {
-      await ApiService.validateTransfer(formData)
-    } catch (validationError: any) {
-      if (validationError.response?.data?.errors) {
-        Object.assign(errors, validationError.response.data.errors)
-      }
+    fieldsToValidate: Array<{ field: string; value: any }>
+  ): void {
+    switch (formData.deliveryMethod) {
+      case 'bank':
+        fieldsToValidate.push(
+          { field: 'accountNumber', value: formData.accountNumber },
+          { field: 'bankName', value: formData.bankName }
+        )
+        break
+      case 'card':
+        fieldsToValidate.push(
+          { field: 'cardNumber', value: formData.cardNumber }
+        )
+        break
+      case 'wallet':
+        fieldsToValidate.push(
+          { field: 'mobileNumber', value: formData.mobileNumber }
+        )
+        break
     }
   }
 }
