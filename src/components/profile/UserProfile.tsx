@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -8,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { User, Mail, Phone, MapPin, Shield, Bell, CreditCard, Edit } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { ApiService } from "@/services/apiService"
+import { UserInfo, UserPreferences, SavedCard, UserProfileResponse } from "./types"
 
 interface UserInfo {
   name: string
@@ -84,7 +84,7 @@ export function UserProfile() {
       setIsLoading(true)
       // In a real app, get user ID from auth context
       const userId = "1"
-      const profile = await ApiService.request(`/users/profile/${userId}`, { method: 'GET' })
+      const profile = await ApiService.getUserProfile(userId) as UserProfileResponse
       
       if (profile) {
         setUserInfo({
@@ -95,6 +95,10 @@ export function UserProfile() {
           dateOfBirth: profile.dateOfBirth || userInfo.dateOfBirth,
           nationality: profile.nationality || userInfo.nationality
         })
+
+        if (profile.preferences) {
+          setPreferences(profile.preferences)
+        }
       }
     } catch (error) {
       console.log("Failed to load user profile, using defaults:", error)
@@ -109,10 +113,7 @@ export function UserProfile() {
       // In a real app, get user ID from auth context
       const userId = "1"
       
-      await ApiService.request(`/users/profile/${userId}`, {
-        method: 'PUT',
-        body: JSON.stringify(userInfo)
-      })
+      await ApiService.updateUserProfile(userId, userInfo)
       
       setIsEditing(false)
       toast({
@@ -144,8 +145,8 @@ export function UserProfile() {
 
   const savePreferences = async (newPreferences: UserPreferences) => {
     try {
-      // In a real app, save to backend
-      console.log("Saving preferences:", newPreferences)
+      const userId = "1"
+      await ApiService.updateUserPreferences(userId, newPreferences)
       toast({
         title: "Preferences Updated",
         description: "Your preferences have been saved.",
@@ -162,8 +163,8 @@ export function UserProfile() {
 
   const handleRemoveCard = async (cardId: string) => {
     try {
-      // In a real app, call API to remove card
-      console.log("Removing card:", cardId)
+      const userId = "1"
+      await ApiService.removePaymentMethod(userId, cardId)
       toast({
         title: "Card Removed",
         description: "Payment method has been removed successfully.",

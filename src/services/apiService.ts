@@ -8,7 +8,7 @@ import { ConversionResult } from '@/components/remittance/types'
 export class ApiService {
   private static baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
-  private static async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  private static async makeRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
     try {
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
         headers: {
@@ -31,38 +31,38 @@ export class ApiService {
 
   // Generic request method for external use
   static async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
-    return this.request<T>(endpoint, options)
+    return this.makeRequest<T>(endpoint, options)
   }
 
   // Currency endpoints
   static async getCurrencies() {
-    return this.request('/currencies')
+    return this.makeRequest('/currencies')
   }
 
   static async getCurrency(code: string) {
-    return this.request(`/currencies/${code}`)
+    return this.makeRequest(`/currencies/${code}`)
   }
 
   static async getExchangeRate(from: string, to: string) {
-    return this.request(`/currencies/rate/${from}/${to}`)
+    return this.makeRequest(`/currencies/rate/${from}/${to}`)
   }
 
   // Country endpoints
   static async getCountries() {
-    return this.request('/countries')
+    return this.makeRequest('/countries')
   }
 
   static async getCountry(code: string) {
-    return this.request(`/countries/${code}`)
+    return this.makeRequest(`/countries/${code}`)
   }
 
   static async getDeliveryMethods(countryCode: string) {
-    return this.request(`/countries/${countryCode}/delivery-methods`)
+    return this.makeRequest(`/countries/${countryCode}/delivery-methods`)
   }
 
   // Exchange endpoints (legacy)
   static async convertCurrency(data: { amount: string; from: string; to: string }): Promise<ConversionResult> {
-    return this.request<ConversionResult>('/exchange/convert', {
+    return this.makeRequest<ConversionResult>('/exchange/convert', {
       method: 'POST',
       body: JSON.stringify(data),
     })
@@ -70,43 +70,58 @@ export class ApiService {
 
   // Transfer endpoints
   static async createTransfer(transferData: any) {
-    return this.request('/transfers', {
+    return this.makeRequest('/transfers', {
       method: 'POST',
       body: JSON.stringify(transferData),
     })
   }
 
   static async validateTransfer(transferData: any) {
-    return this.request('/transfers/validate', {
+    return this.makeRequest('/transfers/validate', {
       method: 'POST',
       body: JSON.stringify(transferData),
     })
   }
 
   static async getTransferPreview(data: { amount: string; fromCurrency: string; toCurrency: string; deliveryMethod: string }) {
-    return this.request('/transfers/preview', {
+    return this.makeRequest('/transfers/preview', {
       method: 'POST',
       body: JSON.stringify(data),
     })
   }
 
   static async trackTransfer(transferId: string) {
-    return this.request(`/transfers/${transferId}`)
+    return this.makeRequest(`/transfers/${transferId}`)
   }
 
   static async getTransferHistory() {
-    return this.request('/transfers')
+    return this.makeRequest('/transfers')
   }
 
   // User profile endpoints
   static async getUserProfile(userId: string) {
-    return this.request(`/users/profile/${userId}`)
+    return this.makeRequest(`/users/profile/${userId}`)
   }
 
   static async updateUserProfile(userId: string, profileData: any) {
-    return this.request(`/users/profile/${userId}`, {
+    return this.makeRequest(`/users/profile/${userId}`, {
       method: 'PUT',
       body: JSON.stringify(profileData),
+    })
+  }
+
+  // User preferences endpoints
+  static async updateUserPreferences(userId: string, preferences: any) {
+    return this.makeRequest(`/users/profile/${userId}/preferences`, {
+      method: 'PUT',
+      body: JSON.stringify(preferences),
+    })
+  }
+
+  // Payment methods endpoints
+  static async removePaymentMethod(userId: string, cardId: string) {
+    return this.makeRequest(`/users/profile/${userId}/payment-methods/${cardId}`, {
+      method: 'DELETE',
     })
   }
 }
