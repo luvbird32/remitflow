@@ -2,10 +2,12 @@
 import { TransferSuccessDialog } from '../TransferSuccessDialog'
 import { LoadingState } from './LoadingState'
 import { TransferFormCard } from './TransferFormCard'
-import { useTransferForm } from '../hooks/useTransferForm'
 import { useTransferSubmission } from '../hooks/useTransferSubmission'
 import { useTransferFormState } from './hooks/useTransferFormState'
 import { useTransferTracking } from './hooks/useTransferTracking'
+import { useFormData } from '../hooks/useFormData'
+import { useDataLoading } from '../hooks/useDataLoading'
+import { useCountryHandling } from '../hooks/useCountryHandling'
 
 export function TransferFormContainer() {
   const {
@@ -20,13 +22,9 @@ export function TransferFormContainer() {
 
   const { handleTrackTransfer } = useTransferTracking()
   
-  const {
-    formData,
-    setFormData,
-    isDataLoaded,
-    handleCountryChange,
-    updateFormData
-  } = useTransferForm()
+  const { formData, setFormData, updateFormData, resetFormData } = useFormData()
+  const { isDataLoaded } = useDataLoading()
+  const { handleCountryChange } = useCountryHandling(updateFormData)
 
   const { handleSubmit, isSubmitting } = useTransferSubmission({
     formData,

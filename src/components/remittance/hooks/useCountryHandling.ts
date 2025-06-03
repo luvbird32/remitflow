@@ -1,5 +1,5 @@
 
-import { ApiService } from '@/services/apiService'
+import { EnhancedApiService } from '@/services/enhancedApiService'
 import { fallbackCountries } from '../utils/currencyUtils'
 import { TransferFormData } from '../types'
 
@@ -10,7 +10,7 @@ export function useCountryHandling(updateFormData: (updates: Partial<TransferFor
       
       let country
       try {
-        country = await ApiService.getCountry(countryCode)
+        country = await EnhancedApiService.getCountry(countryCode)
       } catch (error) {
         country = fallbackCountries.find(c => c.code === countryCode)
       }

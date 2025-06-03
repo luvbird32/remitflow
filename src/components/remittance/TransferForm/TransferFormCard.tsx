@@ -1,6 +1,5 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { DollarSign } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { TransferFormSteps } from './TransferFormSteps'
 import { TransferFormData, FormErrors } from '../types'
 
@@ -24,15 +23,9 @@ export function TransferFormCard({
   onSubmit
 }: TransferFormCardProps) {
   return (
-    <Card className="max-w-2xl mx-auto">
+    <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <DollarSign className="h-5 w-5" />
-          Send Money
-        </CardTitle>
-        <CardDescription>
-          Send money quickly and securely to anyone, anywhere
-        </CardDescription>
+        <CardTitle className="text-2xl font-bold text-center">Send Money</CardTitle>
       </CardHeader>
       <CardContent>
         <TransferFormSteps
