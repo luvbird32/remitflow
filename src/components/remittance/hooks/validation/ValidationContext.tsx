@@ -14,11 +14,30 @@ const ValidationContext = createContext<ValidationContextType | null>(null)
 
 export function ValidationProvider({ children }: { children: ReactNode }) {
   const validateField = async (field: string, value: any) => {
-    return await FieldValidationService.validateField(field, value)
+    try {
+      console.log('ValidationProvider: Validating field:', field, 'with value:', value)
+      const result = await FieldValidationService.validateField(field, value)
+      console.log('ValidationProvider: Field validation result:', result)
+      return result
+    } catch (error) {
+      console.error('ValidationProvider: Field validation error:', error)
+      return { isValid: false, error: 'Validation failed' }
+    }
   }
 
   const validateForm = async (formData: TransferFormData) => {
-    return await FormValidationService.validateForm(formData)
+    try {
+      console.log('ValidationProvider: Validating form with data:', formData)
+      const result = await FormValidationService.validateForm(formData)
+      console.log('ValidationProvider: Form validation result:', result)
+      return result
+    } catch (error) {
+      console.error('ValidationProvider: Form validation error:', error)
+      return {
+        isValid: false,
+        errors: { general: 'Form validation failed. Please check your inputs.' }
+      }
+    }
   }
 
   return (

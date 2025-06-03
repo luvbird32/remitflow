@@ -24,29 +24,44 @@ export function useTransferSubmission({
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     
+    console.log('useTransferSubmission: Starting submission process')
+    console.log('useTransferSubmission: Form data:', formData)
+    
     setIsSubmitting(true)
     setErrors({})
 
     try {
       // Validate form first
+      console.log('useTransferSubmission: Validating form...')
       const validation = await validateForm(formData)
+      
       if (!validation.isValid) {
+        console.log('useTransferSubmission: Form validation failed:', validation.errors)
         setErrors(validation.errors as FormErrors)
         return
       }
 
+      console.log('useTransferSubmission: Form validation passed, submitting transfer...')
+      
       // Submit transfer
       const result = await TransferSubmissionService.submitTransfer(formData)
       
       if (result) {
+        console.log('useTransferSubmission: Transfer submission successful:', result)
         setTransferResult(result)
         setShowSuccessDialog(true)
+      } else {
+        console.error('useTransferSubmission: Transfer submission returned null/undefined result')
+        setErrors({ general: 'Transfer submission failed. Please try again.' })
       }
     } catch (error) {
-      console.error('Transfer submission error:', error)
-      setErrors({ general: 'Failed to submit transfer. Please try again.' })
+      console.error('useTransferSubmission: Transfer submission error:', error)
+      setErrors({ 
+        general: error instanceof Error ? error.message : 'Failed to submit transfer. Please try again.' 
+      })
     } finally {
       setIsSubmitting(false)
+      console.log('useTransferSubmission: Submission process completed')
     }
   }, [formData, validateForm, setErrors, setTransferResult, setShowSuccessDialog, setIsSubmitting])
 

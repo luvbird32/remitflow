@@ -30,6 +30,13 @@ export function TransferFormSteps({
   const showPaymentDetails = hasDeliveryMethod
   const showReviewStep = hasDeliveryMethod
 
+  console.log('TransferFormSteps: Rendering with form data:', formData)
+  console.log('TransferFormSteps: hasBasicInfo:', hasBasicInfo)
+  console.log('TransferFormSteps: hasDeliveryMethod:', hasDeliveryMethod)
+  console.log('TransferFormSteps: showPaymentDetails:', showPaymentDetails)
+  console.log('TransferFormSteps: showReviewStep:', showReviewStep)
+  console.log('TransferFormSteps: errors:', errors)
+
   return (
     <form onSubmit={onSubmit} className="space-y-8">
       <AmountDestinationStepContainer
@@ -50,7 +57,10 @@ export function TransferFormSteps({
           <DeliveryMethodStep
             recipientCountry={formData.recipientCountry}
             deliveryMethod={formData.deliveryMethod}
-            setDeliveryMethod={(method) => updateFormData({ deliveryMethod: method })}
+            setDeliveryMethod={(method) => {
+              console.log('TransferFormSteps: Setting delivery method to:', method)
+              updateFormData({ deliveryMethod: method })
+            }}
             errors={errors}
           />
         </FormStep>
@@ -66,7 +76,10 @@ export function TransferFormSteps({
         >
           <PaymentMethodFields
             formData={formData}
-            onFieldChange={(field, value) => updateFormData({ [field]: value })}
+            onFieldChange={(field, value) => {
+              console.log('TransferFormSteps: Setting field', field, 'to:', value)
+              updateFormData({ [field]: value })
+            }}
             errors={errors}
           />
         </FormStep>
