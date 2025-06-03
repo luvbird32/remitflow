@@ -38,10 +38,36 @@ src/
 │   ├── ui/              # Base UI components (shadcn/ui)
 │   ├── layout/          # Layout components
 │   ├── remittance/      # Transfer-specific components
+│   │   ├── TransferForm/           # Transfer form components
+│   │   │   ├── FormLayout.tsx      # Form wrapper component
+│   │   │   ├── FormErrorDisplay.tsx # Error display component
+│   │   │   ├── StepIndicator.tsx   # Step indicator component
+│   │   │   ├── StepContainer.tsx   # Step wrapper component
+│   │   │   ├── FormStep.tsx        # Generic form step component
+│   │   │   ├── StepVisibilityManager.tsx # Step visibility logic
+│   │   │   └── steps/              # Individual step containers
+│   │   ├── ReviewCompleteStep/     # Review and payment components
+│   │   │   └── PaymentSection/     # Payment method components
+│   │   │       ├── PaymentSectionHeader.tsx
+│   │   │       ├── PaymentSectionContent.tsx
+│   │   │       ├── PaymentSectionContainer.tsx
+│   │   │       ├── PaymentMethodSelector.tsx
+│   │   │       ├── SavedCardItem.tsx
+│   │   │       ├── NewCardOption.tsx
+│   │   │       ├── NewCardFields.tsx
+│   │   │       ├── FallbackPaymentForm.tsx
+│   │   │       └── PaymentMethodManager.tsx
+│   │   └── DeliveryMethodStep/     # Delivery method components
 │   └── auth/            # Authentication components
 ├── pages/               # Route-based page components
 ├── hooks/               # Custom React hooks
 ├── services/            # API services and HTTP clients
+│   ├── api/            # Organized API services
+│   │   ├── baseApiService.ts       # Core transfer operations
+│   │   ├── dataApiService.ts       # Data operations (currencies, countries)
+│   │   ├── transactionApiService.ts # Transaction operations
+│   │   └── userManagementService.ts # User management operations
+│   └── http/           # HTTP client infrastructure
 ├── types/               # TypeScript type definitions
 ├── utils/               # Utility functions
 └── config/              # Configuration files
@@ -62,11 +88,37 @@ src/
 │  ┌─────────────────────────────────────┐ │
 │  │          Route Content              │ │
 │  │  ┌─────────────┐ ┌───────────────┐  │ │
-│  │  │  Feature    │ │  Feature      │  │ │
-│  │  │ Components  │ │ Components    │  │ │
+│  │  │  Transfer   │ │  Review &     │  │ │
+│  │  │  Form Steps │ │  Payment      │  │ │
 │  │  └─────────────┘ └───────────────┘  │ │
 │  └─────────────────────────────────────┘ │
 └─────────────────────────────────────────┘
+```
+
+### New Form Architecture (Post-Refactoring)
+
+The transfer form now follows a modular, step-based architecture:
+
+```
+TransferForm
+├── FormLayout (form wrapper)
+├── TransferFormSteps
+│   ├── AmountDestinationStepContainer
+│   ├── DeliveryMethodStepContainer
+│   ├── PaymentDetailsStepContainer
+│   └── ReviewStepContainer
+│       └── ReviewCompleteStep
+│           ├── ReviewStepHeader
+│           ├── TransferSummaryCard
+│           ├── SecurityNotice
+│           └── PaymentSection
+│               ├── PaymentSectionHeader
+│               ├── PaymentSectionContent
+│               │   ├── PaymentMethodSelector
+│               │   └── FallbackPaymentForm
+│               └── PaymentSectionContainer
+├── StepVisibilityManager (controls step visibility)
+└── FormErrorDisplay (centralized error display)
 ```
 
 ## 🔧 Backend Architecture
@@ -110,27 +162,31 @@ src/
 ```
 1. User Input (Frontend)
    ↓
-2. Validation (Frontend + Backend)
+2. Step-by-Step Form Validation (FormStep Components)
    ↓
-3. Fee Calculation (Service Layer)
+3. StepVisibilityManager Controls Step Progression
    ↓
-4. Exchange Rate Conversion (Service Layer)
+4. Fee Calculation (Service Layer)
    ↓
-5. Transfer ID Generation (Service Layer)
+5. Exchange Rate Conversion (Service Layer)
    ↓
-6. Data Persistence (Data Layer)
+6. Transfer ID Generation (Service Layer)
    ↓
-7. Response (API → Frontend)
+7. Data Persistence (Data Layer)
+   ↓
+8. Response (API → Frontend)
 ```
 
-### State Management Flow
+### New API Service Flow
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   UI Component  │    │  Custom Hook    │    │  API Service    │
-│                 │◄──►│                 │◄──►│                 │
-│  User Actions   │    │ State Logic     │    │ HTTP Requests   │
-│  Display Data   │    │ Side Effects    │    │ Data Transform  │
+│  UI Component   │    │  Main ApiService│    │ Specialized     │
+│                 │◄──►│                 │◄──►│ Services        │
+│  Form Actions   │    │ Delegates calls │    │ BaseApi         │
+│  Display Data   │    │ to specialized  │    │ DataApi         │
+│                 │    │ services        │    │ TransactionApi  │
+│                 │    │                 │    │ UserMgmtApi     │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -155,25 +211,44 @@ src/
 
 ### 1. Service Layer Pattern
 
-Services encapsulate business logic and provide clean interfaces:
+Services are now organized into specialized layers:
 
 ```typescript
-export class TransferService {
-  static calculateConvertedAmount(amount: string, from: string, to: string): string
-  static calculateFee(amount: string, deliveryMethod: string): number
-  static validateTransfer(transfer: TransferRequest): ValidationError[]
+// Main API Service delegates to specialized services
+export class ApiService {
+  static async createTransfer(transferData: TransferFormData) {
+    return BaseApiService.createTransfer(transferData)
+  }
+  
+  static async getCurrencies() {
+    return DataApiService.getCurrencies()
+  }
+}
+
+// Specialized services handle specific domains
+export class DataApiService {
+  static async getCurrencies() {
+    return CurrencyApiService.getCurrencies()
+  }
+  
+  static async getCountries() {
+    return CountryApiService.getCountries()
+  }
 }
 ```
 
-### 2. Repository Pattern
+### 2. Component Composition Pattern
 
-Data access is abstracted through service interfaces:
+Form components are now highly composable:
 
 ```typescript
-export class CurrencyService {
-  static getAllCurrencies(): Currency[]
-  static getCurrencyByCode(code: string): Currency | undefined
-  static calculateExchangeRate(from: string, to: string): number
+export function FormStep({ stepNumber, title, description, children }) {
+  return (
+    <StepContainer>
+      <StepIndicator stepNumber={stepNumber} title={title} description={description} />
+      {children}
+    </StepContainer>
+  )
 }
 ```
 
@@ -182,21 +257,24 @@ export class CurrencyService {
 Custom hooks encapsulate stateful logic:
 
 ```typescript
-export function useTransferFormState() {
-  const [formData, setFormData] = useState<TransferFormData>()
-  const [currentStep, setCurrentStep] = useState<number>(1)
-  // Business logic...
-  return { formData, currentStep, /* methods */ }
+export function useStepVisibility({ formData }) {
+  const hasBasicInfo = !!(formData.amount && formData.recipientName && formData.recipientCountry)
+  const showPaymentDetails = hasBasicInfo && !!formData.deliveryMethod
+  
+  return { hasBasicInfo, showPaymentDetails }
 }
 ```
 
-### 4. Error Boundary Pattern
+### 4. Manager Pattern
 
-Graceful error handling at component boundaries:
+Managers handle complex component interactions:
 
 ```typescript
-export function ErrorBoundary({ children }: { children: React.ReactNode }) {
-  // Error handling logic...
+export function usePaymentMethodManager() {
+  const [savedCards, setSavedCards] = useState([])
+  const [selectedCard, setSelectedCard] = useState(null)
+  // Business logic...
+  return { savedCards, selectedCard, /* methods */ }
 }
 ```
 
@@ -246,6 +324,7 @@ interface TransferResponse {
 - **Component Memoization**: React.memo for expensive components
 - **Query Optimization**: TanStack Query caching and deduplication
 - **Bundle Analysis**: Vite bundle analyzer integration
+- **Modular Components**: Small, focused components for better tree-shaking
 
 ### Backend Optimizations
 
@@ -326,4 +405,20 @@ interface TransferResponse {
 - **Fallback Data**: Graceful degradation when services are unavailable
 - **Webhook Handling**: Asynchronous event processing
 
-This architecture provides a solid foundation for a scalable, secure, and maintainable international money transfer platform.
+## 🆕 Recent Architecture Updates
+
+### Component Refactoring (2024)
+
+1. **Form Components**: Split large form components into smaller, focused components
+2. **Payment Section**: Extracted payment logic into specialized components
+3. **API Services**: Reorganized API services into domain-specific modules
+4. **Step Management**: Implemented step visibility management for better UX
+
+### Benefits of Recent Changes
+
+- **Better Maintainability**: Smaller, focused components are easier to maintain
+- **Improved Reusability**: Components can be reused across different contexts
+- **Enhanced Testability**: Isolated components are easier to test
+- **Better Performance**: Smaller components enable better tree-shaking and lazy loading
+
+This architecture provides a solid foundation for a scalable, secure, and maintainable international money transfer platform with modern component composition and service organization patterns.

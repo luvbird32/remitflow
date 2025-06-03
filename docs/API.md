@@ -16,6 +16,7 @@ This document provides comprehensive documentation for the RemitFlow API endpoin
   - [Exchange Rates](#exchange-rates)
   - [Tracking](#tracking)
   - [External Services](#external-services)
+- [API Service Architecture](#api-service-architecture)
 
 ## 🔗 Base URL & Authentication
 
@@ -555,33 +556,122 @@ GET /external/health
 }
 ```
 
+## 🏗️ API Service Architecture
+
+### Frontend API Service Organization
+
+The frontend uses a layered API service architecture:
+
+```typescript
+// Main API Service - Entry point for all API calls
+class ApiService {
+  // Delegates to specialized services
+  static async createTransfer(data) {
+    return BaseApiService.createTransfer(data)
+  }
+  
+  static async getCurrencies() {
+    return DataApiService.getCurrencies()
+  }
+}
+
+// Specialized Services
+class BaseApiService {
+  // Core transfer operations
+  static async createTransfer(data) { /* ... */ }
+  static async validateTransfer(data) { /* ... */ }
+}
+
+class DataApiService {
+  // Data operations (currencies, countries)
+  static async getCurrencies() {
+    return CurrencyApiService.getCurrencies()
+  }
+  
+  static async getCountries() {
+    return CountryApiService.getCountries()
+  }
+}
+
+class TransactionApiService {
+  // Transaction operations (exchanges, previews)
+  static async convertCurrency(data) { /* ... */ }
+  static async getTransferPreview(data) { /* ... */ }
+}
+
+class UserManagementService {
+  // User and external service operations
+  static async getUserProfile(userId) { /* ... */ }
+  static async getExternalRates() { /* ... */ }
+}
+```
+
+### Service Delegation Pattern
+
+```
+ApiService (Main Entry Point)
+├── BaseApiService (Core Operations)
+├── DataApiService (Data Operations)
+│   ├── CurrencyApiService
+│   └── CountryApiService
+├── TransactionApiService (Transaction Operations)
+│   ├── ExchangeApiService
+│   └── TransferApiService
+└── UserManagementService (User & External Operations)
+```
+
 ## 📝 Usage Examples
 
 ### JavaScript/TypeScript
 
 ```typescript
+import { ApiService } from '@/services/apiService'
+
 // Create a transfer
 const createTransfer = async (transferData: TransferRequest) => {
-  const response = await fetch('/api/transfers', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(transferData),
-  });
-  
-  if (!response.ok) {
-    throw new Error('Transfer creation failed');
+  try {
+    const result = await ApiService.createTransfer(transferData)
+    return result
+  } catch (error) {
+    console.error('Transfer creation failed:', error)
+    throw error
   }
-  
-  return response.json();
-};
+}
 
 // Get exchange rate
 const getExchangeRate = async (from: string, to: string) => {
-  const response = await fetch(`/api/exchange/rate/${from}/${to}`);
-  return response.json();
-};
+  const rate = await ApiService.getExchangeRate(from, to)
+  return rate
+}
+
+// Get currencies using the specialized service
+const currencies = await ApiService.getCurrencies()
+
+// Track transfer
+const tracking = await ApiService.trackTransfer(transferId)
+```
+
+### React Hook Usage
+
+```typescript
+import { useQuery } from '@tanstack/react-query'
+import { ApiService } from '@/services/apiService'
+
+// Using TanStack Query with the API service
+const useCurrencies = () => {
+  return useQuery({
+    queryKey: ['currencies'],
+    queryFn: ApiService.getCurrencies,
+  })
+}
+
+const useTransferPreview = (previewData) => {
+  return useQuery({
+    queryKey: ['transfer-preview', previewData],
+    queryFn: () => ApiService.getTransferPreview(previewData),
+    enabled: !!previewData.amount,
+  })
+}
 ```
 
 ### cURL Examples
@@ -608,7 +698,30 @@ curl http://localhost:3001/api/tracking/TXN1734123456789abc123def
 
 ## 🔍 Testing
 
-Use the included Postman collection or test with curl:
+### API Service Testing
+
+```typescript
+import { ApiService } from '@/services/apiService'
+
+describe('ApiService', () => {
+  test('creates transfer successfully', async () => {
+    const transferData = {
+      amount: '100.00',
+      recipientName: 'John Doe',
+      recipientCountry: 'NG',
+      deliveryMethod: 'bank',
+      fromCurrency: 'USD',
+      toCurrency: 'NGN'
+    }
+    
+    const result = await ApiService.createTransfer(transferData)
+    expect(result.id).toBeDefined()
+    expect(result.status).toBe('pending')
+  })
+})
+```
+
+### Health Check
 
 ```bash
 # Health check
@@ -621,6 +734,38 @@ curl http://localhost:3001/api/currencies
 curl -X POST http://localhost:3001/api/exchange/convert \
   -H "Content-Type: application/json" \
   -d '{"amount": "100", "from": "USD", "to": "NGN"}'
+```
+
+## 🚀 Best Practices
+
+### Error Handling
+
+```typescript
+// Proper error handling with the API service
+try {
+  const transfer = await ApiService.createTransfer(data)
+  // Handle success
+} catch (error) {
+  if (error.response?.status === 422) {
+    // Handle validation errors
+  } else if (error.response?.status === 429) {
+    // Handle rate limiting
+  } else {
+    // Handle general errors
+  }
+}
+```
+
+### Caching Strategy
+
+```typescript
+// Use TanStack Query for intelligent caching
+const { data: currencies } = useQuery({
+  queryKey: ['currencies'],
+  queryFn: ApiService.getCurrencies,
+  staleTime: 5 * 60 * 1000, // 5 minutes
+  cacheTime: 10 * 60 * 1000, // 10 minutes
+})
 ```
 
 For more detailed testing examples, see the [Testing Guide](./TESTING.md).
