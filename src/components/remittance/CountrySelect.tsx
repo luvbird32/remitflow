@@ -21,17 +21,21 @@ export function CountrySelect({
         Recipient Country
       </label>
       <Select value={recipientCountry} onValueChange={onCountryChange}>
-        <SelectTrigger className={error ? "border-red-500" : ""}>
+        <SelectTrigger className={`w-full ${error ? "border-red-500" : ""}`}>
           <SelectValue placeholder="Select country" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-white border shadow-lg rounded-md z-50 max-h-60 overflow-y-auto">
           {countries.map((country) => (
-            <SelectItem key={country.code} value={country.code}>
-              <span className="flex items-center gap-2">
-                <span>{country.flag}</span>
-                <span>{country.name}</span>
-                <span className="text-gray-500">({country.currency})</span>
-              </span>
+            <SelectItem 
+              key={country.code} 
+              value={country.code}
+              className="flex items-center gap-2 p-2 hover:bg-gray-100 cursor-pointer"
+            >
+              <div className="flex items-center gap-2 w-full">
+                <span className="text-lg">{country.flag}</span>
+                <span className="font-medium">{country.name}</span>
+                <span className="text-gray-500 text-sm ml-auto">({country.currency})</span>
+              </div>
             </SelectItem>
           ))}
         </SelectContent>
