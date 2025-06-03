@@ -1,3 +1,4 @@
+
 export interface TransferFormData {
   amount: string
   recipientName: string
@@ -12,6 +13,11 @@ export interface TransferFormData {
   cardIssuer: string
   mobileNumber: string
   mobileProvider: string
+  // Payment method fields for the final step
+  paymentCardNumber?: string
+  paymentExpiry?: string
+  paymentCvv?: string
+  paymentName?: string
 }
 
 export interface FormErrors {
@@ -26,6 +32,10 @@ export interface FormErrors {
   cardIssuer?: string
   mobileNumber?: string
   mobileProvider?: string
+  paymentCardNumber?: string
+  paymentExpiry?: string
+  paymentCvv?: string
+  paymentName?: string
   general?: string
 }
 

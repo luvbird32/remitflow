@@ -16,9 +16,9 @@ export const currencies: Currency[] = [
 export const countries: Country[] = [
   { code: "US", name: "United States", currency: "USD", flag: "🇺🇸", deliveryMethods: ["bank", "card"] },
   { code: "GB", name: "United Kingdom", currency: "GBP", flag: "🇬🇧", deliveryMethods: ["bank", "card"] },
-  { code: "NG", name: "Nigeria", currency: "NGN", flag: "🇳🇬", deliveryMethods: ["bank", "card", "mobile"] },
-  { code: "KE", name: "Kenya", currency: "KES", flag: "🇰🇪", deliveryMethods: ["bank", "card", "mobile"] },
-  { code: "GH", name: "Ghana", currency: "GHS", flag: "🇬🇭", deliveryMethods: ["bank", "card", "mobile"] },
+  { code: "NG", name: "Nigeria", currency: "NGN", flag: "🇳🇬", deliveryMethods: ["bank", "card", "wallet"] },
+  { code: "KE", name: "Kenya", currency: "KES", flag: "🇰🇪", deliveryMethods: ["bank", "card", "wallet"] },
+  { code: "GH", name: "Ghana", currency: "GHS", flag: "🇬🇭", deliveryMethods: ["bank", "card", "wallet"] },
   { code: "ZA", name: "South Africa", currency: "ZAR", flag: "🇿🇦", deliveryMethods: ["bank", "card"] },
   { code: "CA", name: "Canada", currency: "CAD", flag: "🇨🇦", deliveryMethods: ["bank", "card"] },
   { code: "JP", name: "Japan", currency: "JPY", flag: "🇯🇵", deliveryMethods: ["bank", "card"] }
@@ -43,7 +43,7 @@ export class TransferService {
     const deliveryFees = {
       bank: 0,
       card: 1.99,
-      mobile: 0.99
+      wallet: 0.99
     };
     
     return baseFee + (deliveryFees[deliveryMethod as keyof typeof deliveryFees] || 0);
@@ -89,7 +89,7 @@ export class TransferService {
       if (!transfer.cardIssuer) {
         errors.push({ field: "cardIssuer", message: "Card issuer is required" });
       }
-    } else if (transfer.deliveryMethod === 'mobile') {
+    } else if (transfer.deliveryMethod === 'wallet') {
       if (!transfer.mobileNumber) {
         errors.push({ field: "mobileNumber", message: "Mobile number is required" });
       }
@@ -105,7 +105,7 @@ export class TransferService {
     const timeframes = {
       bank: "1-3 business days",
       card: "1-2 hours", 
-      mobile: "Within minutes"
+      wallet: "Within minutes"
     };
     return timeframes[deliveryMethod as keyof typeof timeframes] || "Unknown";
   }

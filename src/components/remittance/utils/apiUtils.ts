@@ -1,24 +1,11 @@
-
-import { ApiService } from '@/services/apiService'
-import { currencies } from './currencyUtils'
-import { countries } from './countryUtils'
-
+// Placeholder for API utilities - can be expanded based on needs
 export const loadCurrenciesAndCountries = async () => {
-  try {
-    // Try to load from backend, but don't fail if unavailable
-    const [currenciesData, countriesData] = await Promise.all([
-      ApiService.getCurrencies().catch(() => currencies),
-      ApiService.getCountries().catch(() => countries)
-    ])
-    
-    // Type check and update the exported arrays if we got valid data from backend
-    if (Array.isArray(currenciesData) && currenciesData.length > 0) {
-      currencies.splice(0, currencies.length, ...currenciesData)
-    }
-    if (Array.isArray(countriesData) && countriesData.length > 0) {
-      countries.splice(0, countries.length, ...countriesData)
-    }
-  } catch (error) {
-    console.log('Backend unavailable, using fallback data')
-  }
+  // This function is referenced in useTransferForm but not actually needed
+  // since we have static data. Adding as placeholder for future API integration.
+  return Promise.resolve()
+}
+
+export const apiConfig = {
+  baseUrl: process.env.REACT_APP_API_URL || 'http://localhost:3001',
+  timeout: 10000
 }
