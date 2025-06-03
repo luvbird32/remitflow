@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react"
 import { ApiService } from '@/services/apiService'
-import { Currency } from '../transferUtils'
 import { ConversionResult } from '../types'
-import { fallbackCurrencies } from '../utils/currencyUtils'
+import { fallbackCurrencies, Currency } from '../utils/currencyUtils'
 
 /**
  * Exchange Calculator Hook
@@ -60,7 +59,7 @@ export function useExchangeCalculator() {
     const loadCurrencies = async () => {
       try {
         const data = await ApiService.getCurrencies()
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           setCurrencies(data)
         }
       } catch (error) {
