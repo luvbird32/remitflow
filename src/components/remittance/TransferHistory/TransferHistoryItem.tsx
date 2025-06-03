@@ -24,13 +24,13 @@ export function TransferHistoryItemComponent({ transfer, index, onTrack }: Trans
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "delivered":
-        return <CheckCircle className="h-5 w-5 text-emerald-500" />
+        return <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-500" />
       case "processing":
-        return <Clock className="h-5 w-5 text-blue-500" />
+        return <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
       case "pending":
-        return <Clock className="h-5 w-5 text-amber-500" />
+        return <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
       case "failed":
-        return <XCircle className="h-5 w-5 text-red-500" />
+        return <XCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
       default:
         return null
     }
@@ -61,6 +61,15 @@ export function TransferHistoryItemComponent({ transfer, index, onTrack }: Trans
     })
   }
 
+  const formatDateMobile = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
   const getCountryFlag = (countryCode: string) => {
     const flags: Record<string, string> = {
       'US': '🇺🇸',
@@ -77,10 +86,58 @@ export function TransferHistoryItemComponent({ transfer, index, onTrack }: Trans
 
   return (
     <div
-      className="modern-card-hover p-6 animate-scale-in group"
+      className="modern-card-hover p-4 sm:p-6 animate-scale-in group"
       style={{animationDelay: `${0.1 * (index + 1)}s`}}
     >
-      <div className="flex items-center justify-between">
+      {/* Mobile Layout */}
+      <div className="sm:hidden">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-2">
+            {getStatusIcon(transfer.status)}
+            <div>
+              <h4 className="font-bold text-slate-800 text-base leading-tight">
+                {transfer.recipientName}
+              </h4>
+              <div className="flex items-center gap-2 text-xs text-slate-500 mt-1">
+                <span>{getCountryFlag(transfer.recipientCountry)} {transfer.recipientCountry}</span>
+              </div>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-lg font-bold text-slate-800">
+              {transfer.currency} {transfer.amount}
+            </div>
+            <Badge className={`${getStatusColor(transfer.status)} font-medium px-2 py-1 rounded-lg border text-xs`}>
+              {transfer.status.charAt(0).toUpperCase() + transfer.status.slice(1)}
+            </Badge>
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between text-xs text-slate-500">
+          <div className="flex items-center gap-1">
+            <Calendar className="h-3 w-3" />
+            {formatDateMobile(transfer.createdAt)}
+          </div>
+          <div>ID: {transfer.id.substring(0, 8)}...</div>
+        </div>
+        
+        <div className="mt-2 text-xs text-slate-600">
+          Est. delivery: {transfer.estimatedDelivery}
+        </div>
+        
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onTrack(transfer.id)}
+          className="w-full mt-3 h-8 text-xs"
+        >
+          <Search className="h-3 w-3 mr-1" />
+          Track Transfer
+        </Button>
+      </div>
+
+      {/* Desktop Layout */}
+      <div className="hidden sm:flex items-center justify-between">
         <div className="flex items-center gap-4">
           {getStatusIcon(transfer.status)}
           <div className="space-y-2">

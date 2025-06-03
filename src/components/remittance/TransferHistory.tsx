@@ -61,10 +61,10 @@ export function TransferHistory() {
   }
 
   return (
-    <div className="modern-card p-8 animate-fade-in">
+    <div className="modern-card p-4 sm:p-6 md:p-8 animate-fade-in">
       <TransferHistoryHeader onRefresh={loadTransferHistory} />
       
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {transfers.map((transfer, index) => (
           <TransferHistoryItemComponent
             key={transfer.id}
