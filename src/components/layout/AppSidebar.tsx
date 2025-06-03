@@ -1,3 +1,4 @@
+
 import {
   Sidebar,
   SidebarContent,
@@ -8,10 +9,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
-  SidebarTrigger,
-  useSidebar,
 } from "@/components/ui/sidebar";
-import { Send, History, TrendingUp, Calculator, Search, User, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { Send, History, TrendingUp, Calculator, Search, User } from 'lucide-react';
 
 interface AppSidebarProps {
   activeTab: string;
@@ -65,109 +64,71 @@ const menuItems: MenuItem[] = [
 ];
 
 export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
-  const { state } = useSidebar();
-  const isCollapsed = state === "collapsed";
-
   return (
-    <div className="relative">
-      <Sidebar 
-        collapsible="icon" 
-        className="border-r border-slate-200/30 glass backdrop-blur-xl transition-all duration-300 ease-in-out"
-      >
-        <SidebarHeader className="p-4 border-b border-slate-200/30">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/25 transition-all duration-300 hover:shadow-teal-500/40 hover:scale-110">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            {!isCollapsed && (
-              <div className="transition-opacity duration-200">
-                <h1 className="text-lg font-bold gradient-text tracking-tight">
-                  RemitFlow
-                </h1>
-                <p className="text-xs text-slate-500 font-medium">Global Money Transfer</p>
-              </div>
-            )}
+    <Sidebar 
+      collapsible="none" 
+      className="border-r border-slate-200/30 glass backdrop-blur-xl w-[16rem]"
+    >
+      <SidebarHeader className="p-4 border-b border-slate-200/30">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/25 transition-all duration-300 hover:shadow-teal-500/40 hover:scale-110">
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
           </div>
-        </SidebarHeader>
-        
-        <SidebarContent className="p-3">
-          <SidebarGroup>
-            {!isCollapsed && (
-              <SidebarGroupLabel className="text-slate-500 font-bold text-xs uppercase tracking-wider px-3 py-2 mb-2 transition-opacity duration-200">
-                Navigation
-              </SidebarGroupLabel>
-            )}
-            <SidebarGroupContent>
-              <SidebarMenu className="space-y-1">
-                {menuItems.map((item) => (
-                  <SidebarMenuItem key={item.value}>
-                    <SidebarMenuButton
-                      onClick={() => onTabChange(item.value)}
-                      isActive={activeTab === item.value}
-                      className={`group w-full justify-start rounded-xl p-3 transition-all duration-300 ease-out ${
-                        activeTab === item.value
-                          ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 scale-[1.02]'
-                          : 'text-slate-600 hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 hover:text-slate-800 hover:scale-[1.01] hover:shadow-md'
-                      } ${isCollapsed ? 'justify-center' : ''}`}
-                      tooltip={isCollapsed ? item.title : undefined}
-                    >
-                      <item.icon className={`h-5 w-5 transition-all duration-200 ${
-                        activeTab === item.value ? 'scale-110' : 'group-hover:scale-105'
-                      } ${isCollapsed ? 'mx-auto' : ''}`} />
-                      {!isCollapsed && (
-                        <div className="flex flex-col items-start ml-1 transition-opacity duration-200">
-                          <span className="font-semibold text-sm">{item.title}</span>
-                          <span className={`text-xs transition-colors ${
-                            activeTab === item.value 
-                              ? 'text-white/80' 
-                              : 'text-slate-400 group-hover:text-slate-500'
-                          }`}>
-                            {item.description}
-                          </span>
-                        </div>
-                      )}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-
-          {!isCollapsed && (
-            <div className="mt-auto p-3 border-t border-slate-200/30 transition-opacity duration-200">
-              <div className="text-xs text-slate-400 text-center">
-                <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
-                  <span className="text-xs">⌘</span>B
-                </kbd>
-                <span className="ml-1">to toggle sidebar</span>
-              </div>
-            </div>
-          )}
-        </SidebarContent>
-      </Sidebar>
+          <div>
+            <h1 className="text-lg font-bold gradient-text tracking-tight">
+              RemitFlow
+            </h1>
+            <p className="text-xs text-slate-500 font-medium">Global Money Transfer</p>
+          </div>
+        </div>
+      </SidebarHeader>
       
-      {/* Fixed position toggle button */}
-      <div className={`absolute top-4 transition-all duration-300 z-50 ${
-        isCollapsed ? 'right-2' : 'right-4'
-      }`}>
-        <SidebarTrigger className={`
-          w-10 h-10 p-2
-          bg-white/90 hover:bg-white shadow-lg hover:shadow-xl 
-          border border-slate-200/50 hover:border-slate-300 
-          rounded-xl transition-all duration-200 
-          flex items-center justify-center
-          hover:scale-105 active:scale-95
-          backdrop-blur-sm
-        `}>
-          {isCollapsed ? (
-            <PanelLeftOpen className="h-5 w-5 text-slate-700" />
-          ) : (
-            <PanelLeftClose className="h-5 w-5 text-slate-700" />
-          )}
-        </SidebarTrigger>
-      </div>
-    </div>
+      <SidebarContent className="p-3">
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-slate-500 font-bold text-xs uppercase tracking-wider px-3 py-2 mb-2">
+            Navigation
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu className="space-y-1">
+              {menuItems.map((item) => (
+                <SidebarMenuItem key={item.value}>
+                  <SidebarMenuButton
+                    onClick={() => onTabChange(item.value)}
+                    isActive={activeTab === item.value}
+                    className={`group w-full justify-start rounded-xl p-3 transition-all duration-300 ease-out ${
+                      activeTab === item.value
+                        ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 scale-[1.02]'
+                        : 'text-slate-600 hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 hover:text-slate-800 hover:scale-[1.01] hover:shadow-md'
+                    }`}
+                  >
+                    <item.icon className={`h-5 w-5 transition-all duration-200 ${
+                      activeTab === item.value ? 'scale-110' : 'group-hover:scale-105'
+                    }`} />
+                    <div className="flex flex-col items-start ml-1">
+                      <span className="font-semibold text-sm">{item.title}</span>
+                      <span className={`text-xs transition-colors ${
+                        activeTab === item.value 
+                          ? 'text-white/80' 
+                          : 'text-slate-400 group-hover:text-slate-500'
+                      }`}>
+                        {item.description}
+                      </span>
+                    </div>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <div className="mt-auto p-3 border-t border-slate-200/30">
+          <div className="text-xs text-slate-400 text-center">
+            <span>RemitFlow v1.0</span>
+          </div>
+        </div>
+      </SidebarContent>
+    </Sidebar>
   );
 }

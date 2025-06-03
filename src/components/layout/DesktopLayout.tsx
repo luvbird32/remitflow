@@ -1,4 +1,4 @@
-import { Header } from '@/components/layout/Header';
+
 import { TransferForm } from '@/components/remittance/TransferForm';
 import { TransferHistory } from '@/components/remittance/TransferHistory';
 import { ExchangeRates } from '@/components/remittance/ExchangeRates';
@@ -37,7 +37,7 @@ export function DesktopLayout({ activeTab, onTabChange }: DesktopLayoutProps) {
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full gradient-bg">
         <AppSidebar activeTab={activeTab} onTabChange={onTabChange} />
-        <div className="flex-1 flex flex-col transition-all duration-300 ease-in-out">
+        <div className="flex-1 flex flex-col">
           <main className="flex-1 container mx-auto px-8 py-16">
             <div className="mb-16 text-center animate-fade-in">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-3xl mb-8 shadow-2xl shadow-teal-500/25 animate-float">
