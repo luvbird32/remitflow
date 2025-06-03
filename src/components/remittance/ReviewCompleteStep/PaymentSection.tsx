@@ -32,6 +32,18 @@ export function PaymentSection({
     handleUseNewCard
   } = usePaymentMethodManager()
 
+  const handleCardSelect = (cardId: string) => {
+    handleCardSelection(cardId)
+    setShowPaymentFields(false)
+  }
+
+  const handleNewCardSelect = () => {
+    handleUseNewCard()
+    setShowPaymentFields(true)
+  }
+
+  const isPaymentMethodSelected = selectedCard || useNewCard
+
   return (
     <Card className="modern-card">
       <CardContent className="p-8 space-y-6">
@@ -44,23 +56,21 @@ export function PaymentSection({
 
         {savedCards.length > 0 ? (
           <div className="space-y-4">
-            <p className="text-slate-600">
-              Choose how to pay for this transfer
-            </p>
+            <p className="text-slate-600">Choose how to pay for this transfer</p>
             
             <PaymentMethodSelector
               savedCards={savedCards}
               selectedCard={selectedCard}
               useNewCard={useNewCard}
               showPaymentFields={showPaymentFields}
-              onCardSelection={(cardId) => handleCardSelection(cardId, setShowPaymentFields)}
-              onUseNewCard={() => handleUseNewCard(setShowPaymentFields)}
+              onCardSelection={handleCardSelect}
+              onUseNewCard={handleNewCardSelect}
               onFieldChange={onPaymentFieldChange}
             />
 
             <Button
               type="submit"
-              disabled={isSubmitting || (!selectedCard && !useNewCard)}
+              disabled={isSubmitting || !isPaymentMethodSelected}
               className="w-full h-16 text-lg bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 font-bold"
             >
               {isSubmitting ? (

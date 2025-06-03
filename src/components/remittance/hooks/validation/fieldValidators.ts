@@ -1,12 +1,7 @@
+
 import { ValidationResult } from './validationTypes'
 
-/**
- * Individual field validation functions
- */
 export const fieldValidators = {
-  /**
-   * Validates transfer amount according to business rules and limits
-   */
   amount: (amount: string): ValidationResult => {
     if (!amount || amount.trim() === '') {
       return { isValid: false, error: 'Please enter an amount' }
@@ -28,9 +23,6 @@ export const fieldValidators = {
     return { isValid: true }
   },
 
-  /**
-   * Validates recipient name for required fields and format
-   */
   recipientName: (name: string): ValidationResult => {
     if (!name || name.trim() === '') {
       return { isValid: false, error: 'Please enter the recipient name' }
@@ -43,9 +35,6 @@ export const fieldValidators = {
     return { isValid: true }
   },
 
-  /**
-   * Validates email address format using regex pattern
-   */
   recipientEmail: (email: string): ValidationResult => {
     if (email && email.trim() !== '') {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -56,9 +45,6 @@ export const fieldValidators = {
     return { isValid: true }
   },
 
-  /**
-   * Validates country selection for supported countries
-   */
   recipientCountry: (country: string): ValidationResult => {
     if (!country) {
       return { isValid: false, error: 'Please choose where to send money' }
@@ -66,9 +52,6 @@ export const fieldValidators = {
     return { isValid: true }
   },
 
-  /**
-   * Validates delivery method based on country support
-   */
   deliveryMethod: (method: string): ValidationResult => {
     if (!method) {
       return { isValid: false, error: 'Please choose how they will get the money' }
@@ -76,9 +59,6 @@ export const fieldValidators = {
     return { isValid: true }
   },
 
-  /**
-   * Validates bank account number format and length
-   */
   accountNumber: (accountNumber: string): ValidationResult => {
     if (!accountNumber || accountNumber.trim() === '') {
       return { isValid: false, error: 'Account number is required' }
@@ -86,9 +66,6 @@ export const fieldValidators = {
     return { isValid: true }
   },
 
-  /**
-   * Validates bank name for required field
-   */
   bankName: (bankName: string): ValidationResult => {
     if (!bankName || bankName.trim() === '') {
       return { isValid: false, error: 'Bank name is required' }
@@ -96,9 +73,6 @@ export const fieldValidators = {
     return { isValid: true }
   },
 
-  /**
-   * Validates card number format and checksum
-   */
   cardNumber: (cardNumber: string): ValidationResult => {
     if (!cardNumber || cardNumber.trim() === '') {
       return { isValid: false, error: 'Card number is required' }
@@ -112,9 +86,6 @@ export const fieldValidators = {
     return { isValid: true }
   },
 
-  /**
-   * Validates mobile number format for mobile wallet transfers
-   */
   mobileNumber: (mobileNumber: string): ValidationResult => {
     if (!mobileNumber || mobileNumber.trim() === '') {
       return { isValid: false, error: 'Mobile number is required' }
