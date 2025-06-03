@@ -9,7 +9,13 @@ const mockFormData = {
   recipientName: 'John Doe',
   recipientEmail: 'john@example.com',
   recipientCountry: 'GB',
-  deliveryMethod: 'bank'
+  deliveryMethod: 'bank',
+  accountNumber: '',
+  bankName: '',
+  cardNumber: '',
+  cardIssuer: '',
+  mobileNumber: '',
+  mobileProvider: ''
 };
 
 describe('FeeBreakdown', () => {

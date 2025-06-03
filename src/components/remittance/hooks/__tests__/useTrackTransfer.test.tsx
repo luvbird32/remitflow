@@ -1,6 +1,6 @@
 
 import { renderHook, act } from '@testing-library/react';
-import { useTrackTransfer } from '../TrackTransfer/useTrackTransfer';
+import { useTrackTransfer } from '../../TrackTransfer/useTrackTransfer';
 
 // Mock the toast hook
 jest.mock('@/hooks/use-toast', () => ({
