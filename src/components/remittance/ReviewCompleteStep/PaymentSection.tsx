@@ -1,10 +1,11 @@
 
 import { useState, useEffect } from "react"
-import { CreditCard, ArrowRight, Check } from "lucide-react"
+import { CreditCard, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { TransferFormData, FormErrors } from '../types'
+import { PaymentMethodSelector } from './PaymentSection/PaymentMethodSelector'
+import { FallbackPaymentForm } from './PaymentSection/FallbackPaymentForm'
 
 interface SavedCard {
   id: string
@@ -77,25 +78,6 @@ export function PaymentSection({
     setShowPaymentFields(true)
   }
 
-  const getBrandIcon = (brand: string) => {
-    switch (brand.toLowerCase()) {
-      case 'visa':
-        return (
-          <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center">
-            <span className="text-white text-xs font-bold">VISA</span>
-          </div>
-        )
-      case 'mastercard':
-        return (
-          <div className="w-8 h-5 bg-red-600 rounded flex items-center justify-center">
-            <span className="text-white text-xs font-bold">MC</span>
-          </div>
-        )
-      default:
-        return <CreditCard className="h-5 w-5 text-gray-600" />
-    }
-  }
-
   return (
     <Card className="modern-card">
       <CardContent className="p-8 space-y-6">
@@ -112,103 +94,15 @@ export function PaymentSection({
               Choose a payment method for this transfer
             </p>
             
-            {/* Saved Cards */}
-            <div className="space-y-3">
-              {savedCards.map((card) => (
-                <div
-                  key={card.id}
-                  className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                    selectedCard === card.id 
-                      ? 'border-coral-500 bg-coral-50' 
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                  onClick={() => handleCardSelection(card.id)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      {getBrandIcon(card.brand)}
-                      <div>
-                        <p className="font-medium text-slate-800">
-                          •••• •••• •••• {card.last4}
-                        </p>
-                        <p className="text-sm text-slate-600">
-                          Expires {card.expiryMonth.toString().padStart(2, '0')}/{card.expiryYear}
-                        </p>
-                      </div>
-                      {card.isDefault && (
-                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                          Default
-                        </span>
-                      )}
-                    </div>
-                    {selectedCard === card.id && (
-                      <Check className="h-5 w-5 text-coral-500" />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Use New Card Option */}
-            <div
-              className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                useNewCard 
-                  ? 'border-coral-500 bg-coral-50' 
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-              onClick={handleUseNewCard}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <CreditCard className="h-5 w-5 text-gray-600" />
-                  <p className="font-medium text-slate-800">Use a different card</p>
-                </div>
-                {useNewCard && <Check className="h-5 w-5 text-coral-500" />}
-              </div>
-            </div>
-
-            {/* New Card Fields */}
-            {showPaymentFields && useNewCard && (
-              <div className="space-y-6 mt-6 p-4 border-t">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="form-label">Card Number</label>
-                    <Input
-                      placeholder="1234 5678 9012 3456"
-                      className="form-input h-12"
-                      onChange={(e) => onPaymentFieldChange('paymentCardNumber', e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="form-label">Expiry Date</label>
-                    <Input
-                      placeholder="MM/YY"
-                      className="form-input h-12"
-                      onChange={(e) => onPaymentFieldChange('paymentExpiry', e.target.value)}
-                    />
-                  </div>
-                </div>
-                
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="form-label">CVV</label>
-                    <Input
-                      placeholder="123"
-                      className="form-input h-12"
-                      onChange={(e) => onPaymentFieldChange('paymentCvv', e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="form-label">Cardholder Name</label>
-                    <Input
-                      placeholder="John Doe"
-                      className="form-input h-12"
-                      onChange={(e) => onPaymentFieldChange('paymentName', e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+            <PaymentMethodSelector
+              savedCards={savedCards}
+              selectedCard={selectedCard}
+              useNewCard={useNewCard}
+              showPaymentFields={showPaymentFields}
+              onCardSelection={handleCardSelection}
+              onUseNewCard={handleUseNewCard}
+              onFieldChange={onPaymentFieldChange}
+            />
 
             <Button
               type="submit"
@@ -229,81 +123,12 @@ export function PaymentSection({
             </Button>
           </div>
         ) : (
-          // Fallback to original flow if no saved cards
-          <div className="space-y-4">
-            <p className="text-slate-600">
-              Choose how you'd like to pay for this transfer
-            </p>
-            <Button
-              type="button"
-              onClick={() => setShowPaymentFields(true)}
-              className="w-full h-14 text-lg bg-gradient-to-r from-coral-500 to-orange-500 hover:from-coral-600 hover:to-orange-600"
-            >
-              <CreditCard className="mr-2 h-5 w-5" />
-              Pay with Card
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            
-            {showPaymentFields && (
-              <div className="space-y-6">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="form-label">Card Number</label>
-                    <Input
-                      placeholder="1234 5678 9012 3456"
-                      className="form-input h-12"
-                      onChange={(e) => onPaymentFieldChange('paymentCardNumber', e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="form-label">Expiry Date</label>
-                    <Input
-                      placeholder="MM/YY"
-                      className="form-input h-12"
-                      onChange={(e) => onPaymentFieldChange('paymentExpiry', e.target.value)}
-                    />
-                  </div>
-                </div>
-                
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="form-label">CVV</label>
-                    <Input
-                      placeholder="123"
-                      className="form-input h-12"
-                      onChange={(e) => onPaymentFieldChange('paymentCvv', e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="form-label">Cardholder Name</label>
-                    <Input
-                      placeholder="John Doe"
-                      className="form-input h-12"
-                      onChange={(e) => onPaymentFieldChange('paymentName', e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full h-16 text-lg bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 font-bold"
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      Processing Transfer...
-                    </div>
-                  ) : (
-                    <>
-                      Complete Transfer
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
-          </div>
+          <FallbackPaymentForm
+            showPaymentFields={showPaymentFields}
+            isSubmitting={isSubmitting}
+            onShowPaymentFields={() => setShowPaymentFields(true)}
+            onFieldChange={onPaymentFieldChange}
+          />
         )}
       </CardContent>
     </Card>
