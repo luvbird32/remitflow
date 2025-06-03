@@ -10,6 +10,6 @@ import { TransferFormContainer } from './TransferForm/TransferFormContainer'
  * 
  * @returns JSX element containing the complete transfer form
  */
-export function TransferForm() {
-  return <TransferFormContainer />
+export function TransferForm({ key }: { key?: React.Key }) {
+  return <TransferFormContainer key={key} />
 }
