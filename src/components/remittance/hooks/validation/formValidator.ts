@@ -1,4 +1,3 @@
-
 import { TransferFormData } from '../../types'
 import { fieldValidators } from './fieldValidators'
 import { FormValidationResult } from './types'
