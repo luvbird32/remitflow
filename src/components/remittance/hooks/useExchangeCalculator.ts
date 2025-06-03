@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from "react"
 import { ApiService } from '@/services/apiService'
 import { Currency } from '../transferUtils'
 import { ConversionResult } from '../types'
+import { fallbackCurrencies } from '../utils/currencyUtils'
 
 /**
  * Exchange Calculator Hook
@@ -45,7 +45,7 @@ export function useExchangeCalculator() {
   const [amount, setAmount] = useState("")
   const [fromCurrency, setFromCurrency] = useState("USD")
   const [toCurrency, setToCurrency] = useState("EUR")
-  const [currencies, setCurrencies] = useState<Currency[]>([])
+  const [currencies, setCurrencies] = useState<Currency[]>(fallbackCurrencies)
   const [conversionResult, setConversionResult] = useState<ConversionResult | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -64,7 +64,9 @@ export function useExchangeCalculator() {
           setCurrencies(data)
         }
       } catch (error) {
+        console.log('Backend unavailable, using fallback currencies')
         console.error('Failed to load currencies:', error)
+        // Keep using fallback currencies that were already set in useState
       }
     }
     loadCurrencies()
@@ -113,7 +115,24 @@ export function useExchangeCalculator() {
       })
       setConversionResult(result)
     } catch (error) {
+      console.log('Backend conversion unavailable, using fallback calculation')
       console.error('Conversion error:', error)
+      
+      // Fallback to local calculation using currency rates
+      const fromCurrencyData = currencies.find(c => c.code === fromCurrency)
+      const toCurrencyData = currencies.find(c => c.code === toCurrency)
+      
+      if (fromCurrencyData && toCurrencyData) {
+        const fromRate = fromCurrencyData.rate
+        const toRate = toCurrencyData.rate
+        const rate = toRate / fromRate
+        const convertedAmount = (parseFloat(amount) * rate).toFixed(2)
+        
+        setConversionResult({
+          convertedAmount,
+          rate
+        })
+      }
     } finally {
       setIsLoading(false)
     }
