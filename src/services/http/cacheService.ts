@@ -1,46 +1,69 @@
-
 import { CachedResponse } from './types';
 
 /**
- * Cache service for HTTP responses with TTL support
+ * In-memory cache service for HTTP responses
  * 
- * This service provides in-memory caching functionality with automatic
- * expiration based on TTL (time to live) values.
+ * Provides caching functionality with TTL (time to live) support
+ * for HTTP responses to reduce redundant API calls and improve
+ * application performance.
  */
 export class CacheService {
-  private cache: Map<string, CachedResponse> = new Map();
+  private cache = new Map<string, CachedResponse>();
+  private defaultTTL = 5 * 60 * 1000; // 5 minutes
 
   /**
-   * Caches a response with a default TTL of 5 minutes
-   * @param url - The URL to cache the response for
-   * @param data - The response data to cache
-   * @param ttl - Time to live in milliseconds (default: 300000ms = 5 minutes)
+   * Stores a response in the cache with TTL
+   * @param key - Cache key (typically the request URL)
+   * @param data - Response data to cache
+   * @param ttl - Time to live in milliseconds (optional)
    */
-  set(url: string, data: any, ttl: number = 300000): void {
-    this.cache.set(url, {
+  set(key: string, data: any, ttl?: number): void {
+    const expiresAt = Date.now() + (ttl || this.defaultTTL);
+    this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl: expiresAt
     });
   }
 
   /**
-   * Retrieves cached response if it exists and hasn't expired
-   * @param url - The URL to check for cached response
-   * @returns Cached data if valid, null otherwise
+   * Retrieves a cached response if it's still valid
+   * @param key - Cache key to look up
+   * @returns Cached data or null if not found/expired
    */
-  get(url: string): any | null {
-    const cached = this.cache.get(url);
-    if (!cached) return null;
-
-    const isExpired = Date.now() - cached.timestamp > cached.ttl;
-    if (isExpired) {
-      this.cache.delete(url);
+  get(key: string): any | null {
+    const cached = this.cache.get(key);
+    
+    if (!cached) {
       return null;
     }
 
-    console.log('[HTTP] Cache hit for:', url);
+    // Check if cache entry has expired
+    if (Date.now() > cached.ttl) {
+      // Keep expired data for potential stale usage
+      return null;
+    }
+
     return cached.data;
+  }
+
+  /**
+   * Retrieves cached data even if expired (stale data)
+   * Useful for offline scenarios
+   * @param key - Cache key to look up
+   * @returns Cached data or null if not found
+   */
+  getStale(key: string): any | null {
+    const cached = this.cache.get(key);
+    return cached ? cached.data : null;
+  }
+
+  /**
+   * Removes a specific cache entry
+   * @param key - Cache key to remove
+   */
+  delete(key: string): void {
+    this.cache.delete(key);
   }
 
   /**
@@ -48,6 +71,47 @@ export class CacheService {
    */
   clear(): void {
     this.cache.clear();
-    console.log('[HTTP] Cache cleared');
+  }
+
+  /**
+   * Gets cache statistics
+   * @returns Object with cache metrics
+   */
+  getStats() {
+    const now = Date.now();
+    let validEntries = 0;
+    let expiredEntries = 0;
+
+    this.cache.forEach(cached => {
+      if (now <= cached.ttl) {
+        validEntries++;
+      } else {
+        expiredEntries++;
+      }
+    });
+
+    return {
+      totalEntries: this.cache.size,
+      validEntries,
+      expiredEntries,
+      hitRate: validEntries / Math.max(this.cache.size, 1)
+    };
+  }
+
+  /**
+   * Cleans up expired cache entries
+   */
+  cleanup(): void {
+    const now = Date.now();
+    const keysToDelete: string[] = [];
+
+    this.cache.forEach((cached, key) => {
+      // Only delete entries that are older than 1 hour (keep for stale usage)
+      if (now - cached.timestamp > 60 * 60 * 1000) {
+        keysToDelete.push(key);
+      }
+    });
+
+    keysToDelete.forEach(key => this.cache.delete(key));
   }
 }
