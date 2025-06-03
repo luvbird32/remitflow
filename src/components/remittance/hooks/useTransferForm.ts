@@ -1,7 +1,7 @@
-
 import { useState, useEffect } from "react"
 import { TransferFormData, FormErrors } from '../types'
-import { loadCurrenciesAndCountries } from '../transferUtils'
+import { ApiService } from '@/services/apiService'
+import { fallbackCountries, fallbackCurrencies } from '../utils/currencyUtils'
 
 export function useTransferForm() {
   const [formData, setFormData] = useState<TransferFormData>({
@@ -24,33 +24,40 @@ export function useTransferForm() {
   const [transferResult, setTransferResult] = useState<any>(null)
   const [isDataLoaded, setIsDataLoaded] = useState(false)
 
-  // Always call useEffect unconditionally
   useEffect(() => {
     const loadData = async () => {
       try {
-        console.log('Loading currencies and countries data...')
-        await loadCurrenciesAndCountries()
-        console.log('Data loaded successfully')
+        console.log('Loading currencies and countries from backend...')
+        await ApiService.getCurrencies()
+        await ApiService.getCountries()
+        console.log('Backend data loaded successfully')
       } catch (error) {
-        console.log('API unavailable, using fallback data for transfer form')
+        console.log('Backend unavailable, using fallback data')
         console.error('Data loading error:', error)
       } finally {
         setIsDataLoaded(true)
       }
     }
     loadData()
-  }, []) // Empty dependency array - this effect runs once on mount
+  }, [])
 
-  const handleCountryChange = (countryCode: string) => {
+  const handleCountryChange = async (countryCode: string) => {
     try {
-      const { countries } = require('../transferUtils')
-      const country = countries.find((c: any) => c?.code === countryCode)
-      console.log('Country selected:', countryCode, country)
+      console.log('Country selected:', countryCode)
+      
+      // Try to get country data from backend
+      let country
+      try {
+        country = await ApiService.getCountry(countryCode)
+      } catch (error) {
+        // Fallback to local data
+        country = fallbackCountries.find(c => c.code === countryCode)
+      }
       
       setFormData(prev => ({
         ...prev,
         recipientCountry: countryCode,
-        toCurrency: (country as any)?.currency || prev.toCurrency,
+        toCurrency: country?.currency || prev.toCurrency,
         deliveryMethod: ""
       }))
     } catch (error) {

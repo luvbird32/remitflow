@@ -3,15 +3,11 @@ import { ConversionResult } from '@/components/remittance/types'
 
 /**
  * API Service for handling backend communication
- * All business logic has been moved to backend services:
- * - CurrencyService, CountryService, DeliveryService, FeeService, TransferService
+ * All business logic moved to backend services
  */
 export class ApiService {
   private static baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
-  /**
-   * Generic request handler with error handling
-   */
   private static async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     try {
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
@@ -33,33 +29,41 @@ export class ApiService {
     }
   }
 
-  /**
-   * Get available currencies from CurrencyService
-   */
+  // Currency endpoints
   static async getCurrencies() {
     return this.request('/currencies')
   }
 
-  /**
-   * Get available countries from CountryService
-   */
+  static async getCurrency(code: string) {
+    return this.request(`/currencies/${code}`)
+  }
+
+  static async getExchangeRate(from: string, to: string) {
+    return this.request(`/currencies/rate/${from}/${to}`)
+  }
+
+  // Country endpoints
   static async getCountries() {
     return this.request('/countries')
   }
 
-  /**
-   * Convert currency using CurrencyService
-   */
+  static async getCountry(code: string) {
+    return this.request(`/countries/${code}`)
+  }
+
+  static async getDeliveryMethods(countryCode: string) {
+    return this.request(`/countries/${countryCode}/delivery-methods`)
+  }
+
+  // Exchange endpoints (legacy)
   static async convertCurrency(data: { amount: string; from: string; to: string }): Promise<ConversionResult> {
-    return this.request<ConversionResult>('/convert', {
+    return this.request<ConversionResult>('/exchange/convert', {
       method: 'POST',
       body: JSON.stringify(data),
     })
   }
 
-  /**
-   * Create a new transfer using TransferService
-   */
+  // Transfer endpoints
   static async createTransfer(transferData: any) {
     return this.request('/transfers', {
       method: 'POST',
@@ -67,9 +71,6 @@ export class ApiService {
     })
   }
 
-  /**
-   * Validate transfer data using ValidationService
-   */
   static async validateTransfer(transferData: any) {
     return this.request('/transfers/validate', {
       method: 'POST',
@@ -77,9 +78,6 @@ export class ApiService {
     })
   }
 
-  /**
-   * Get transfer preview using FeeService and other services
-   */
   static async getTransferPreview(data: { amount: string; fromCurrency: string; toCurrency: string; deliveryMethod: string }) {
     return this.request('/transfers/preview', {
       method: 'POST',
@@ -87,24 +85,11 @@ export class ApiService {
     })
   }
 
-  /**
-   * Track a transfer using TransferService
-   */
   static async trackTransfer(transferId: string) {
     return this.request(`/transfers/${transferId}`)
   }
 
-  /**
-   * Get transfer history from TransferService
-   */
   static async getTransferHistory() {
-    return this.request('/transfers/history')
-  }
-
-  /**
-   * Get delivery methods for a country using DeliveryService
-   */
-  static async getDeliveryMethods(countryCode: string) {
-    return this.request(`/countries/${countryCode}/delivery-methods`)
+    return this.request('/transfers')
   }
 }

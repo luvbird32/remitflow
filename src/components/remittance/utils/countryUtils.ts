@@ -1,4 +1,4 @@
-
+// Frontend utility - only types and API communication  
 export interface Country {
   code: string
   name: string
@@ -7,16 +7,11 @@ export interface Country {
   deliveryMethods: string[]
 }
 
-// Note: This is just a type definition file now.
-// All business logic has been moved to the backend CountryService.
-// These fallback countries are only used when the backend is unavailable.
-export const countries: Country[] = [
+// Fallback data for when backend is unavailable
+export const fallbackCountries: Country[] = [
   { code: "US", name: "United States", currency: "USD", flag: "🇺🇸", deliveryMethods: ["bank", "card"] },
-  { code: "GB", name: "United Kingdom", currency: "GBP", flag: "🇬🇧", deliveryMethods: ["bank", "card"] },
   { code: "NG", name: "Nigeria", currency: "NGN", flag: "🇳🇬", deliveryMethods: ["bank", "card", "wallet"] },
-  { code: "KE", name: "Kenya", currency: "KES", flag: "🇰🇪", deliveryMethods: ["bank", "card", "wallet"] },
-  { code: "GH", name: "Ghana", currency: "GHS", flag: "🇬🇭", deliveryMethods: ["bank", "card", "wallet"] },
-  { code: "ZA", name: "South Africa", currency: "ZAR", flag: "🇿🇦", deliveryMethods: ["bank", "card"] },
-  { code: "CA", name: "Canada", currency: "CAD", flag: "🇨🇦", deliveryMethods: ["bank", "card"] },
-  { code: "JP", name: "Japan", currency: "JPY", flag: "🇯🇵", deliveryMethods: ["bank", "card"] }
+  { code: "KE", name: "Kenya", currency: "KES", flag: "🇰🇪", deliveryMethods: ["bank", "card", "wallet"] }
 ]
+
+// All business logic moved to backend CountryService
