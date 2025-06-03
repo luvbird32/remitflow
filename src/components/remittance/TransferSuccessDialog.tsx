@@ -1,9 +1,9 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { CheckCircle, Copy, ExternalLink, Clock, MapPin, CreditCard } from "lucide-react"
 import { TransferFormData } from './types'
 import { useToast } from '@/hooks/use-toast'
+import { useEffect } from 'react'
 
 interface TransferSuccessDialogProps {
   isOpen: boolean
@@ -21,6 +21,14 @@ export function TransferSuccessDialog({
   onTrackTransfer
 }: TransferSuccessDialogProps) {
   const { toast } = useToast()
+
+  // Emit dialog close event when dialog is closed
+  useEffect(() => {
+    if (!isOpen) {
+      const event = new CustomEvent('transferDialogClosed')
+      window.dispatchEvent(event)
+    }
+  }, [isOpen])
 
   const copyTransferID = () => {
     navigator.clipboard.writeText(transferResult?.id || '')
