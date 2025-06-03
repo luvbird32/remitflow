@@ -1,6 +1,6 @@
 
 import { CreditCard } from "lucide-react"
-import { TransferFormData } from '../../types'
+import { TransferFormData } from '../types'
 
 interface DeliveryInfoProps {
   formData: TransferFormData

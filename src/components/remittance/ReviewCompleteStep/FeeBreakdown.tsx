@@ -1,6 +1,6 @@
 
-import { TransferFormData } from '../../types'
-import { currencies, calculateFee } from '../../transferUtils'
+import { TransferFormData } from '../types'
+import { currencies, calculateFee } from '../transferUtils'
 
 interface FeeBreakdownProps {
   formData: TransferFormData

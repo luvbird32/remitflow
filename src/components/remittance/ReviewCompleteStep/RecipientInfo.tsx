@@ -1,7 +1,7 @@
 
 import { User, MapPin } from "lucide-react"
-import { TransferFormData } from '../../types'
-import { countries } from '../../transferUtils'
+import { TransferFormData } from '../types'
+import { countries } from '../transferUtils'
 
 interface RecipientInfoProps {
   formData: TransferFormData

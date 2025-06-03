@@ -1,6 +1,6 @@
 
-import { TransferFormData, ConversionResult } from '../../types'
-import { currencies } from '../../transferUtils'
+import { TransferFormData, ConversionResult } from '../types'
+import { currencies } from '../transferUtils'
 
 interface AmountDisplayProps {
   formData: TransferFormData
