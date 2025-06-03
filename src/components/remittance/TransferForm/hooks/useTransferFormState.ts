@@ -10,10 +10,7 @@ export function useTransferFormState() {
   const handleSuccessDialogClose = () => {
     console.log('Closing success dialog')
     setShowSuccessDialog(false)
-    // Don't reset transferResult here as we need it for the reset logic
-    setTimeout(() => {
-      setTransferResult(null)
-    }, 100)
+    setTransferResult(null)
   }
 
   return {

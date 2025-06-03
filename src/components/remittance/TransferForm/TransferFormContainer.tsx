@@ -8,7 +8,6 @@ import { useTransferTracking } from './hooks/useTransferTracking'
 import { useFormData } from '../hooks/useFormData'
 import { useDataLoading } from '../hooks/useDataLoading'
 import { useCountryHandling } from '../hooks/useCountryHandling'
-import { useEffect } from 'react'
 
 export function TransferFormContainer() {
   const {
@@ -33,15 +32,6 @@ export function TransferFormContainer() {
     setTransferResult,
     setShowSuccessDialog
   })
-
-  // Reset form when dialog closes
-  useEffect(() => {
-    if (!showSuccessDialog && transferResult) {
-      console.log('Dialog closed, resetting form data')
-      resetFormData()
-      setErrors({})
-    }
-  }, [showSuccessDialog, transferResult, resetFormData, setErrors])
 
   const onTrackTransfer = () => {
     handleTrackTransfer(transferResult, formData, handleSuccessDialogClose)
