@@ -2,7 +2,7 @@
 import { useCallback } from 'react'
 import { TransferFormData, FormErrors } from '../types'
 import { TransferSubmissionService } from './submission/transferSubmissionService'
-import { useFormValidation } from './useFormValidation'
+import { useValidation } from './validation/ValidationContext'
 
 interface UseTransferSubmissionProps {
   formData: TransferFormData
@@ -19,7 +19,7 @@ export function useTransferSubmission({
   setShowSuccessDialog,
   setIsSubmitting
 }: UseTransferSubmissionProps) {
-  const { validateForm } = useFormValidation()
+  const { validateForm } = useValidation()
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,7 +31,7 @@ export function useTransferSubmission({
       // Validate form first
       const validation = await validateForm(formData)
       if (!validation.isValid) {
-        setErrors(validation.errors)
+        setErrors(validation.errors as FormErrors)
         return
       }
 
