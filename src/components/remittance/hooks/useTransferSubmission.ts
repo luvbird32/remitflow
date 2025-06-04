@@ -31,6 +31,17 @@ export function useTransferSubmission({
     setErrors({})
 
     try {
+      // For saved card selections, we may not need full validation
+      const hasValidPaymentMethod = formData.paymentCardNumber || formData.paymentName
+      
+      if (!hasValidPaymentMethod) {
+        console.log('useTransferSubmission: No payment method selected')
+        setErrors({ general: 'Please select a payment method to continue.' })
+        return
+      }
+
+      console.log('useTransferSubmission: Payment method validated, proceeding with submission')
+      
       // Validate form first
       console.log('useTransferSubmission: Validating form...')
       const validation = await validateForm(formData)

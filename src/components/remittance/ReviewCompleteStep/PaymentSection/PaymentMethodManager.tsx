@@ -36,23 +36,27 @@ export function usePaymentMethodManager() {
   const [useNewCard, setUseNewCard] = useState(false)
 
   useEffect(() => {
+    console.log('PaymentMethodManager: Initializing saved cards...')
     // In production, this would call backend PaymentMethodService.getSavedCards()
-    // For now, using fallback data
     setSavedCards(mockSavedCards)
     
-    // In production, this would call backend PaymentMethodService.getDefaultCard()
+    // Auto-select default card
     const defaultCard = mockSavedCards.find(card => card.isDefault)
     if (defaultCard) {
+      console.log('PaymentMethodManager: Auto-selecting default card:', defaultCard.id)
       setSelectedCard(defaultCard.id)
+      setUseNewCard(false)
     }
   }, [])
 
   const handleCardSelection = (cardId: string) => {
+    console.log('PaymentMethodManager: Card selected:', cardId)
     setSelectedCard(cardId)
     setUseNewCard(false)
   }
 
   const handleUseNewCard = () => {
+    console.log('PaymentMethodManager: Using new card')
     setUseNewCard(true)
     setSelectedCard(null)
   }
