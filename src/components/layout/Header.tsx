@@ -87,17 +87,27 @@ export function Header({ onProfileClick }: HeaderProps) {
             <Bell className={isMobile ? "h-4 w-4" : "h-5 w-5"} />
           </Button>
           
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className={`text-slate-600 hover:text-red-500 hover:bg-red-50/80 rounded-xl transition-all duration-200 hover:scale-105 ${
-              isMobile ? 'h-10 w-10' : 'h-11 w-11'
-            }`}
-            onClick={handleSignOut}
-            title="Sign Out"
-          >
-            <LogOut className={isMobile ? "h-4 w-4" : "h-5 w-5"} />
-          </Button>
+          {/* Enhanced Logout Button */}
+          {isMobile ? (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-slate-600 hover:text-red-500 hover:bg-red-50/80 rounded-xl transition-all duration-200 hover:scale-105 h-10 w-10 border border-red-200"
+              onClick={handleSignOut}
+              title="Sign Out"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button 
+              variant="outline" 
+              className="text-slate-600 hover:text-red-500 hover:bg-red-50/80 hover:border-red-300 rounded-xl transition-all duration-200 hover:scale-105 border-slate-200 px-4 py-2 h-11"
+              onClick={handleSignOut}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              <span className="text-sm font-medium">Sign Out</span>
+            </Button>
+          )}
         </div>
       </div>
     </header>
