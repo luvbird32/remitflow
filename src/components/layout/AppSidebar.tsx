@@ -86,7 +86,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
     <div className="relative">
       <Sidebar 
         collapsible="icon" 
-        className="border-r border-slate-200/30 glass backdrop-blur-xl transition-all duration-300 ease-in-out"
+        className="border-r border-slate-200/30 glass transition-all duration-300 ease-in-out"
       >
         <SidebarHeader className="p-4 border-b border-slate-200/30">
           <SidebarBrand />
@@ -96,7 +96,7 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
           {/* Welcome Section at Top */}
           {!isCollapsed && user && (
             <div className="flex items-center space-x-3 px-3 py-2 mb-4 modern-card rounded-xl">
-              <div className="w-6 h-6 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center">
+              <div className="w-6 h-6 bg-teal-500 rounded-lg flex items-center justify-center">
                 <User className="h-3 w-3 text-white" />
               </div>
               <div>

@@ -10,7 +10,7 @@ interface StepContainerProps {
 
 export function StepContainer({ children, showArrow = false, isHighlighted = false }: StepContainerProps) {
   const containerClass = isHighlighted 
-    ? "modern-card p-6 border-2 border-coral-200 bg-gradient-to-r from-coral-50 to-orange-50"
+    ? "modern-card p-6 border-2 border-coral-200"
     : "modern-card p-6"
 
   return (
