@@ -11,6 +11,7 @@ interface TransferSuccessDialogProps {
   formData: TransferFormData
   transferResult: any
   onTrackTransfer: () => void
+  onNewTransfer?: () => void
 }
 
 export function TransferSuccessDialog({
@@ -18,7 +19,8 @@ export function TransferSuccessDialog({
   onClose,
   formData,
   transferResult,
-  onTrackTransfer
+  onTrackTransfer,
+  onNewTransfer
 }: TransferSuccessDialogProps) {
   const { toast } = useToast()
 
@@ -28,6 +30,14 @@ export function TransferSuccessDialog({
       title: "Copied!",
       description: "Reference number copied"
     })
+  }
+
+  const handleNewTransfer = () => {
+    if (onNewTransfer) {
+      onNewTransfer()
+    } else {
+      onClose()
+    }
   }
 
   const getDeliveryMethodLabel = (method: string) => {
@@ -162,7 +172,7 @@ export function TransferSuccessDialog({
             
             <Button 
               variant="outline" 
-              onClick={onClose}
+              onClick={handleNewTransfer}
               className="w-full"
             >
               Send Another Transfer

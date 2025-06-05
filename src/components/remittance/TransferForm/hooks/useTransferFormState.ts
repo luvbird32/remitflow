@@ -10,11 +10,17 @@ export function useTransferFormState() {
     setTransferResult(null)
   }
 
+  const handleNewTransfer = () => {
+    setShowSuccessDialog(false)
+    setTransferResult(null)
+  }
+
   return {
     showSuccessDialog,
     setShowSuccessDialog,
     transferResult,
     setTransferResult,
-    handleSuccessDialogClose
+    handleSuccessDialogClose,
+    handleNewTransfer
   }
 }

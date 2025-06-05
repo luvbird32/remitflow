@@ -16,7 +16,8 @@ function TransferFormContent() {
     setShowSuccessDialog,
     transferResult,
     setTransferResult,
-    handleSuccessDialogClose
+    handleSuccessDialogClose,
+    handleNewTransfer
   } = useTransferFormState()
 
   const { handleTrackTransfer } = useTransferTracking()
@@ -28,7 +29,8 @@ function TransferFormContent() {
     errors,
     setErrors,
     isSubmitting,
-    setIsSubmitting
+    setIsSubmitting,
+    resetForm
   } = useFormState()
   
   const { isDataLoaded } = useDataLoading()
@@ -44,6 +46,11 @@ function TransferFormContent() {
 
   const onTrackTransfer = () => {
     handleTrackTransfer(transferResult, formData, handleSuccessDialogClose)
+  }
+
+  const onNewTransfer = () => {
+    resetForm() // Reset the form state
+    handleNewTransfer() // Close dialog and reset transfer state
   }
 
   if (!isDataLoaded) {
@@ -68,6 +75,7 @@ function TransferFormContent() {
         formData={formData}
         transferResult={transferResult}
         onTrackTransfer={onTrackTransfer}
+        onNewTransfer={onNewTransfer}
       />
     </>
   )
