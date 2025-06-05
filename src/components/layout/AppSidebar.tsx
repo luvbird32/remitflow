@@ -93,6 +93,19 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
         </SidebarHeader>
         
         <SidebarContent className="p-3 flex flex-col">
+          {/* Welcome Section at Top */}
+          {!isCollapsed && user && (
+            <div className="flex items-center space-x-3 px-3 py-2 mb-4 modern-card rounded-xl">
+              <div className="w-6 h-6 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                <User className="h-3 w-3 text-white" />
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-slate-700">Welcome</span>
+                <p className="text-xs text-slate-500 font-medium truncate max-w-20">{user?.name}</p>
+              </div>
+            </div>
+          )}
+
           <SidebarGroup>
             {!isCollapsed && (
               <SidebarGroupLabel className="text-slate-500 font-bold text-xs uppercase tracking-wider px-3 py-2 mb-2 transition-opacity duration-200">
@@ -115,18 +128,6 @@ export function AppSidebar({ activeTab, onTabChange }: AppSidebarProps) {
 
           {/* User Actions Section */}
           <div className="mt-auto border-t border-slate-200/30 pt-3">
-            {!isCollapsed && user && (
-              <div className="flex items-center space-x-3 px-3 py-2 mb-3 modern-card rounded-xl">
-                <div className="w-6 h-6 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                  <User className="h-3 w-3 text-white" />
-                </div>
-                <div>
-                  <span className="text-xs font-semibold text-slate-700">Welcome</span>
-                  <p className="text-xs text-slate-500 font-medium truncate max-w-20">{user?.name}</p>
-                </div>
-              </div>
-            )}
-            
             <div className="space-y-2 px-2">
               {/* Notification Button */}
               <Button 
